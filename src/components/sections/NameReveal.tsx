@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useAnimationFrame } from "framer-motion";
 import { useRef } from "react";
 import { viewportSettings } from "@/lib/motion";
 
@@ -12,11 +12,27 @@ export default function NameReveal() {
     offset: ["start end", "end start"],
   });
 
-  const rotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
+  // Scroll-based rotation (fast spin when scrolling)
+  const scrollRotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
+  
+  // Continuous slow rotation
+  const baseRotation = useMotionValue(0);
+  
+  useAnimationFrame((_, delta) => {
+    // Rotate at ~15 degrees per second for a slow, subtle spin
+    const rotationSpeed = 15;
+    baseRotation.set(baseRotation.get() + (delta / 1000) * rotationSpeed);
+  });
+  
+  // Combine base rotation with scroll rotation
+  const rotate = useTransform(
+    [baseRotation, scrollRotate],
+    ([base, scroll]) => (base as number) + (scroll as number)
+  );
 
   // Circular text content - matching the design (repeated to fill circle)
   const circularText =
-    "Rustacean • Nerd • Engineer • Debugger • Developer • Person • Student • Designer • Rustacean • Nerd • Engineer • Debugger • Developer • Person • Student • Designer • ";
+    "Rustacean • Engineer • Debugger • Developer • Nerd • Student • Designer • ";
 
   return (
     <section
@@ -34,8 +50,8 @@ export default function NameReveal() {
             className="absolute"
             style={{
               rotate,
-              width: "min(90vw, 550px)",
-              height: "min(90vw, 550px)",
+              width: "min(90vw, 750px)",
+              height: "min(90vw, 750px)",
             }}
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -56,9 +72,9 @@ export default function NameReveal() {
               </defs>
               <text
                 fill="#000000"
-                fontSize="11"
+                fontSize="15"
                 fontWeight="600"
-                letterSpacing="0.02em"
+                letterSpacing="0.03em"
                 fontFamily="system-ui, sans-serif"
               >
                 <textPath href="#circlePathLarge" startOffset="0%">
@@ -77,7 +93,7 @@ export default function NameReveal() {
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <h3 
-              className="text-3xl font-bold tracking-wide md:text-4xl lg:text-5xl"
+              className="text-4xl font-bold tracking-wide md:text-6xl lg:text-8xl"
               style={{ 
                 color: "#000000",
                 fontFamily: "system-ui, sans-serif",
