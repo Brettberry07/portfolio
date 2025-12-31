@@ -27,7 +27,7 @@ export default function About() {
             src="/who-am-I-image.png"
             alt="Mountain landscape background"
             fill
-            className="object-cover object-top grayscale"
+            className="object-cover object-bottom grayscale"
             sizes="100vw"
           />
           {/* Gradient overlay for text readability */}
@@ -36,10 +36,10 @@ export default function About() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex min-h-screen items-center py-16">
-        <div className="mx-auto w-full max-w-7xl px-6 md:px-12">
+      <div className="relative z-10 flex min-h-screen items-center justify-center py-16">
+        <div className="mx-auto w-full max-w-7xl px-8 md:px-16 lg:px-20">
           <motion.div
-            className="flex flex-col items-stretch gap-8 md:flex-row md:items-center md:gap-12"
+            className="flex flex-col items-center gap-8 md:flex-row md:justify-center md:gap-12"
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
@@ -47,7 +47,7 @@ export default function About() {
           >
             {/* Circular Image - Left side */}
             <motion.div
-              className="flex flex-shrink-0 justify-center md:justify-start"
+              className="flex shrink-0 justify-center"
               variants={fadeInLeft}
             >
               <div className="relative h-56 w-56 overflow-hidden rounded-full md:h-72 md:w-72 lg:h-96 lg:w-96">
@@ -67,22 +67,21 @@ export default function About() {
               variants={fadeInRight}
             >
               <div 
-                className="flex h-56 items-center p-8 md:h-72 md:p-10 lg:h-96 lg:p-12"
+                className="flex h-56 items-center justify-center p-10 md:h-72 md:p-14 lg:h-96 lg:p-16"
                 style={{
-                  backgroundColor: "rgba(200, 200, 200, 0.8)",
+                  backgroundColor: "rgba(200, 200, 200, 0.5)",
                   borderRadius: "20px",
                   backdropFilter: "blur(8px)",
                 }}
               >
                 <p 
-                  className="text-lg leading-relaxed md:text-xl lg:text-2xl"
+                  className="text-center text-lg leading-relaxed md:text-xl lg:text-2xl"
                   style={{ 
                     fontFamily: "monospace",
                     color: "#1a1a1a",
                   }}
                 >
-                  Text about me here lorem ipsum idk what else to type but I need
-                  more space here to see the text on image
+                  I am a dedicated software developer with a passion for creating impactful digital experiences. With a background in computer science and a knack for problem-solving, I specialize in building web applications that are not only functional but also user-friendly. I'm also an upcoming freshman at the University of Arkansas studying Computer Science and attending the Honor's College
                 </p>
               </div>
             </motion.div>
