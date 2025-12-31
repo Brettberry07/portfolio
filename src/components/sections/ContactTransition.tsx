@@ -54,10 +54,10 @@ export default function ContactTransition() {
             whileInView="visible"
             viewport={viewportSettings}
           >
-            <h2 className="font-sans text-6xl font-bold tracking-tight text-zinc-900 md:text-7xl lg:text-8xl">
+            <h2 className="absolute bottom-16 left-6 font-sans text-6xl font-bold tracking-tight text-zinc-900 md:text-7xl lg:text-8xl">
               Interested?
             </h2>
-            <p className="mt-4 text-sm italic text-zinc-700 md:text-base">
+            <p className="absolute bottom-6 left-6 mt-4 text-sm italic text-zinc-700 md:text-base">
               Don&apos;t Blame You
             </p>
           </motion.div>

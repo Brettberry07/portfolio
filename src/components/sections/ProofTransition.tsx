@@ -76,7 +76,7 @@ export default function ProofTransition() {
           whileInView="visible"
           viewport={viewportSettings}
         >
-          <h2 className="font-sans text-7xl font-bold tracking-tight text-zinc-900 md:text-8xl lg:text-9xl">
+          <h2 className="absolute bottom-16 right-6 font-sans text-7xl font-bold tracking-tight text-zinc-900 md:text-8xl lg:text-9xl">
             Proof?
           </h2>
         </motion.div>

@@ -53,7 +53,7 @@ export default function Hero() {
 
         <motion.blockquote
           variants={fadeInUp}
-          className="max-w-md text-lg font-light italic leading-relaxed tracking-wide text-foreground/90 md:max-w-lg md:text-xl lg:text-2xl"
+          className="max-w-md text-3xl font-light italic leading-relaxed tracking-wide text-foreground/90 md:max-w-lg md:text-4xl lg:max-w-4xl lg:text-7xl"
         >
           &ldquo;Building Solutions, Not Just Software&rdquo;
         </motion.blockquote>
