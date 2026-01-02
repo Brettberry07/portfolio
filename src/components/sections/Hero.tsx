@@ -17,6 +17,7 @@ export default function Hero() {
 
   return (
     <section
+      id="home"
       ref={containerRef}
       className="relative min-h-screen w-full overflow-hidden"
       aria-label="Hero section"
