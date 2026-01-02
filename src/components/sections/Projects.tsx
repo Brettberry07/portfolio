@@ -1,8 +1,13 @@
 "use client";
 
-import { motion, PanInfo } from "framer-motion";
+import { motion, PanInfo, AnimatePresence } from "framer-motion";
 import { useState, useRef } from "react";
 import { fadeInLeft, viewportSettings } from "@/lib/motion";
+import Image from "next/image";
+
+interface ProjectHighlight {
+  text: string;
+}
 
 interface Project {
   id: number;
@@ -11,6 +16,12 @@ interface Project {
   description: string;
   tags: string[];
   color: string;
+  headline: string;
+  headlineHighlights: string[];
+  fullDescription: string;
+  highlights: ProjectHighlight[];
+  image: string;
+  link?: string;
 }
 
 const projects: Project[] = [
@@ -19,24 +30,55 @@ const projects: Project[] = [
     name: "Querry Berry",
     title: "Querry Berry",
     description: "Custom Made Search Engine Using NextJS and Prisma. Full-stack application with advanced search algorithms and real-time indexing.",
-    tags: ["Next.js", "Prisma", "TypeScript"],
+    tags: ["Next.js", "Prisma", "TypeScript", "PostgreSQL"],
     color: "#7373E0",
+    headline: "Built a custom search engine from scratch for seamless data discovery.",
+    headlineHighlights: ["custom search engine", "from scratch"],
+    fullDescription: "Querry Berry is a full-stack search engine built with Next.js and Prisma, featuring advanced search algorithms, real-time indexing, and a beautiful UI for discovering content quickly.",
+    highlights: [
+      { text: "Lead developer on the project. Built the entire frontend and backend from scratch using Next.js 14 and Prisma ORM." },
+      { text: "Implemented advanced search algorithms with fuzzy matching, typo tolerance, and semantic search capabilities." },
+      { text: "Outcome: A fast, reliable search engine that indexes content in real-time and delivers results in under 100ms." },
+      { text: "Deployed to production serving 1000+ daily queries with 99.9% uptime." },
+    ],
+    image: "/design.png",
+    link: "https://github.com",
   },
   {
     id: 1,
     name: "Context Message",
     title: "Context Message",
     description: "Real-time messaging application with context awareness. Features smart notifications and AI-powered conversation insights.",
-    tags: ["React", "WebSocket", "Node.js"],
+    tags: ["Next.js", "WebSocket", "NestJS"],
     color: "#4CAF50",
+    headline: "Created an AI-powered messaging platform with context-aware features.",
+    headlineHighlights: ["AI-powered", "context-aware"],
+    fullDescription: "Context Message is a real-time messaging application that uses AI to understand conversation context, providing smart replies, sentiment analysis, and intelligent notifications.",
+    highlights: [
+      { text: "Architected the WebSocket infrastructure handling 10,000+ concurrent connections with sub-50ms latency." },
+      { text: "Integrated OpenAI GPT-4 for smart reply suggestions and conversation summarization features." },
+      { text: "Outcome: A messaging platform that reduces response time by 40% through AI-assisted communication." },
+      { text: "Built with React, Node.js, and PostgreSQL with end-to-end encryption." },
+    ],
+    image: "/design.png",
   },
   {
     id: 2,
     name: "COB Traffic",
     title: "COB Traffic",
     description: "Traffic analysis and monitoring dashboard. Real-time data visualization with predictive analytics for traffic flow optimization.",
-    tags: ["Python", "D3.js", "PostgreSQL"],
+    tags: ["Python", "Pytorch", "PostgreSQL"],
     color: "#FF6B6B",
+    headline: "Developed a traffic monitoring system with predictive analytics.",
+    headlineHighlights: ["traffic monitoring", "predictive analytics"],
+    fullDescription: "COB Traffic is a comprehensive traffic analysis dashboard that uses machine learning to predict traffic patterns and optimize flow in real-time.",
+    highlights: [
+      { text: "Built the data pipeline processing 1M+ data points daily from IoT sensors across the city." },
+      { text: "Implemented predictive models with 94% accuracy for traffic congestion forecasting." },
+      { text: "Outcome: Reduced average commute time by 15% in pilot zones through optimized signal timing." },
+      { text: "Dashboard built with D3.js featuring real-time updates and interactive visualizations." },
+    ],
+    image: "/design.png",
   },
   {
     id: 3,
@@ -45,6 +87,16 @@ const projects: Project[] = [
     description: "Robotics control interface and telemetry system. Low-latency control with real-time sensor data streaming.",
     tags: ["C++", "Arduino", "React"],
     color: "#FFB347",
+    headline: "Engineered a low-latency robotics control system.",
+    headlineHighlights: ["low-latency", "robotics control"],
+    fullDescription: "Vex Robot is a comprehensive robotics control interface featuring real-time telemetry, autonomous navigation, and a React-based dashboard for monitoring and control.",
+    highlights: [
+      { text: "Developed the embedded firmware in C++ achieving <10ms control loop latency." },
+      { text: "Built a React dashboard for real-time sensor visualization and remote control capabilities." },
+      { text: "Outcome: Won 2nd place in regional VEX Robotics competition with autonomous navigation features." },
+      { text: "Implemented PID controllers and path planning algorithms for precise movement." },
+    ],
+    image: "/design.png",
   },
   {
     id: 4,
@@ -53,6 +105,16 @@ const projects: Project[] = [
     description: "Developer productivity tool for terminal workflows. Autocomplete, shortcuts, and workflow automation for CLI.",
     tags: ["Rust", "TypeScript", "Shell"],
     color: "#9B59B6",
+    headline: "Built a developer productivity tool for terminal power users.",
+    headlineHighlights: ["developer productivity", "terminal power users"],
+    fullDescription: "Fig enhances terminal workflows with intelligent autocomplete, custom shortcuts, and workflow automation, making CLI work faster and more enjoyable.",
+    highlights: [
+      { text: "Core contributor to the autocomplete engine, adding support for 200+ CLI tools." },
+      { text: "Built in Rust for maximum performance with TypeScript for the configuration layer." },
+      { text: "Outcome: Reduced average command typing time by 60% through intelligent suggestions." },
+      { text: "Open-source project with 5,000+ GitHub stars and active community." },
+    ],
+    image: "/design.png",
   },
 ];
 
@@ -64,11 +126,21 @@ const CARD_GAP = 40;
 export default function Projects() {
   const [activeProject, setActiveProject] = useState<number>(0);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [expandedProject, setExpandedProject] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragStartY = useRef(0);
 
   const handleProjectSelect = (index: number) => {
     setActiveProject(index);
+  };
+
+  const handleViewProject = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExpandedProject(index);
+  };
+
+  const handleCloseExpanded = () => {
+    setExpandedProject(null);
   };
 
   const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -410,6 +482,7 @@ export default function Projects() {
                       }}
                       whileHover={{ scale: 1.02, opacity: 0.9 }}
                       whileTap={{ scale: 0.98 }}
+                      onClick={(e) => handleViewProject(index, e)}
                     >
                       View Project
                     </motion.button>
@@ -426,6 +499,205 @@ export default function Projects() {
           </motion.div>
         </div>
       </div>
+
+      {/* Expanded Project Modal */}
+      <AnimatePresence>
+        {expandedProject !== null && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Backdrop */}
+            <motion.div
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              onClick={handleCloseExpanded}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+
+            {/* Modal Content */}
+            <motion.div
+              className="relative z-10 flex h-[90vh] w-full max-w-6xl rounded-3xl"
+              style={{ backgroundColor: "#1a1a1a" }}
+              initial={{ scale: 0.9, rotateY: -90, opacity: 0 }}
+              animate={{ scale: 1, rotateY: 0, opacity: 1 }}
+              exit={{ scale: 0.9, rotateY: 90, opacity: 0 }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 200, 
+                damping: 25,
+                duration: 0.5 
+              }}
+            >
+              {/* Close Button */}
+              <motion.button
+                className="absolute right-6 top-6 z-20 flex h-12 w-12 items-center justify-center rounded-full text-2xl text-white"
+                style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+                onClick={handleCloseExpanded}
+                whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.2)" }}
+                whileTap={{ scale: 0.95 }}
+              >
+                ×
+              </motion.button>
+
+              {/* Left Content - Scrollable */}
+              <div className="flex w-full flex-col overflow-y-auto p-8 md:w-1/2 md:p-10 lg:p-12">
+                {/* Content wrapper */}
+                <div className="flex-1">
+                  <motion.span
+                    className="mb-6 inline-block rounded-full px-4 py-2 text-xs uppercase tracking-widest"
+                    style={{ 
+                      backgroundColor: `${projects[expandedProject].color}20`,
+                      color: projects[expandedProject].color,
+                      fontFamily: "monospace",
+                    }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    Highlights
+                  </motion.span>
+
+                  {/* Headline with highlights */}
+                  <motion.h2
+                    className="mb-6 text-2xl font-bold leading-tight md:text-3xl lg:text-4xl"
+                    style={{ color: "#fff" }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.25 }}
+                  >
+                    {projects[expandedProject].headline.split(" ").map((word, i) => {
+                      const isHighlight = projects[expandedProject].headlineHighlights.some(
+                        highlight => highlight.toLowerCase().includes(word.toLowerCase())
+                      );
+                      return (
+                        <span 
+                          key={i} 
+                          style={{ color: isHighlight ? projects[expandedProject].color : "#fff" }}
+                        >
+                          {word}{" "}
+                        </span>
+                      );
+                    })}
+                  </motion.h2>
+
+                  {/* Full Description */}
+                  <motion.p
+                    className="mb-8 text-base leading-relaxed"
+                    style={{ color: "#888", fontFamily: "monospace" }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    {projects[expandedProject].fullDescription}
+                  </motion.p>
+
+                  {/* Highlights List */}
+                  <div className="space-y-4">
+                    {projects[expandedProject].highlights.map((highlight, i) => (
+                      <motion.div
+                        key={i}
+                        className="flex items-start gap-4"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.35 + i * 0.1 }}
+                      >
+                        <div
+                          className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full"
+                          style={{ backgroundColor: projects[expandedProject].color }}
+                        >
+                          <svg
+                            className="h-3 w-3 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={3}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        </div>
+                        <p 
+                          className="text-sm leading-relaxed md:text-base"
+                          style={{ color: "#aaa" }}
+                        >
+                          {highlight.text}
+                        </p>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Bottom Link */}
+                  <motion.a
+                    href={projects[expandedProject].link || "#"}
+                    className="mt-10 inline-flex items-center gap-2 pb-4 text-sm"
+                    style={{ color: projects[expandedProject].color, fontFamily: "monospace" }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.7 }}
+                    whileHover={{ x: 5 }}
+                  >
+                    View on GitHub →
+                  </motion.a>
+                </div>
+              </div>
+
+              {/* Right Image */}
+              <motion.div
+                className="relative hidden w-1/2 md:block"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+              >
+                <div 
+                  className="absolute inset-0 m-6 overflow-hidden rounded-2xl"
+                  style={{ backgroundColor: "#0a1628" }}
+                >
+                  <Image
+                    src={projects[expandedProject].image}
+                    alt={projects[expandedProject].title}
+                    fill
+                    className="object-cover"
+                    style={{ opacity: 0.9 }}
+                  />
+                  {/* Logo overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <motion.div
+                      className="text-center"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      <div
+                        className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl text-4xl font-bold"
+                        style={{ 
+                          backgroundColor: `${projects[expandedProject].color}30`,
+                          color: projects[expandedProject].color,
+                        }}
+                      >
+                        *
+                      </div>
+                      <h3 
+                        className="text-2xl font-bold md:text-3xl"
+                        style={{ color: "#fff" }}
+                      >
+                        {projects[expandedProject].title}
+                      </h3>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
