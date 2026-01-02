@@ -82,8 +82,8 @@ const projects: Project[] = [
   },
   {
     id: 3,
-    name: "Vex Robot",
-    title: "Vex Robot",
+    name: "BLk0ut",
+    title: "BLk0ut",
     description: "Robotics control interface and telemetry system. Low-latency control with real-time sensor data streaming.",
     tags: ["C++", "Arduino", "React"],
     color: "#FFB347",
@@ -234,24 +234,29 @@ export default function Projects() {
       </motion.div>
 
       {/* Main Content Container - Two Column Layout */}
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-[1800px] items-center px-8 md:px-16 lg:px-24">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-450 items-center px-8  md:px-16 lg:px-32">
         
         {/* Left Side - Selector Panel */}
         <motion.div
-          className="relative z-30 w-full max-w-lg flex-shrink-0"
+          className="relative z-30 max-w-lg shrink-0 w-[120%]"
           variants={fadeInLeft}
           initial="hidden"
           whileInView="visible"
           viewport={viewportSettings}
+          style={{ padding: "1rem" }}
         >
           {/* Selector Container */}
           <div 
-            className="rounded-3xl p-10 md:p-12"
+            className="rounded-3xl p-10 md:p-12 h-80"
             style={{
+              flexDirection: "column",
+              display: "flex",
+              justifyContent: "space-between",
               backgroundColor: "rgba(210, 210, 210, 0.6)",
               backdropFilter: "blur(16px)",
               border: "1px solid rgba(200, 200, 200, 0.5)",
               boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)",
+              padding: "0.5rem",
             }}
           >
             <p 
@@ -261,7 +266,7 @@ export default function Projects() {
               Projects
             </p>
             
-            <div className="flex flex-col space-y-3 pl-4">
+            <div className="flex flex-col space-y-5 pl-4">
               {projects.map((project, index) => (
                 <motion.button
                   key={project.id}
@@ -406,21 +411,22 @@ export default function Projects() {
                 >
                   {/* Card */}
                   <motion.div
-                    className="relative h-full w-full overflow-hidden rounded-[2rem] p-10"
+                    className="relative h-full w-full rounded-[2rem]"
                     style={{
                       backgroundColor: "#1a1a1a",
                       border: `2px solid ${hoveredCard === index ? project.color : "#2a2a2a"}`,
                       boxShadow: hoveredCard === index 
                         ? `0 40px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px ${project.color}50`
                         : "0 30px 60px rgba(0, 0, 0, 0.3)",
+                      padding: "2.5rem",
                     }}
                     whileHover={{ y: -8 }}
                     transition={{ duration: 0.3 }}
                   >
                     {/* Card Header */}
-                    <div className="mb-8 flex items-start justify-between">
+                    <div className="mb-6 flex items-start justify-between">
                       <div
-                        className="flex h-14 w-14 items-center justify-center rounded-2xl text-2xl font-bold"
+                        className="flex h-12 w-12 items-center justify-center rounded-xl text-xl font-bold"
                         style={{ 
                           backgroundColor: `${project.color}20`,
                           color: project.color,
@@ -429,7 +435,7 @@ export default function Projects() {
                         *
                       </div>
                       <span 
-                        className="text-sm tracking-wider uppercase"
+                        className="text-xs tracking-wider uppercase"
                         style={{ color: "#555", fontFamily: "monospace" }}
                       >
                         Project {String(index + 1).padStart(2, '0')}
@@ -457,15 +463,16 @@ export default function Projects() {
                     </p>
 
                     {/* Tags - positioned at bottom above button */}
-                    <div className="absolute bottom-28 left-10 right-10 flex flex-wrap gap-2">
+                    <div style={{ position: "absolute", bottom: "7.5rem", left: "2.5rem", right: "2.5rem", display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                       {project.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full px-4 py-2 text-sm"
+                          className="rounded-full px-3 py-1.5 text-xs"
                           style={{
                             backgroundColor: "#2a2a2a",
                             color: "#bbb",
                             fontFamily: "monospace",
+                            padding: "0.25rem 0.75rem",
                           }}
                         >
                           {tag}
@@ -475,8 +482,12 @@ export default function Projects() {
 
                     {/* Action Button */}
                     <motion.button
-                      className="absolute bottom-10 left-10 right-10 rounded-2xl py-4 text-base font-semibold transition-colors"
+                      className="rounded-xl py-3 text-sm font-semibold transition-colors"
                       style={{
+                        position: "absolute",
+                        bottom: "2.5rem",
+                        left: "2.5rem",
+                        right: "2.5rem",
                         backgroundColor: project.color,
                         color: "#fff",
                       }}
@@ -521,7 +532,7 @@ export default function Projects() {
 
             {/* Modal Content */}
             <motion.div
-              className="relative z-10 flex h-[90vh] w-full max-w-6xl rounded-3xl"
+              className="relative z-10 flex h-[90vh] w-full max-w-[90vw] rounded-3xl"
               style={{ backgroundColor: "#1a1a1a" }}
               initial={{ scale: 0.9, rotateY: -90, opacity: 0 }}
               animate={{ scale: 1, rotateY: 0, opacity: 1 }}
@@ -535,8 +546,8 @@ export default function Projects() {
             >
               {/* Close Button */}
               <motion.button
-                className="absolute right-6 top-6 z-20 flex h-12 w-12 items-center justify-center rounded-full text-2xl text-white"
-                style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+                className="absolute z-20 flex h-10 w-10 items-center justify-center rounded-full text-xl text-white"
+                style={{ backgroundColor: `${projects[expandedProject].color}90`, top: "2.5rem", right: "2.5rem" }}
                 onClick={handleCloseExpanded}
                 whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.2)" }}
                 whileTap={{ scale: 0.95 }}
@@ -545,22 +556,26 @@ export default function Projects() {
               </motion.button>
 
               {/* Left Content - Scrollable */}
-              <div className="flex w-full flex-col overflow-y-auto p-8 md:w-1/2 md:p-10 lg:p-12">
+              <div 
+                className="flex w-full flex-col justify-between overflow-y-auto md:w-1/2 h-full"
+                style={{ padding: "2.5rem" }}
+              >
                 {/* Content wrapper */}
-                <div className="flex-1">
-                  <motion.span
-                    className="mb-6 inline-block rounded-full px-4 py-2 text-xs uppercase tracking-widest"
+                <div className="flex-1 flex flex-col justify-between">
+                    <motion.span
+                    className="mb-6 inline-block rounded-full w-fit text-xs uppercase tracking-widest"
                     style={{ 
                       backgroundColor: `${projects[expandedProject].color}20`,
                       color: projects[expandedProject].color,
                       fontFamily: "monospace",
+                      padding: "0.5rem 0.5rem",
                     }}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                  >
+                    >
                     Highlights
-                  </motion.span>
+                    </motion.span>
 
                   {/* Headline with highlights */}
                   <motion.h2
@@ -657,8 +672,8 @@ export default function Projects() {
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
                 <div 
-                  className="absolute inset-0 m-6 overflow-hidden rounded-2xl"
-                  style={{ backgroundColor: "#0a1628" }}
+                  className="absolute overflow-hidden rounded-2xl"
+                  style={{ backgroundColor: "#0a1628", top: "2.5rem", right: "2.5rem", bottom: "2.5rem", left: "1rem" }}
                 >
                   <Image
                     src={projects[expandedProject].image}
@@ -667,31 +682,7 @@ export default function Projects() {
                     className="object-cover"
                     style={{ opacity: 0.9 }}
                   />
-                  {/* Logo overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <motion.div
-                      className="text-center"
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: 0.5 }}
-                    >
-                      <div
-                        className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl text-4xl font-bold"
-                        style={{ 
-                          backgroundColor: `${projects[expandedProject].color}30`,
-                          color: projects[expandedProject].color,
-                        }}
-                      >
-                        *
-                      </div>
-                      <h3 
-                        className="text-2xl font-bold md:text-3xl"
-                        style={{ color: "#fff" }}
-                      >
-                        {projects[expandedProject].title}
-                      </h3>
-                    </motion.div>
-                  </div>
+
                 </div>
               </motion.div>
             </motion.div>
