@@ -20,7 +20,7 @@ const socialLinks: SocialLink[] = [
   {
     name: "GitHub",
     href: "https://github.com",
-    icon: "/github-svgrepo-com 2.svg",
+    icon: "/github-svgrepo-com 2-2.svg",
     ariaLabel: "Visit my GitHub profile",
   },
   {
@@ -57,9 +57,9 @@ export default function Contact() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex min-h-[50vh] flex-col items-center justify-center px-6 py-16 md:py-24">
+      <div className="relative z-10 flex min-h-[50vh] flex-col items-centern justify-around px-6 py-16 md:py-24">
         <motion.div
-          className="flex flex-col items-center text-center"
+          className="flex flex-col items-center text-center gap-y-24"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
@@ -85,7 +85,7 @@ export default function Contact() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.ariaLabel}
-                className="group relative flex h-20 w-20 items-center justify-center rounded-2xl bg-zinc-800/90 transition-all duration-300 hover:scale-110 hover:bg-zinc-700 md:h-24 md:w-24"
+                className="group relative flex h-20 w-20 items-center justify-center rounded-2xl bg-zinc-800/90 transition-all duration-300 hover:scale-110 hover:bg-zinc-700 md:h-24 md:w-24 lg:h-36 lg:w-36"
                 whileHover={{ y: -5 }}
                 whileTap={buttonTap}
               >
@@ -94,7 +94,7 @@ export default function Contact() {
                   alt={link.name}
                   width={48}
                   height={48}
-                  className="h-12 w-12 md:h-14 md:w-14"
+                  className="h-12 w-12 md:h-14 md:w-14 lg:h-24 lg:w-24 transition-all duration-300 group-hover:brightness-125"
                 />
               </motion.a>
             ))}

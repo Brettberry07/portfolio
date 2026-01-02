@@ -21,9 +21,9 @@ function MarqueeRow({ items, direction = "left" }: MarqueeRowProps) {
   const duplicatedItems = [...items, ...items];
 
   return (
-    <div className="relative overflow-hidden py-6 md:py-8">
+    <div className="relative overflow-hidden">
       <motion.div
-        className={`flex gap-14 md:gap-20 lg:gap-24 ${
+        className={`flex items-center gap-14 md:gap-20 lg:gap-24 ${
           direction === "left" ? "animate-marquee-left" : "animate-marquee-right"
         }`}
         style={{ width: "fit-content" }}
@@ -57,14 +57,17 @@ export default function Proof() {
 
   return (
     <section
-      className="relative w-full overflow-hidden py-20 md:py-28 lg:py-32"
+      className="relative flex w-full flex-col justify-center overflow-hidden py-20 md:py-28 lg:py-32"
       style={{ backgroundColor: "#3B394A" }}
       aria-label="Code showcase section"
     >
       {/* Marquee Rows */}
       <div className="space-y-10 md:space-y-14 lg:space-y-16">
+        <div className="w-screen h-4"></div>
         <MarqueeRow items={topRowItems} direction="left" />
+        <div className="w-screen h-4"></div>
         <MarqueeRow items={bottomRowItems} direction="right" />
+        <div className="w-screen h-4"></div>
       </div>
     </section>
   );

@@ -7,82 +7,85 @@ import { fadeInUp, fadeInLeft, fadeInRight, viewportSettings } from "@/lib/motio
 export default function ContactTransition() {
   return (
     <section
-      className="relative min-h-[70vh] w-full overflow-hidden py-24 md:py-32"
+      className="relative min-h-screen w-full overflow-hidden py-16 md:py-24"
       style={{ backgroundColor: "#A4A4A4" }}
       aria-label="Contact transition section"
     >
-      <div className="mx-auto flex h-full max-w-7xl items-center px-8 md:px-16 lg:px-20">
-        {/* Left Side - Geometric Shape and Text */}
-        <div className="relative flex-1">
-          {/* Nested Diamond Shape */}
+      <div className="mx-auto max-w-7xl px-6 md:px-12">
+        {/* Top Row - Diamond and Image */}
+        <div className="flex items-start justify-between gap-6 md:gap-12">
+          {/* Diamond Shape - Left aligned */}
           <motion.div
-            className="absolute left-1/4 top-0 -translate-x-1/2"
+            className="absolute top-[40%] left-1/6 flex items-center justify-center py-8 md:py-16"
             variants={fadeInLeft}
             initial="hidden"
             whileInView="visible"
             viewport={viewportSettings}
           >
-            <div className="relative h-48 w-48 rotate-45 md:h-64 md:w-64 lg:h-80 lg:w-80">
-              {/* Outer diamond */}
+            <div className="relative h-48 w-48 md:h-64 md:w-64 lg:h-80 lg:w-80">
+              {/* Outer square */}
               <div
                 className="absolute inset-0 border-[3px]"
-                style={{ borderColor: "#444464" }}
+                style={{ 
+                  borderColor: "#444464",
+                }}
               />
-              {/* Middle diamond */}
+              {/* Middle square */}
               <div
-                className="absolute inset-6 border-[3px] md:inset-8 lg:inset-10"
-                style={{ borderColor: "#444464" }}
+                className="absolute inset-6 border-[3px] md:inset-8"
+                style={{ 
+                  borderColor: "#444464",
+                  transform: "rotate(45deg)",
+                }}
               />
-              {/* Inner diamond */}
+              {/* Inner square */}
               <div
-                className="absolute inset-12 border-[3px] md:inset-16 lg:inset-20"
-                style={{ borderColor: "#444464" }}
-              />
-              {/* Innermost diamond */}
-              <div
-                className="absolute inset-[72px] border-[3px] md:inset-24 lg:inset-[120px]"
-                style={{ borderColor: "#444464" }}
+                className="absolute inset-12 border-[3px] md:inset-16"
+                style={{ 
+                  borderColor: "#444464",
+                }}
               />
             </div>
           </motion.div>
 
-          {/* Title Text - Overlapping the diamond */}
+          {/* Forest Image - Right aligned */}
           <motion.div
-            className="relative z-10 pt-32 md:pt-40 lg:pt-48"
-            variants={fadeInUp}
+            className="flex flex-col items-end"
+            variants={fadeInRight}
             initial="hidden"
             whileInView="visible"
             viewport={viewportSettings}
           >
-            <h2 className="absolute bottom-16 left-6 font-sans text-6xl font-bold tracking-tight text-zinc-900 md:text-7xl lg:text-8xl">
-              Interested?
-            </h2>
-            <p className="absolute bottom-6 left-6 mt-4 text-sm italic text-zinc-700 md:text-base">
-              Don&apos;t Blame You
-            </p>
+            <div className="absolute top-0 right-0">
+              <div 
+                className="relative aspect-4/3 w-48 h-screen overflow-hidden md:w-80 lg:w-xl"
+
+              >
+                <Image
+                  src="/contact-transition-image.png"
+                  alt="Misty forest landscape"
+                  fill
+                  className="object-cover grayscale h-screen"
+                />
+              </div>
+            </div>
           </motion.div>
         </div>
 
-        {/* Right Side - Forest Image */}
+        {/* Title and Caption */}
         <motion.div
-          className="flex-shrink-0"
-          variants={fadeInRight}
+          className="absolute top-1/2 left-6 md:bottom-20 md:left-12"
+          variants={fadeInUp}
           initial="hidden"
           whileInView="visible"
           viewport={viewportSettings}
         >
-          <div 
-            className="relative aspect-[3/4] w-48 overflow-hidden md:w-64 lg:w-80"
-            style={{ borderRadius: "0" }}
-          >
-            <Image
-              src="/contact-transition-image.png"
-              alt="Misty forest landscape"
-              fill
-              className="object-cover grayscale"
-              sizes="(max-width: 768px) 192px, (max-width: 1024px) 256px, 320px"
-            />
-          </div>
+          <h2 className="font-sans text-5xl font-bold tracking-tight text-zinc-900 md:text-7xl lg:text-9xl">
+            Interested?
+          </h2>
+          <p className="mt-2 text-md italic tracking-wide text-zinc-700 md:mt-4 md:text-lg lg:text-xl">
+            Don&apos;t Blame You
+          </p>
         </motion.div>
       </div>
     </section>

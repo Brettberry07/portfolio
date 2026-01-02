@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { motion, PanInfo } from "framer-motion";
+import { useState, useRef } from "react";
 import { fadeInLeft, viewportSettings } from "@/lib/motion";
 
 interface Project {
@@ -9,6 +9,8 @@ interface Project {
   name: string;
   title: string;
   description: string;
+  tags: string[];
+  color: string;
 }
 
 const projects: Project[] = [
@@ -16,90 +18,99 @@ const projects: Project[] = [
     id: 0,
     name: "Querry Berry",
     title: "Querry Berry",
-    description: "Custom Made Search Engine Using NextJS and Prisma",
+    description: "Custom Made Search Engine Using NextJS and Prisma. Full-stack application with advanced search algorithms and real-time indexing.",
+    tags: ["Next.js", "Prisma", "TypeScript"],
+    color: "#7373E0",
   },
   {
     id: 1,
     name: "Context Message",
     title: "Context Message",
-    description: "Real-time messaging application with context awareness",
+    description: "Real-time messaging application with context awareness. Features smart notifications and AI-powered conversation insights.",
+    tags: ["React", "WebSocket", "Node.js"],
+    color: "#4CAF50",
   },
   {
     id: 2,
     name: "COB Traffic",
     title: "COB Traffic",
-    description: "Traffic analysis and monitoring dashboard",
+    description: "Traffic analysis and monitoring dashboard. Real-time data visualization with predictive analytics for traffic flow optimization.",
+    tags: ["Python", "D3.js", "PostgreSQL"],
+    color: "#FF6B6B",
   },
   {
     id: 3,
     name: "Vex Robot",
     title: "Vex Robot",
-    description: "Robotics control interface and telemetry system",
+    description: "Robotics control interface and telemetry system. Low-latency control with real-time sensor data streaming.",
+    tags: ["C++", "Arduino", "React"],
+    color: "#FFB347",
   },
   {
     id: 4,
     name: "Fig",
     title: "Fig",
-    description: "Developer productivity tool for terminal workflows",
+    description: "Developer productivity tool for terminal workflows. Autocomplete, shortcuts, and workflow automation for CLI.",
+    tags: ["Rust", "TypeScript", "Shell"],
+    color: "#9B59B6",
   },
 ];
 
+// Card dimensions
+const CARD_WIDTH = 420;
+const CARD_HEIGHT = 520;
+const CARD_GAP = 40;
+
 export default function Projects() {
   const [activeProject, setActiveProject] = useState<number>(0);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragStartY = useRef(0);
 
-  const handleProjectHover = (index: number) => {
+  const handleProjectSelect = (index: number) => {
     setActiveProject(index);
   };
 
-  // Calculate rotation for each card in a clockwise circle
-  const getCardStyle = (index: number) => {
-    const totalProjects = projects.length;
-    const anglePerProject = 360 / totalProjects;
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const threshold = 80;
+    const velocity = info.velocity.y;
+    const offset = info.offset.y;
     
-    // Calculate the angle offset based on active project
-    const baseAngle = index * anglePerProject;
-    const activeAngle = activeProject * anglePerProject;
-    let angleDiff = baseAngle - activeAngle;
+    let newIndex = activeProject;
     
-    // Normalize to -180 to 180
-    if (angleDiff > 180) angleDiff -= 360;
-    if (angleDiff < -180) angleDiff += 360;
+    if (Math.abs(velocity) > 300 || Math.abs(offset) > threshold) {
+      const direction = (velocity + offset * 0.5) > 0 ? -1 : 1;
+      newIndex = activeProject + direction;
+    }
     
-    // Convert to radians for position calculation
-    // Start from 0 degrees (right/3 o'clock position) and go clockwise
-    const angleInRadians = (angleDiff * Math.PI) / 180;
-    
-    // Large circular path - cards rotate around a wheel
-    const radiusX = 200; // Horizontal movement 
-    const radiusY = 450; // Vertical radius to create the wheel effect
-    
-    // Calculate position on the circle
-    // x uses cos so active card is at the rightmost point
-    // y uses sin for vertical positioning
-    const x = -Math.cos(angleInRadians) * radiusX + radiusX; // Offset so active is at right edge
-    const y = Math.sin(angleInRadians) * radiusY;
-    
-    // Card rotation - cards tilt as they go around, upright in the middle
-    const cardRotation = angleDiff * 0.4; // Tilt based on position (40% of angle)
-    
-    // Determine visibility and scale based on position in the circle
-    const isFront = Math.abs(angleDiff) < 10;
-    const isNearFront = Math.abs(angleDiff) <= 90;
-    const isVisible = Math.abs(angleDiff) <= 150;
-    
-    const scale = isFront ? 1 : isNearFront ? 0.85 : 0.7;
-    const opacity = isFront ? 1 : isNearFront ? 0.9 : isVisible ? 0.6 : 0;
-    const zIndex = Math.round(20 - Math.abs(angleDiff) / 10);
+    // Clamp to valid range
+    newIndex = Math.max(0, Math.min(projects.length - 1, newIndex));
+    setActiveProject(newIndex);
+  };
 
-    return {
-      x,
-      y,
-      scale,
-      opacity,
-      zIndex,
-      cardRotation,
-      isVisible,
-    };
+  // Calculate card position in the vertical stack
+  const getCardTransform = (index: number) => {
+    const diff = index - activeProject;
+    
+    // Y position - stack cards vertically with offset
+    const baseY = diff * (CARD_HEIGHT * 0.35 + CARD_GAP);
+    
+    // X offset - selected card at 0, unselected cards fan out to the right
+    const xOffset = diff === 0 ? 0 : Math.abs(diff) * 80 + 60;
+    
+    // Scale - active card is largest
+    const scale = diff === 0 ? 1 : Math.max(0.75, 1 - Math.abs(diff) * 0.12);
+    
+    // Rotation - subtle tilt based on position
+    const rotation = diff * -3;
+    
+    // Opacity
+    const opacity = Math.max(0.4, 1 - Math.abs(diff) * 0.25);
+    
+    // Z-index
+    const zIndex = 20 - Math.abs(diff);
+    
+    return { y: baseY, x: xOffset, scale, rotation, opacity, zIndex };
   };
 
   return (
@@ -108,29 +119,25 @@ export default function Projects() {
       style={{ backgroundColor: "#E3E3E3" }}
       aria-label="Projects section"
     >
-      {/* Decorative Black Triangles */}
-      {/* Top Left */}
+      {/* Decorative Corner Elements */}
       <div
         className="absolute left-0 top-0 h-32 w-32 md:h-48 md:w-48 lg:h-64 lg:w-64"
         style={{
           background: "linear-gradient(135deg, #1a1a1a 50%, transparent 50%)",
         }}
       />
-      {/* Top Right */}
       <div
         className="absolute right-0 top-0 h-32 w-32 md:h-48 md:w-48 lg:h-64 lg:w-64"
         style={{
           background: "linear-gradient(225deg, #1a1a1a 50%, transparent 50%)",
         }}
       />
-      {/* Bottom Left */}
       <div
         className="absolute bottom-0 left-0 h-32 w-32 md:h-48 md:w-48 lg:h-64 lg:w-64"
         style={{
           background: "linear-gradient(45deg, #1a1a1a 50%, transparent 50%)",
         }}
       />
-      {/* Bottom Right */}
       <div
         className="absolute bottom-0 right-0 h-32 w-32 md:h-48 md:w-48 lg:h-64 lg:w-64"
         style={{
@@ -138,103 +145,285 @@ export default function Projects() {
         }}
       />
 
-      {/* Content Container */}
-      <div className="relative z-10 flex min-h-screen items-center">
-        {/* Project List - Left Side */}
+      {/* Section Header - Centered at Top */}
+      <motion.div 
+        className="absolute left-1/2 top-12 z-20 -translate-x-1/2 md:top-16"
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={viewportSettings}
+        transition={{ duration: 0.6 }}
+      >
+        <p 
+          className="text-sm tracking-[0.3em] uppercase md:text-base"
+          style={{ color: "#666" }}
+        >
+          Featured Work
+        </p>
+      </motion.div>
+
+      {/* Main Content Container - Two Column Layout */}
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-[1800px] items-center px-8 md:px-16 lg:px-24">
+        
+        {/* Left Side - Selector Panel */}
         <motion.div
-          className="absolute left-8 z-30 flex flex-col justify-center space-y-2 md:left-16 md:space-y-3 lg:left-24"
+          className="relative z-30 w-full max-w-lg flex-shrink-0"
           variants={fadeInLeft}
           initial="hidden"
           whileInView="visible"
           viewport={viewportSettings}
         >
-          {projects.map((project, index) => (
-            <motion.button
-              key={project.id}
-              className="group flex items-center gap-3 py-2 text-left transition-all duration-300"
-              onMouseEnter={() => handleProjectHover(index)}
-              onClick={() => handleProjectHover(index)}
+          {/* Selector Container */}
+          <div 
+            className="rounded-3xl p-10 md:p-12"
+            style={{
+              backgroundColor: "rgba(210, 210, 210, 0.6)",
+              backdropFilter: "blur(16px)",
+              border: "1px solid rgba(200, 200, 200, 0.5)",
+              boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)",
+            }}
+          >
+            <p 
+              className="mb-10 text-base tracking-[0.25em] uppercase md:text-lg"
+              style={{ color: "#555", fontFamily: "monospace" }}
             >
-              {/* Arrow indicator */}
-              <motion.span
-                className="text-lg font-bold"
-                style={{ color: "#7373E0" }}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{
-                  opacity: activeProject === index ? 1 : 0,
-                  x: activeProject === index ? 0 : -10,
-                }}
-                transition={{ duration: 0.2 }}
-              >
-                →
-              </motion.span>
-              <motion.span
-                className="font-sans font-bold transition-all duration-300"
-                animate={{
-                  color: activeProject === index ? "#7373E0" : "#1a1a1a",
-                  fontSize: activeProject === index ? "1.75rem" : "1.25rem",
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                {project.name}
-              </motion.span>
-            </motion.button>
-          ))}
-        </motion.div>
-
-        {/* Rotating Cards - Right side, vertical carousel */}
-        <div 
-          className="absolute right-8 top-1/2 -translate-y-1/2 md:right-16 lg:right-24"
-        >
-          {projects.map((project, index) => {
-            const style = getCardStyle(index);
-            return (
-              <motion.div
-                key={project.id}
-                className="absolute w-48 md:w-56 lg:w-64"
-                style={{
-                  right: 0,
-                  top: "50%",
-                  marginTop: "-180px", // Half of card height to center
-                }}
-                animate={{
-                  x: style.x,
-                  y: style.y,
-                  scale: style.scale,
-                  opacity: style.opacity,
-                  zIndex: style.zIndex,
-                }}
-                transition={{
-                  duration: 0.5,
-                  ease: [0.25, 0.1, 0.25, 1],
-                }}
-              >
-                <div
-                  className="h-72 rounded-xl p-6 shadow-2xl md:h-80 md:p-8 lg:h-96"
+              Projects
+            </p>
+            
+            <div className="flex flex-col space-y-3 pl-4">
+              {projects.map((project, index) => (
+                <motion.button
+                  key={project.id}
+                  className="group relative flex items-center gap-6 rounded-2xl py-5 pl-8 pr-6 text-left transition-all duration-300"
+                  onClick={() => handleProjectSelect(index)}
+                  onMouseEnter={() => handleProjectSelect(index)}
                   style={{
-                    backgroundColor: "#2a2a2a",
-                    border: "3px solid #3a3a3a",
+                    backgroundColor: activeProject === index ? "rgba(0, 0, 0, 0.08)" : "transparent",
                   }}
+                  whileHover={{ x: 8 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <h3
-                    className="mb-4 text-xl font-bold md:text-2xl"
-                    style={{ color: "#7373E0" }}
-                  >
-                    {project.title}
-                  </h3>
-                  <p
-                    className="text-sm leading-relaxed md:text-base"
-                    style={{
-                      color: "#a0a0a0",
-                      fontFamily: "monospace",
+                  {/* Active Indicator Line */}
+                  <motion.div
+                    className="absolute -left-4 top-1/2 h-10 w-1.5 -translate-y-1/2 rounded-full"
+                    style={{ backgroundColor: project.color }}
+                    initial={{ scaleY: 0 }}
+                    animate={{ scaleY: activeProject === index ? 1 : 0 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                  />
+                  
+                  {/* Project Number */}
+                  <span 
+                    className="w-10 text-lg font-mono font-semibold md:text-xl"
+                    style={{ 
+                      color: activeProject === index ? project.color : "#999",
                     }}
                   >
-                    {project.description}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  
+                  {/* Project Name */}
+                  <span
+                    className="text-xl font-semibold transition-all duration-300 md:text-2xl"
+                    style={{
+                      color: activeProject === index ? "#1a1a1a" : "#555",
+                    }}
+                  >
+                    {project.name}
+                  </span>
+
+                  {/* Arrow */}
+                  <motion.span
+                    className="ml-auto text-2xl"
+                    style={{ color: project.color }}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{
+                      opacity: activeProject === index ? 1 : 0,
+                      x: activeProject === index ? 0 : -10,
+                    }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    →
+                  </motion.span>
+                </motion.button>
+              ))}
+            </div>
+
+            {/* Instructions */}
+            <div className="mt-12 flex items-center justify-center gap-4">
+              <span 
+                className="text-sm md:text-base"
+                style={{ color: "#888", fontFamily: "monospace" }}
+              >
+                Hover to preview
+              </span>
+              <span style={{ color: "#bbb" }}>•</span>
+              <span 
+                className="text-sm md:text-base"
+                style={{ color: "#888", fontFamily: "monospace" }}
+              >
+                Drag cards to explore
+              </span>
+            </div>
+
+            {/* Progress Dots */}
+            <div className="mt-8 flex justify-center gap-3">
+              {projects.map((_, index) => (
+                <motion.button
+                  key={index}
+                  className="h-3 rounded-full transition-all duration-300"
+                  style={{
+                    width: activeProject === index ? "32px" : "12px",
+                    backgroundColor: activeProject === index 
+                      ? projects[activeProject].color 
+                      : "#c0c0c0",
+                  }}
+                  onClick={() => handleProjectSelect(index)}
+                  whileHover={{ scale: 1.2 }}
+                />
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Right Side - Card Carousel - positioned at ~75% from left */}
+        <div className="absolute right-[5%] top-1/2 -translate-y-1/2 lg:right-[10%]">
+          <motion.div 
+            ref={containerRef}
+            className="relative cursor-grab active:cursor-grabbing"
+            style={{ 
+              width: CARD_WIDTH + 100,
+              height: "90vh",
+              touchAction: "none",
+            }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0.15}
+            onDragEnd={handleDragEnd}
+          >
+            {projects.map((project, index) => {
+              const transform = getCardTransform(index);
+              
+              return (
+                <motion.div
+                  key={project.id}
+                  className="absolute cursor-pointer"
+                  style={{
+                    width: CARD_WIDTH,
+                    height: CARD_HEIGHT,
+                    left: "50%",
+                    marginLeft: -CARD_WIDTH / 2,
+                    top: "50%",
+                    marginTop: -CARD_HEIGHT / 2,
+                    zIndex: transform.zIndex,
+                  }}
+                  animate={{
+                    y: transform.y,
+                    x: transform.x,
+                    scale: hoveredCard === index && index === activeProject ? 1.03 : transform.scale,
+                    opacity: transform.opacity,
+                    rotateZ: transform.rotation,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 30,
+                  }}
+                  onHoverStart={() => setHoveredCard(index)}
+                  onHoverEnd={() => setHoveredCard(null)}
+                  onClick={() => handleProjectSelect(index)}
+                >
+                  {/* Card */}
+                  <motion.div
+                    className="relative h-full w-full overflow-hidden rounded-[2rem] p-10"
+                    style={{
+                      backgroundColor: "#1a1a1a",
+                      border: `2px solid ${hoveredCard === index ? project.color : "#2a2a2a"}`,
+                      boxShadow: hoveredCard === index 
+                        ? `0 40px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px ${project.color}50`
+                        : "0 30px 60px rgba(0, 0, 0, 0.3)",
+                    }}
+                    whileHover={{ y: -8 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {/* Card Header */}
+                    <div className="mb-8 flex items-start justify-between">
+                      <div
+                        className="flex h-14 w-14 items-center justify-center rounded-2xl text-2xl font-bold"
+                        style={{ 
+                          backgroundColor: `${project.color}20`,
+                          color: project.color,
+                        }}
+                      >
+                        *
+                      </div>
+                      <span 
+                        className="text-sm tracking-wider uppercase"
+                        style={{ color: "#555", fontFamily: "monospace" }}
+                      >
+                        Project {String(index + 1).padStart(2, '0')}
+                      </span>
+                    </div>
+
+                    {/* Title */}
+                    <h3
+                      className="mb-5 text-3xl font-bold md:text-4xl"
+                      style={{ color: "#fff" }}
+                    >
+                      {project.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p
+                      className="text-base leading-relaxed md:text-lg"
+                      style={{
+                        color: "#999",
+                        fontFamily: "monospace",
+                        lineHeight: 1.7,
+                      }}
+                    >
+                      {project.description}
+                    </p>
+
+                    {/* Tags - positioned at bottom above button */}
+                    <div className="absolute bottom-28 left-10 right-10 flex flex-wrap gap-2">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full px-4 py-2 text-sm"
+                          style={{
+                            backgroundColor: "#2a2a2a",
+                            color: "#bbb",
+                            fontFamily: "monospace",
+                          }}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Action Button */}
+                    <motion.button
+                      className="absolute bottom-10 left-10 right-10 rounded-2xl py-4 text-base font-semibold transition-colors"
+                      style={{
+                        backgroundColor: project.color,
+                        color: "#fff",
+                      }}
+                      whileHover={{ scale: 1.02, opacity: 0.9 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      View Project
+                    </motion.button>
+
+                    {/* Decorative gradient */}
+                    <div 
+                      className="absolute -right-24 -top-24 h-48 w-48 rounded-full opacity-25 blur-3xl"
+                      style={{ backgroundColor: project.color }}
+                    />
+                  </motion.div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
         </div>
       </div>
     </section>

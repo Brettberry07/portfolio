@@ -72,7 +72,7 @@ export default function WhoAmI() {
               />
               </div>
               {/* Caption */}
-              <p className="text-xs tracking-wide text-zinc-500 md:text-sm">
+              <p className="text-md tracking-wide text-zinc-700 md:text-lg lg:text-xl">
               Less Noise, More Impact
               </p>
             </div>
