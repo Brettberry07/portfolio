@@ -767,6 +767,8 @@ export default function Projects() {
                 damping: 25,
                 duration: 0.5 
               }}
+              onWheel={(e) => e.stopPropagation()}
+              onTouchMove={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
               <motion.button
@@ -781,8 +783,10 @@ export default function Projects() {
 
               {/* Left Content - Scrollable (full width on mobile) */}
               <div 
-                className="flex w-full flex-col justify-start overflow-y-auto md:w-1/2 h-full"
+                className="flex w-full flex-col justify-start overflow-y-auto md:w-1/2 h-full overscroll-contain"
                 style={{ padding: "1.5rem", paddingTop: "3rem" }}
+                onWheel={(e) => e.stopPropagation()}
+                onTouchMove={(e) => e.stopPropagation()}
               >
                 {/* Content wrapper */}
                 <div className="flex-1 flex flex-col">
