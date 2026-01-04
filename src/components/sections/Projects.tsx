@@ -22,6 +22,7 @@ interface Project {
   highlights: ProjectHighlight[];
   image: string;
   link?: string;
+  showExternalLink?: boolean;
 }
 
 const projects: Project[] = [
@@ -44,6 +45,7 @@ const projects: Project[] = [
     ],
     image: "/querry-berry-image.png",
     link: "https://github.com/Brettberry07/querry-berry",
+    showExternalLink: true,
   },
   {
     id: 1,
@@ -82,6 +84,8 @@ const projects: Project[] = [
       { text: "Combined domain knowledge (traffic operations) with ML to produce interpretable, deployable timing plans." },
     ],
     image: "/COB-traffic.png",
+    link: "https://github.com/Brettberry07/COB-Traffic-Project",
+    showExternalLink: true,
   },
   {
     id: 3,
@@ -102,6 +106,7 @@ const projects: Project[] = [
     ],
     image: "/BLk0ut-pather.png",
     link: "https://github.com/Brettberry07/RoboticsClub_BLACKOUT",
+    showExternalLink: true,
   },
   {
     id: 4,
@@ -122,6 +127,7 @@ const projects: Project[] = [
     ],
     image: "/fig-example.png",
     link: "https://github.com/Brettberry07/fig-lang",
+    showExternalLink: true,
   },
   {
     id: 5,
@@ -162,8 +168,32 @@ const projects: Project[] = [
       },
     ],
     image: "/figma-screenshot.png",
-    link: "https://www.figma.com/design/iAIP71pgOX4RqJmSZBJwsy/Portfolio?node-id=0-1&t=InfL1ZmXGKydC5Rg-1"
+    link: "https://www.figma.com/design/iAIP71pgOX4RqJmSZBJwsy/Portfolio?node-id=0-1&t=InfL1ZmXGKydC5Rg-1",
+    showExternalLink: true,
   },
+  {
+    id: 6,
+    name: "Splash Mobile App",
+    title: "Splash Mobile App",
+    description: "Enterprise mobile app prototype and data-reporting system proposed to C-suite leadership. Built with React Native, NestJS, and real Sonny’s API data.",
+    tags: ["React Native", "NestJS", "Enterprise", "APIs", "Email Automation", "System Design"],
+    color: "#1ABC9C",
+    headline: "Enterprise mobile prototype pitched from managers to COO with live operational data.",
+    headlineHighlights: ["C-suite proposal", "enterprise prototype", "live data reporting"],
+    fullDescription: "Splash is an enterprise mobile application prototype developed and pitched internally to C-suite leadership. The project progressed through multiple executive levels — from managers to VP of Marketing and ultimately the COO. The app was built in React Native and paired with a NestJS backend. After the VP of Marketing review, we were granted access to a restricted Playground API, which led to a pivot toward building an automated reporting system to demonstrate value before investment.",
+    highlights: [
+      { text: "Designed and developed a React Native prototype showcasing store-level performance data for enterprise stakeholders." },
+      { text: "Presented the project to managers, VP of Marketing, and COO, iterating on scope and value proposition at each stage." },
+      { text: "After VP approval, gained access to the Playground API and pivoted to building an automated performance emailer to validate ROI before full investment." },
+      { text: "Built a NestJS backend that ingested real Sonny’s API data, formatted metrics, and generated HTML-based, spreadsheet-style emails." },
+      { text: "Implemented automated email reports delivering formatted performance summaries to internal teams, including Excel-compatible data exports." },
+      { text: "Planned full system architecture including AWS backend infrastructure, API request handling for Sonny’s rate-limited endpoints, and third-party oil API integrations." },
+      { text: "Produced a detailed ‘can & can’t’ feasibility list outlining API limitations, infrastructure costs, and scalability constraints." },
+      { text: "Project concluded at proposal stage due to funding constraints, with architecture and implementation plans fully documented." },
+    ],
+    image: "/design.png",
+  },
+
 ];
 
 
@@ -843,18 +873,22 @@ export default function Projects() {
                     ))}
                   </div>
 
-                  {/* Bottom Link */}
-                  <motion.a
-                    href={projects[expandedProject].link || "#"}
-                    className="mt-6 md:mt-10 inline-flex items-center gap-2 pb-4 text-sm"
-                    style={{ color: projects[expandedProject].color, fontFamily: "monospace" }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.7 }}
-                    whileHover={{ x: 5 }}
-                  >
-                    View More →
-                  </motion.a>
+                  {/* Bottom Link - only shown if showExternalLink is true */}
+                  {projects[expandedProject].showExternalLink && projects[expandedProject].link && (
+                    <motion.a
+                      href={projects[expandedProject].link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-6 md:mt-10 inline-flex items-center gap-2 pb-4 text-sm"
+                      style={{ color: projects[expandedProject].color, fontFamily: "monospace" }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.7 }}
+                      whileHover={{ x: 5 }}
+                    >
+                      View More →
+                    </motion.a>
+                  )}
                 </div>
               </div>
 
