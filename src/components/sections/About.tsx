@@ -39,35 +39,35 @@ export default function About() {
       <div className="relative z-10 flex min-h-screen items-center justify-center py-16">
         <div className="mx-auto w-full max-w-7xl px-8 md:px-16 lg:px-20">
           <motion.div
-            className="flex flex-col items-center gap-8 md:flex-row md:justify-center md:gap-12"
+            className="flex flex-col items-center gap-6 md:flex-row md:justify-center md:gap-12"
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
             viewport={viewportSettings}
           >
-            {/* Circular Image - Left side */}
+            {/* Circular Image - Top on mobile, left on desktop */}
             <motion.div
               className="flex shrink-0 justify-center"
               variants={fadeInLeft}
             >
-              <div className="relative h-56 w-56 overflow-hidden rounded-full md:h-72 md:w-72 lg:h-96 lg:w-96">
+              <div className="relative h-56 w-56 overflow-hidden rounded-full sm:h-64 sm:w-64 md:h-72 md:w-72 lg:h-96 lg:w-96">
                 <Image
                   src="/greyscale-me.png"
                   alt="Brett Berry - Personal photo"
                   fill
                   className="object-cover"
-                  sizes="(max-width: 768px) 224px, (max-width: 1024px) 288px, 384px"
+                  sizes="(max-width: 640px) 224px, (max-width: 768px) 256px, (max-width: 1024px) 288px, 384px"
                 />
               </div>
             </motion.div>
 
-            {/* Text Card - Right side, fills remaining space */}
+            {/* Text Card - Below on mobile, right on desktop */}
             <motion.div
-              className="flex-1"
+              className="w-full flex-1 md:w-auto"
               variants={fadeInRight}
             >
               <div 
-                className="flex h-56 items-center justify-center p-10 md:h-72 md:p-14 lg:h-96 lg:p-16"
+                className="flex h-auto min-h-48 items-center justify-center p-6 sm:p-8 md:h-72 md:p-14 lg:h-96 lg:p-16"
                 style={{
                   backgroundColor: "rgba(200, 200, 200, 0.5)",
                   borderRadius: "20px",
@@ -75,7 +75,7 @@ export default function About() {
                 }}
               >
                 <p 
-                  className="text-center text-lg leading-relaxed md:text-xl lg:text-2xl"
+                  className="text-center text-sm leading-relaxed sm:text-base md:text-xl lg:text-2xl"
                   style={{ 
                     fontFamily: "monospace",
                     color: "#1a1a1a",

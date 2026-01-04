@@ -68,7 +68,7 @@ export default function Contact() {
           {/* Section Title */}
           <motion.h2
             variants={fadeInUp}
-            className="text-4xl font-bold italic tracking-tight text-white md:text-5xl lg:text-6xl"
+            className="text-5xl font-bold italic tracking-tight text-white md:text-5xl lg:text-6xl"
           >
             Find Me Here
           </motion.h2>
@@ -76,7 +76,7 @@ export default function Contact() {
           {/* Social Links */}
           <motion.div
             variants={fadeInUp}
-            className="mt-12 flex items-center gap-6 md:gap-10"
+            className="mt-12 flex items-center gap-4 sm:gap-6 md:gap-10"
           >
             {socialLinks.map((link) => (
               <motion.a
@@ -85,7 +85,7 @@ export default function Contact() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.ariaLabel}
-                className="group relative flex h-20 w-20 items-center justify-center rounded-2xl bg-zinc-800/90 transition-all duration-300 hover:scale-110 hover:bg-zinc-700 md:h-24 md:w-24 lg:h-36 lg:w-36"
+                className="group relative flex h-24 w-24 items-center justify-center rounded-2xl bg-zinc-800/90 transition-all duration-300 hover:scale-110 hover:bg-zinc-700 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-36 lg:w-36"
                 whileHover={{ y: -5 }}
                 whileTap={buttonTap}
               >
@@ -94,7 +94,7 @@ export default function Contact() {
                   alt={link.name}
                   width={48}
                   height={48}
-                  className="h-12 w-12 md:h-14 md:w-14 lg:h-24 lg:w-24 transition-all duration-300 group-hover:brightness-125"
+                  className="h-14 w-14 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-24 lg:w-24 transition-all duration-300 group-hover:brightness-125"
                 />
               </motion.a>
             ))}

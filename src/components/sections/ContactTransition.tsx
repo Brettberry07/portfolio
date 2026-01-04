@@ -35,9 +35,9 @@ export default function ContactTransition() {
         {/* Left-aligned Container for Geometric Shape and Text */}
         <div className="absolute left-6 inset-0 flex items-center justify-start px-6 md:px-12">
           <div className="relative flex items-center justify-center">
-            {/* Diamond Shape - Centered behind text */}
+            {/* Diamond Shape - Centered behind text, hidden on mobile */}
             <motion.div
-              className="absolute left-[49%] top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
+              className="absolute left-[49%] top-1/2 -translate-x-1/2 -translate-y-1/2 hidden items-center justify-center sm:flex"
               variants={fadeInLeft}
               initial="hidden"
               whileInView="visible"
@@ -78,13 +78,13 @@ export default function ContactTransition() {
               viewport={viewportSettings}
             >
               <h2 
-                className="text-5xl font-bold tracking-tight md:text-7xl lg:text-9xl"
+                className="text-6xl font-bold tracking-tight sm:text-7xl md:text-9xl lg:text-[12rem]"
                 style={{ color: "#1a1a1a" }}
               >
                 Interested?
               </h2>
               <p 
-                className="mt-2 text-md italic tracking-wide md:mt-4 md:text-lg lg:text-xl"
+                className="mt-2 text-sm italic tracking-wide md:mt-4 md:text-lg lg:text-xl"
                 style={{ color: "#555", fontFamily: "monospace" }}
               >
                 Don&apos;t Blame You

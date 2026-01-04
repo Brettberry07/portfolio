@@ -124,10 +124,14 @@ const projects: Project[] = [
 ];
 
 
-// Card dimensions
+// Card dimensions - responsive
 const CARD_WIDTH = 420;
 const CARD_HEIGHT = 520;
 const CARD_GAP = 40;
+
+// Mobile card dimensions
+const MOBILE_CARD_WIDTH = 300;
+const MOBILE_CARD_HEIGHT = 420;
 
 export default function Projects() {
   const [activeProject, setActiveProject] = useState<number>(0);
@@ -239,8 +243,8 @@ export default function Projects() {
         </p>
       </motion.div>
 
-      {/* Main Content Container - Two Column Layout */}
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-450 items-center px-8  md:px-16 lg:px-32">
+      {/* Main Content Container - Two Column Layout for Desktop */}
+      <div className="relative z-10 mx-auto hidden min-h-screen max-w-450 items-center px-8 md:flex md:px-16 lg:px-32">
         
         {/* Left Side - Selector Panel */}
         <motion.div
@@ -517,6 +521,147 @@ export default function Projects() {
         </div>
       </div>
 
+      {/* Mobile Layout - Horizontal Scrollable Cards */}
+      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center gap-4 px-4 py-20 md:hidden">
+        {/* Mobile Header */}
+        <p 
+          className="text-sm tracking-[0.25em] uppercase"
+          style={{ color: "#555", fontFamily: "monospace" }}
+        >
+          Projects
+        </p>
+
+        {/* Horizontal Scroll Container */}
+        <div 
+          className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto px-4"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {projects.map((project, index) => (
+            <motion.div
+              key={project.id}
+              className="flex-shrink-0 snap-center"
+              style={{
+                width: MOBILE_CARD_WIDTH,
+                height: MOBILE_CARD_HEIGHT,
+              }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+            >
+              {/* Card */}
+              <div
+                className="relative h-full w-full rounded-[1.5rem]"
+                style={{
+                  backgroundColor: "#1a1a1a",
+                  border: `2px solid ${project.color}30`,
+                  boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3)",
+                  padding: "1.5rem",
+                }}
+              >
+                {/* Card Header */}
+                <div className="mb-4 flex items-start justify-between">
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-lg text-lg font-bold"
+                    style={{ 
+                      backgroundColor: `${project.color}20`,
+                      color: project.color,
+                    }}
+                  >
+                    *
+                  </div>
+                  <span 
+                    className="text-xs tracking-wider uppercase"
+                    style={{ color: "#555", fontFamily: "monospace" }}
+                  >
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h3
+                  className="mb-3 text-2xl font-bold"
+                  style={{ color: "#fff" }}
+                >
+                  {project.title}
+                </h3>
+
+                {/* Description */}
+                <p
+                  className="mb-4 text-sm leading-relaxed line-clamp-4"
+                  style={{
+                    color: "#999",
+                    fontFamily: "monospace",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {project.description}
+                </p>
+
+                {/* Tags - limited display */}
+                <div className="absolute bottom-20 left-6 right-6 flex flex-wrap gap-1.5">
+                  {project.tags.slice(0, 4).map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full px-2 py-1 text-xs"
+                      style={{
+                        backgroundColor: "#2a2a2a",
+                        color: "#bbb",
+                        fontFamily: "monospace",
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                  {project.tags.length > 4 && (
+                    <span
+                      className="rounded-full px-2 py-1 text-xs"
+                      style={{
+                        backgroundColor: "#2a2a2a",
+                        color: "#bbb",
+                        fontFamily: "monospace",
+                      }}
+                    >
+                      +{project.tags.length - 4}
+                    </span>
+                  )}
+                </div>
+
+                {/* Action Button */}
+                <motion.button
+                  className="absolute bottom-6 left-6 right-6 rounded-xl py-3 text-sm font-semibold"
+                  style={{
+                    backgroundColor: project.color,
+                    color: "#fff",
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={(e) => handleViewProject(index, e)}
+                >
+                  View Project
+                </motion.button>
+
+                {/* Decorative gradient */}
+                <div 
+                  className="absolute -right-16 -top-16 h-32 w-32 rounded-full opacity-20 blur-2xl"
+                  style={{ backgroundColor: project.color }}
+                />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Progress Dots for Mobile */}
+        <div className="flex justify-center gap-2">
+          {projects.map((project, index) => (
+            <div
+              key={index}
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: project.color + "60" }}
+            />
+          ))}
+        </div>
+      </div>
+
       {/* Expanded Project Modal */}
       <AnimatePresence>
         {expandedProject !== null && (
@@ -538,11 +683,11 @@ export default function Projects() {
 
             {/* Modal Content */}
             <motion.div
-              className="relative z-10 flex h-[90vh] w-full max-w-[90vw] rounded-3xl"
+              className="relative z-10 flex h-[95vh] md:h-[90vh] w-full max-w-[95vw] md:max-w-[90vw] flex-col md:flex-row rounded-3xl overflow-hidden\"
               style={{ backgroundColor: "#1a1a1a" }}
-              initial={{ scale: 0.9, rotateY: -90, opacity: 0 }}
-              animate={{ scale: 1, rotateY: 0, opacity: 1 }}
-              exit={{ scale: 0.9, rotateY: 90, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
               transition={{ 
                 type: "spring", 
                 stiffness: 200, 
@@ -553,7 +698,7 @@ export default function Projects() {
               {/* Close Button */}
               <motion.button
                 className="absolute z-20 flex h-10 w-10 items-center justify-center rounded-full text-xl text-white"
-                style={{ backgroundColor: `${projects[expandedProject].color}90`, top: "2.5rem", right: "2.5rem" }}
+                style={{ backgroundColor: `${projects[expandedProject].color}90`, top: "1rem", right: "1rem" }}
                 onClick={handleCloseExpanded}
                 whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.2)" }}
                 whileTap={{ scale: 0.95 }}
@@ -561,15 +706,15 @@ export default function Projects() {
                 ×
               </motion.button>
 
-              {/* Left Content - Scrollable */}
+              {/* Left Content - Scrollable (full width on mobile) */}
               <div 
-                className="flex w-full flex-col justify-between overflow-y-auto md:w-1/2 h-full"
-                style={{ padding: "2.5rem" }}
+                className="flex w-full flex-col justify-start overflow-y-auto md:w-1/2 h-full"
+                style={{ padding: "1.5rem", paddingTop: "3rem" }}
               >
                 {/* Content wrapper */}
-                <div className="flex-1 flex flex-col justify-between">
+                <div className="flex-1 flex flex-col">
                     <motion.span
-                    className="mb-6 inline-block rounded-full w-fit text-xs uppercase tracking-widest"
+                    className="mb-4 md:mb-6 inline-block rounded-full w-fit text-xs uppercase tracking-widest"
                     style={{ 
                       backgroundColor: `${projects[expandedProject].color}20`,
                       color: projects[expandedProject].color,
@@ -585,7 +730,7 @@ export default function Projects() {
 
                   {/* Headline with highlights */}
                   <motion.h2
-                    className="mb-6 text-2xl font-bold leading-tight md:text-3xl lg:text-4xl"
+                    className="mb-4 md:mb-6 text-lg font-bold leading-tight sm:text-xl md:text-3xl lg:text-4xl"
                     style={{ color: "#fff" }}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -608,7 +753,7 @@ export default function Projects() {
 
                   {/* Full Description */}
                   <motion.p
-                    className="mb-8 text-base leading-relaxed"
+                    className="mb-6 md:mb-8 text-sm md:text-base leading-relaxed"
                     style={{ color: "#888", fontFamily: "monospace" }}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -618,21 +763,21 @@ export default function Projects() {
                   </motion.p>
 
                   {/* Highlights List */}
-                  <div className="space-y-4">
+                  <div className="space-y-3 md:space-y-4">
                     {projects[expandedProject].highlights.map((highlight, i) => (
                       <motion.div
                         key={i}
-                        className="flex items-start gap-4"
+                        className="flex items-start gap-3 md:gap-4"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.35 + i * 0.1 }}
                       >
                         <div
-                          className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full"
+                          className="mt-0.5 flex h-5 w-5 md:h-6 md:w-6 flex-shrink-0 items-center justify-center rounded-full"
                           style={{ backgroundColor: projects[expandedProject].color }}
                         >
                           <svg
-                            className="h-3 w-3 text-white"
+                            className="h-2.5 w-2.5 md:h-3 md:w-3 text-white"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -646,7 +791,7 @@ export default function Projects() {
                           </svg>
                         </div>
                         <p 
-                          className="text-sm leading-relaxed md:text-base"
+                          className="text-xs leading-relaxed sm:text-sm md:text-base"
                           style={{ color: "#aaa" }}
                         >
                           {highlight.text}
@@ -658,7 +803,7 @@ export default function Projects() {
                   {/* Bottom Link */}
                   <motion.a
                     href={projects[expandedProject].link || "#"}
-                    className="mt-10 inline-flex items-center gap-2 pb-4 text-sm"
+                    className="mt-6 md:mt-10 inline-flex items-center gap-2 pb-4 text-sm"
                     style={{ color: projects[expandedProject].color, fontFamily: "monospace" }}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}

@@ -16,14 +16,14 @@ export default function ProofTransition() {
         <div className="flex items-start justify-between gap-6 md:gap-12">
           {/* Mountain/Forest Image - Left aligned with margin from edge */}
           <motion.div
-            className="absolute top-1/4 left-6 flex flex-col items-start gap-2"
+            className="absolute top-1/4 left-4 flex flex-col items-start gap-2 md:left-6"
             variants={fadeInLeft}
             initial="hidden"
             whileInView="visible"
             viewport={viewportSettings}
           >
             <div 
-              className="relative aspect-4/3 w-48 overflow-hidden md:w-80 lg:w-xl"
+              className="relative aspect-4/3 w-64 overflow-hidden sm:w-80 md:w-[28rem] lg:w-[36rem]"
               style={{ borderRadius: "20px" }}
             >
               <Image
@@ -31,26 +31,26 @@ export default function ProofTransition() {
                 alt="Mountain landscape"
                 fill
                 className="object-cover grayscale"
-                sizes="(max-width: 768px) 192px, (max-width: 1024px) 320px, 384px"
+                sizes="(max-width: 640px) 256px, (max-width: 768px) 320px, (max-width: 1024px) 448px, 576px"
               />
             </div>
             {/* Caption */}
             <p 
-              className="text-md tracking-wide md:text-lg lg:text-xl"
+              className="text-sm tracking-wide md:text-lg lg:text-xl"
               style={{ color: "#555", fontFamily: "monospace" }}
             >
               Learning By Creation
             </p>
           </motion.div>
 
-          {/* Geometric Shape - Right aligned, larger */}
-                        <motion.div
-            className="absolute top-6 right-6 flex items-center justify-center py-8 md:py-16"
+          {/* Geometric Shape - Right aligned, hidden on mobile */}
+          <motion.div
+            className="absolute top-6 right-6 hidden items-center justify-center py-8 sm:flex md:py-16"
             variants={fadeInLeft}
             initial="hidden"
             whileInView="visible"
             viewport={viewportSettings}
-            >
+          >
             <div className="relative h-48 w-48 md:h-64 md:w-64 lg:h-80 lg:w-80">
               {/* Outer square */}
               <div
@@ -103,7 +103,7 @@ export default function ProofTransition() {
 
         {/* Title - Bottom right, much larger */}
         <motion.h2
-          className="absolute bottom-16 right-6 text-7xl font-bold tracking-tight md:text-8xl lg:text-9xl"
+          className="absolute bottom-12 right-4 text-6xl font-bold tracking-tight sm:text-7xl md:bottom-16 md:right-6 md:text-9xl lg:text-[12rem]"
           style={{ color: "#1a1a1a" }}
           variants={fadeInUp}
           initial="hidden"

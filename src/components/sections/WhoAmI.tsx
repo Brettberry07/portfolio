@@ -14,9 +14,9 @@ export default function WhoAmI() {
       <div className="mx-auto max-w-7xl px-6 md:px-12">
         {/* Top Row - Diamond and Image */}
         <div className="flex items-start justify-between gap-6 md:gap-12">
-            {/* Diamond Shape - Left aligned */}
+            {/* Diamond Shape - Left aligned - hidden on mobile */}
             <motion.div
-            className="flex items-center justify-center py-8 md:py-16"
+            className="hidden items-center justify-center py-8 sm:flex md:py-16"
             variants={fadeInLeft}
             initial="hidden"
             whileInView="visible"
@@ -52,14 +52,14 @@ export default function WhoAmI() {
 
           {/* Mountain Image - Right aligned, floating */}
           <motion.div
-            className="absolute top-6 right-6 flex flex-col items-end gap-2"
+            className="absolute top-4 right-4 flex flex-col items-end gap-2 md:top-6 md:right-6"
             variants={fadeInRight}
             initial="hidden"
             whileInView="visible"
             viewport={viewportSettings}
           >
               <div 
-              className="relative aspect-4/3 w-48 overflow-hidden md:w-80 lg:w-xl"
+              className="relative aspect-4/3 w-64 overflow-hidden sm:w-80 md:w-[28rem] lg:w-[36rem]"
               style={{ borderRadius: "20px" }}
             >
               <Image
@@ -67,12 +67,12 @@ export default function WhoAmI() {
                 alt="Mountain landscape"
                 fill
                 className="object-cover grayscale"
-                sizes="(max-width: 768px) 192px, (max-width: 1024px) 320px, 384px"
+                sizes="(max-width: 640px) 256px, (max-width: 768px) 320px, (max-width: 1024px) 448px, 576px"
               />
             </div>
             {/* Caption */}
             <p 
-              className="text-md tracking-wide md:text-lg lg:text-xl"
+              className="text-sm tracking-wide md:text-lg lg:text-xl"
               style={{ color: "#555", fontFamily: "monospace" }}
             >
               Less Noise, More Impact
@@ -82,7 +82,7 @@ export default function WhoAmI() {
 
         {/* Title */}
         <motion.h2
-          className="absolute bottom-16 left-6 text-5xl font-bold tracking-tight md:bottom-24 md:left-12 md:text-7xl lg:text-9xl"
+          className="absolute bottom-12 left-4 text-6xl font-bold tracking-tight sm:text-7xl md:bottom-24 md:left-12 md:text-9xl lg:text-[12rem]"
           style={{ color: "#1a1a1a" }}
           variants={fadeInUp}
           initial="hidden"
