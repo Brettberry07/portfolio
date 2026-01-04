@@ -50,24 +50,21 @@ export default function ContactTransition() {
 
           {/* Forest Image - Right aligned */}
           <motion.div
-            className="flex flex-col items-end"
+            className="absolute top-0 right-0"
             variants={fadeInRight}
             initial="hidden"
             whileInView="visible"
             viewport={viewportSettings}
           >
-            <div className="absolute top-0 right-0">
               <div 
-                className="relative aspect-4/3 w-48 h-screen overflow-hidden md:w-80 lg:w-xl"
-
-              >
-                <Image
-                  src="/contact-transition-image.png"
-                  alt="Misty forest landscape"
-                  fill
-                  className="object-cover grayscale h-screen"
-                />
-              </div>
+              className="relative aspect-4/3 w-48 h-screen overflow-hidden md:w-80 lg:w-xl"
+            >
+              <Image
+                src="/contact-transition-image.png"
+                alt="Misty forest landscape"
+                fill
+                className="object-cover grayscale h-screen"
+              />
             </div>
           </motion.div>
         </div>
@@ -80,10 +77,16 @@ export default function ContactTransition() {
           whileInView="visible"
           viewport={viewportSettings}
         >
-          <h2 className="font-sans text-5xl font-bold tracking-tight text-zinc-900 md:text-7xl lg:text-9xl">
+          <h2 
+            className="text-5xl font-bold tracking-tight md:text-7xl lg:text-9xl"
+            style={{ color: "#1a1a1a" }}
+          >
             Interested?
           </h2>
-          <p className="mt-2 text-md italic tracking-wide text-zinc-700 md:mt-4 md:text-lg lg:text-xl">
+          <p 
+            className="mt-2 text-md italic tracking-wide md:mt-4 md:text-lg lg:text-xl"
+            style={{ color: "#555", fontFamily: "monospace" }}
+          >
             Don&apos;t Blame You
           </p>
         </motion.div>

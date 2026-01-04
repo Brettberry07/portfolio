@@ -81,7 +81,10 @@ export default function About() {
                     color: "#1a1a1a",
                   }}
                 >
-                  I am a dedicated software developer with a passion for creating impactful digital experiences. With a background in computer science and a knack for problem-solving, I specialize in building web applications that are not only functional but also user-friendly. I'm also an upcoming freshman at the University of Arkansas studying Computer Science and attending the Honor's College
+                  I am an enthusiastic and dedicated aspiring software developer aiming to solve real-world problems through innovative technology solutions.
+                  With a self taught background in computer science and a knack for problem-solving, 
+                  I specialize in building web applications that are not only functional but also user-friendly. 
+                  I'm also an upcoming freshman at the University of Arkansas studying Computer Science and attending the Honor's College
                 </p>
               </div>
             </motion.div>

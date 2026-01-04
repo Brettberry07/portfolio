@@ -47,7 +47,8 @@ export default function Hero() {
       >
         <motion.p
           variants={fadeIn}
-          className="mb-4 text-xs tracking-[0.3em] text-muted uppercase md:text-sm"
+          className="mb-4 text-xs tracking-[0.3em] uppercase md:text-sm"
+          style={{ color: "#666", fontFamily: "monospace" }}
         >
           Portfolio
         </motion.p>
@@ -77,7 +78,10 @@ export default function Hero() {
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
         >
-          <span className="text-xs tracking-widest text-muted/60 uppercase">
+          <span 
+            className="text-xs tracking-widest uppercase"
+            style={{ color: "rgba(102, 102, 102, 0.6)", fontFamily: "monospace" }}
+          >
             Scroll
           </span>
           <div className="h-8 w-px bg-gradient-to-b from-muted/60 to-transparent" />

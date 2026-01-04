@@ -19,19 +19,19 @@ interface SocialLink {
 const socialLinks: SocialLink[] = [
   {
     name: "GitHub",
-    href: "https://github.com",
+    href: "https://github.com/Brettberry07",
     icon: "/github-svgrepo-com 2-2.svg",
     ariaLabel: "Visit my GitHub profile",
   },
   {
     name: "Gmail",
-    href: "https://mail.google.com",
+    href: "mailto:brettberry07@gmail.com?subject=Portfolio%20Inquiry&body=Hi%20Brett,",
     icon: "/gmail-svgrepo-com 2-2.svg",
     ariaLabel: "Send me an email",
   },
   {
     name: "LinkedIn",
-    href: "https://linkedin.com",
+    href: "https://linkedin.com/in/brett-berry-a81b29329",
     icon: "/linkedin-svgrepo-com 2-2.svg",
     ariaLabel: "Connect with me on LinkedIn",
   },
@@ -68,7 +68,7 @@ export default function Contact() {
           {/* Section Title */}
           <motion.h2
             variants={fadeInUp}
-            className="font-sans text-4xl font-bold italic tracking-tight text-white md:text-5xl lg:text-6xl"
+            className="text-4xl font-bold italic tracking-tight text-white md:text-5xl lg:text-6xl"
           >
             Find Me Here
           </motion.h2>

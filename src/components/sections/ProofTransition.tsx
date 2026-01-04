@@ -16,17 +16,16 @@ export default function ProofTransition() {
         <div className="flex items-start justify-between gap-6 md:gap-12">
           {/* Mountain/Forest Image - Left aligned with margin from edge */}
           <motion.div
-            className="flex flex-col items-end"
-            variants={fadeInRight}
+            className="absolute top-1/4 left-6 flex flex-col items-start gap-2"
+            variants={fadeInLeft}
             initial="hidden"
             whileInView="visible"
             viewport={viewportSettings}
           >
-            <div className="absolute top-1/4 left-6 flex flex-col items-start gap-2">
-              <div 
+            <div 
               className="relative aspect-4/3 w-48 overflow-hidden md:w-80 lg:w-xl"
               style={{ borderRadius: "20px" }}
-              >
+            >
               <Image
                 src="/project-transition-image.png"
                 alt="Mountain landscape"
@@ -34,12 +33,14 @@ export default function ProofTransition() {
                 className="object-cover grayscale"
                 sizes="(max-width: 768px) 192px, (max-width: 1024px) 320px, 384px"
               />
-              </div>
-              {/* Caption */}
-              <p className="text-md tracking-wide text-zinc-700 md:text-lg lg:text-xl">
-              Learning By Creation
-              </p>
             </div>
+            {/* Caption */}
+            <p 
+              className="text-md tracking-wide md:text-lg lg:text-xl"
+              style={{ color: "#555", fontFamily: "monospace" }}
+            >
+              Learning By Creation
+            </p>
           </motion.div>
 
           {/* Geometric Shape - Right aligned, larger */}
@@ -101,17 +102,16 @@ export default function ProofTransition() {
         </div>
 
         {/* Title - Bottom right, much larger */}
-        <motion.div
-          className="mt-16 flex justify-end md:mt-24 lg:mt-32"
+        <motion.h2
+          className="absolute bottom-16 right-6 text-7xl font-bold tracking-tight md:text-8xl lg:text-9xl"
+          style={{ color: "#1a1a1a" }}
           variants={fadeInUp}
           initial="hidden"
           whileInView="visible"
           viewport={viewportSettings}
         >
-          <h2 className="absolute bottom-16 right-6 font-sans text-7xl font-bold tracking-tight text-zinc-900 md:text-8xl lg:text-9xl">
-            Proof?
-          </h2>
-        </motion.div>
+          Proof?
+        </motion.h2>
       </div>
     </section>
   );

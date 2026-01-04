@@ -75,7 +75,7 @@ export default function NameReveal() {
                 fontSize="15"
                 fontWeight="600"
                 letterSpacing="0.03em"
-                fontFamily="system-ui, sans-serif"
+                fontFamily="monospace"
               >
                 <textPath href="#circlePathLarge" startOffset="0%">
                   {circularText}
@@ -96,7 +96,6 @@ export default function NameReveal() {
               className="text-4xl font-bold tracking-wide md:text-6xl lg:text-8xl"
               style={{ 
                 color: "#000000",
-                fontFamily: "system-ui, sans-serif",
               }}
             >
               Brett Berry

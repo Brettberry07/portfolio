@@ -52,17 +52,16 @@ export default function WhoAmI() {
 
           {/* Mountain Image - Right aligned, floating */}
           <motion.div
-            className="flex flex-col items-end"
+            className="absolute top-6 right-6 flex flex-col items-end gap-2"
             variants={fadeInRight}
             initial="hidden"
             whileInView="visible"
             viewport={viewportSettings}
           >
-            <div className="absolute top-6 right-6 flex flex-col items-end gap-2">
               <div 
               className="relative aspect-4/3 w-48 overflow-hidden md:w-80 lg:w-xl"
               style={{ borderRadius: "20px" }}
-              >
+            >
               <Image
                 src="/name-transition-image.png"
                 alt="Mountain landscape"
@@ -70,18 +69,21 @@ export default function WhoAmI() {
                 className="object-cover grayscale"
                 sizes="(max-width: 768px) 192px, (max-width: 1024px) 320px, 384px"
               />
-              </div>
-              {/* Caption */}
-              <p className="text-md tracking-wide text-zinc-700 md:text-lg lg:text-xl">
-              Less Noise, More Impact
-              </p>
             </div>
+            {/* Caption */}
+            <p 
+              className="text-md tracking-wide md:text-lg lg:text-xl"
+              style={{ color: "#555", fontFamily: "monospace" }}
+            >
+              Less Noise, More Impact
+            </p>
           </motion.div>
         </div>
 
         {/* Title */}
         <motion.h2
-          className="absolute bottom-16 left-6 font-sans text-5xl font-bold tracking-tight text-zinc-900 md:bottom-24 md:left-12 md:text-7xl lg:text-9xl"
+          className="absolute bottom-16 left-6 text-5xl font-bold tracking-tight md:bottom-24 md:left-12 md:text-7xl lg:text-9xl"
+          style={{ color: "#1a1a1a" }}
           variants={fadeInUp}
           initial="hidden"
           whileInView="visible"
