@@ -37,7 +37,7 @@ export default function ContactTransition() {
           <div className="relative flex items-center justify-center">
             {/* Diamond Shape - Centered behind text */}
             <motion.div
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
+              className="absolute left-[49%] top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
               variants={fadeInLeft}
               initial="hidden"
               whileInView="visible"
