@@ -191,7 +191,7 @@ const projects: Project[] = [
       { text: "Produced a detailed ‘can & can’t’ feasibility list outlining API limitations, infrastructure costs, and scalability constraints." },
       { text: "Project concluded at proposal stage due to funding constraints, with architecture and implementation plans fully documented." },
     ],
-    image: "/design.png",
+    image: "/splash-demo.png",
   },
 
 ];
@@ -535,7 +535,7 @@ export default function Projects() {
 
                     {/* Description - clipped */}
                     <p
-                      className="line-clamp-6 text-base leading-relaxed md:text-lg"
+                      className="line-clamp-5 text-base leading-relaxed md:text-lg"
                       style={{
                         color: "#999",
                         fontFamily: "monospace",
