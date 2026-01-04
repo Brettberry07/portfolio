@@ -52,7 +52,7 @@ export default function About() {
             >
               <div className="relative h-56 w-56 overflow-hidden rounded-full md:h-72 md:w-72 lg:h-96 lg:w-96">
                 <Image
-                  src="/greyscale-me.heic"
+                  src="/greyscale-me.png"
                   alt="Brett Berry - Personal photo"
                   fill
                   className="object-cover"
