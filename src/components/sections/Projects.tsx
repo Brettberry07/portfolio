@@ -533,9 +533,9 @@ export default function Projects() {
                       {project.title}
                     </h3>
 
-                    {/* Description */}
+                    {/* Description - clipped */}
                     <p
-                      className="text-base leading-relaxed md:text-lg"
+                      className="line-clamp-6 text-base leading-relaxed md:text-lg"
                       style={{
                         color: "#999",
                         fontFamily: "monospace",
@@ -624,7 +624,7 @@ export default function Projects() {
             >
               {/* Card */}
               <div
-                className="relative h-full w-full rounded-3xl"
+                className="relative flex h-full w-full flex-col overflow-hidden rounded-3xl"
                 style={{
                   backgroundColor: "#1a1a1a",
                   border: `2px solid ${project.color}30`,
@@ -633,7 +633,7 @@ export default function Projects() {
                 }}
               >
                 {/* Card Header */}
-                <div className="mb-4 flex items-start justify-between">
+                <div className="mb-4 flex shrink-0 items-start justify-between">
                   <div
                     className="flex h-10 w-10 items-center justify-center rounded-lg text-lg font-bold"
                     style={{ 
@@ -653,26 +653,28 @@ export default function Projects() {
 
                 {/* Title */}
                 <h3
-                  className="mb-3 text-2xl font-bold"
+                  className="mb-3 shrink-0 text-2xl font-bold"
                   style={{ color: "#fff" }}
                 >
                   {project.title}
                 </h3>
 
-                {/* Description */}
-                <p
-                  className="mb-4 text-sm leading-relaxed line-clamp-4"
-                  style={{
-                    color: "#999",
-                    fontFamily: "monospace",
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {project.description}
-                </p>
+                {/* Description - clipped */}
+                <div className="mb-4 min-h-0 flex-1 overflow-hidden">
+                  <p
+                    className="line-clamp-4 text-sm leading-relaxed"
+                    style={{
+                      color: "#999",
+                      fontFamily: "monospace",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {project.description}
+                  </p>
+                </div>
 
                 {/* Tags - limited display */}
-                <div className="absolute bottom-20 left-6 right-6 flex flex-wrap gap-1.5">
+                <div className="mb-4 flex shrink-0 flex-wrap gap-1.5">
                   {project.tags.slice(0, 4).map((tag) => (
                     <span
                       key={tag}
@@ -702,7 +704,7 @@ export default function Projects() {
 
                 {/* Action Button */}
                 <motion.button
-                  className="absolute bottom-6 left-6 right-6 rounded-xl py-3 text-sm font-semibold"
+                  className="shrink-0 rounded-xl py-3 text-sm font-semibold"
                   style={{
                     backgroundColor: project.color,
                     color: "#fff",
@@ -715,7 +717,7 @@ export default function Projects() {
 
                 {/* Decorative gradient */}
                 <div 
-                  className="absolute -right-16 -top-16 h-32 w-32 rounded-full opacity-20 blur-2xl"
+                  className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 rounded-full opacity-20 blur-2xl"
                   style={{ backgroundColor: project.color }}
                 />
               </div>
