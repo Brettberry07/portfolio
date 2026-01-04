@@ -42,8 +42,8 @@ const projects: Project[] = [
       { text: "Designed the Next.js frontend in TypeScript + TailwindCSS with fast client-side querying UX and server-side ranking endpoints." },
       { text: "Exposed a custom search API that supports paging, filters, and relevance tuning for downstream apps." },
     ],
-    image: "/design.png",
-    link: "https://github.com",
+    image: "/querry-berry-image.png",
+    link: "https://github.com/Brettberry07/querry-berry",
   },
   {
     id: 1,
@@ -62,7 +62,7 @@ const projects: Project[] = [
       { text: "Context-awareness pipeline stores topic metadata and allows users to 'zoom out' from a thread into a navigable graph of past contexts." },
       { text: "Designed message schema so contexts, tags, and timestamps are queryable for fast context loading and UI rendering." },
     ],
-    image: "/design.png",
+    image: "/context-message.png",
   },
   {
     id: 2,
@@ -81,7 +81,7 @@ const projects: Project[] = [
       { text: "Presented findings to city officials and traffic engineers; shared code, notebooks, and models with the municipality after winning the competition." },
       { text: "Combined domain knowledge (traffic operations) with ML to produce interpretable, deployable timing plans." },
     ],
-    image: "/design.png",
+    image: "/COB-traffic.png",
   },
   {
     id: 3,
@@ -100,7 +100,8 @@ const projects: Project[] = [
       { text: "ElectronJS path-design tool: draw Bezier curves, assign actions to path segments, and export path+task metadata to the robot." },
       { text: "Competitive outcomes: won Innovation (and previous design/innovation awards), qualifying for worlds level competitions." },
     ],
-    image: "/design.png",
+    image: "/BLk0ut-pather.png",
+    link: "https://github.com/Brettberry07/RoboticsClub_BLACKOUT",
   },
   {
     id: 4,
@@ -119,7 +120,49 @@ const projects: Project[] = [
       { text: "CLI tooling: `fig create new` templates, `fig run` interpreter runner, and a simple project structure generator." },
       { text: "Designed a Rust interoperability layer that exposes raw Rust snippets from Fig code for performance-critical operations." },
     ],
-    image: "/design.png",
+    image: "/fig-example.png",
+    link: "https://github.com/Brettberry07/fig-lang",
+  },
+  {
+    id: 5,
+    name: "Portfolio Site",
+    title: "Portfolio Website",
+    description:
+      "Responsive portfolio website built with Next.js, TypeScript, and TailwindCSS. Features Lenis smooth scrolling and Framer Motion animations, with the full prototype designed in Figma.",
+    tags: [
+      "Next.js",
+      "TypeScript",
+      "TailwindCSS",
+      "Framer Motion",
+      "Lenis",
+      "Figma",
+      "Responsive",
+    ],
+    color: "#2D6CDF",
+    headline:
+      "Designed in Figma, built in Next.js — a responsive portfolio with smooth scrolling and motion-driven storytelling.",
+    headlineHighlights: ["Figma", "Next.js", "responsive", "Lenis", "Framer Motion"],
+    fullDescription:
+      "This portfolio website was built as a polished, responsive experience that works across mobile and desktop. I designed the full layout and interactions in Figma first, then implemented it using Next.js (App Router) with TypeScript and TailwindCSS. Smooth scrolling is handled via a Lenis provider, and section transitions + UI motion are implemented with Framer Motion for consistent, performant animations.",
+    highlights: [
+      {
+        text: "Designed and prototyped the full site in Figma before implementation to lock in layout, spacing, and interaction details.",
+      },
+      {
+        text: "Implemented with Next.js + TypeScript and styled with TailwindCSS for a clean, maintainable UI system.",
+      },
+      {
+        text: "Mobile-first responsive layout that adapts cleanly from small screens to desktop without changing content.",
+      },
+      {
+        text: "Integrated Lenis smooth scrolling via a provider for a more premium navigation feel.",
+      },
+      {
+        text: "Used Framer Motion for entrance animations, transitions, and micro-interactions with reusable variants.",
+      },
+    ],
+    image: "/figma-screenshot.png",
+    link: "https://www.figma.com/design/iAIP71pgOX4RqJmSZBJwsy/Portfolio?node-id=0-1&t=InfL1ZmXGKydC5Rg-1"
   },
 ];
 
@@ -810,7 +853,7 @@ export default function Projects() {
                     transition={{ delay: 0.7 }}
                     whileHover={{ x: 5 }}
                   >
-                    View on GitHub →
+                    View More →
                   </motion.a>
                 </div>
               </div>
@@ -824,15 +867,17 @@ export default function Projects() {
               >
                 <div 
                   className="absolute overflow-hidden rounded-2xl"
-                  style={{ backgroundColor: "#0a1628", top: "2.5rem", right: "2.5rem", bottom: "2.5rem", left: "1rem" }}
+                  style={{ backgroundColor: "#0d0d0d", top: "2.5rem", right: "2.5rem", bottom: "2.5rem", left: "1rem" }}
                 >
-                  <Image
-                    src={projects[expandedProject].image}
-                    alt={projects[expandedProject].title}
-                    fill
-                    className="object-cover"
-                    style={{ opacity: 0.9 }}
-                  />
+                  <div className="relative h-full w-full p-6">
+                    <Image
+                      src={projects[expandedProject].image}
+                      alt={projects[expandedProject].title}
+                      fill
+                      className="object-contain"
+                      style={{ opacity: 0.95 }}
+                    />
+                  </div>
 
                 </div>
               </motion.div>

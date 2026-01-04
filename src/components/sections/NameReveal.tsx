@@ -32,7 +32,7 @@ export default function NameReveal() {
 
   // Circular text content - matching the design (repeated to fill circle)
   const circularText =
-    "Rustacean • Engineer • Debugger • Developer • Nerd • Student • Designer • ";
+    "Rustacean • Engineer • Developer • Student • Designer • ";
 
   return (
     <section
