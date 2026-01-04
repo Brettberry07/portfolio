@@ -88,7 +88,7 @@ const projects: Project[] = [
     name: "BLk0ut",
     title: "BLk0ut",
     description: "VEX V5 competition robot built with PROS (C++). Features odometry, PID, and a custom autonomous path editor built in ElectronJS.",
-    tags: ["C++", "PROS", "VEX V5", "ROS? (no)", "Electron", "Monte Carlo Localization", "PID"],
+    tags: ["C++", "PROS", "VEX V5", "Electron", "Monte Carlo Localization", "PID"],
     color: "#FFB347",
     headline: "Competition-grade VEX robot with full odometry, Monte Carlo localization and a custom path editor.",
     headlineHighlights: ["odometry + MCL", "pure-pursuit path follower", "competition awards"],
