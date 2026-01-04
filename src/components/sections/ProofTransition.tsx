@@ -23,7 +23,7 @@ export default function ProofTransition() {
             viewport={viewportSettings}
           >
             <div 
-              className="relative aspect-4/3 w-64 overflow-hidden sm:w-80 md:w-[28rem] lg:w-[36rem]"
+              className="relative aspect-4/3 w-64 overflow-hidden sm:w-80 md:w-md lg:w-xl"
               style={{ borderRadius: "20px" }}
             >
               <Image

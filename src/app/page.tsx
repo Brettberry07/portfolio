@@ -9,6 +9,8 @@ import Projects from "@/components/sections/Projects";
 import ContactTransition from "@/components/sections/ContactTransition";
 import Contact from "@/components/sections/Contact";
 
+// hosted on brettberry.dev
+
 export default function Home() {
   return (
     <>
