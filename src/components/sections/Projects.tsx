@@ -464,7 +464,7 @@ export default function Projects() {
                 >
                   {/* Card */}
                   <motion.div
-                    className="relative h-full w-full rounded-[2rem]"
+                    className="relative h-full w-full rounded-4xl"
                     style={{
                       backgroundColor: "#1a1a1a",
                       border: `2px solid ${hoveredCard === index ? project.color : "#2a2a2a"}`,
@@ -582,7 +582,7 @@ export default function Projects() {
           {projects.map((project, index) => (
             <motion.div
               key={project.id}
-              className="flex-shrink-0 snap-center"
+              className="shrink-0 snap-center"
               style={{
                 width: MOBILE_CARD_WIDTH,
                 height: MOBILE_CARD_HEIGHT,
@@ -594,7 +594,7 @@ export default function Projects() {
             >
               {/* Card */}
               <div
-                className="relative h-full w-full rounded-[1.5rem]"
+                className="relative h-full w-full rounded-3xl"
                 style={{
                   backgroundColor: "#1a1a1a",
                   border: `2px solid ${project.color}30`,
@@ -816,7 +816,7 @@ export default function Projects() {
                         transition={{ delay: 0.35 + i * 0.1 }}
                       >
                         <div
-                          className="mt-0.5 flex h-5 w-5 md:h-6 md:w-6 flex-shrink-0 items-center justify-center rounded-full"
+                          className="mt-0.5 flex h-5 w-5 md:h-6 md:w-6 shrink-0 items-center justify-center rounded-full"
                           style={{ backgroundColor: projects[expandedProject].color }}
                         >
                           <svg

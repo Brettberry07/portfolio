@@ -31,7 +31,7 @@ function MarqueeRow({ items, direction = "left" }: MarqueeRowProps) {
         {duplicatedItems.map((item, index) => (
           <motion.div
             key={`${item.id}-${index}`}
-            className="group relative h-44 w-72 flex-shrink-0 overflow-hidden rounded-xl bg-zinc-800 shadow-xl md:h-52 md:w-88 lg:h-64 lg:w-[420px]"
+            className="group relative h-44 w-72 shrink-0 overflow-hidden rounded-xl bg-zinc-800 shadow-xl md:h-52 md:w-88 lg:h-64 lg:w-105"
             whileHover={{ scale: 1.03, y: -6 }}
             transition={{ duration: 0.3 }}
           >

@@ -33,7 +33,7 @@ export default function Hero() {
           sizes="100vw"
         />
         {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-background" />
         <div className="absolute inset-0 bg-background/30" />
       </motion.div>
 
@@ -84,7 +84,7 @@ export default function Hero() {
           >
             Scroll
           </span>
-          <div className="h-8 w-px bg-gradient-to-b from-muted/60 to-transparent" />
+          <div className="h-8 w-px bg-linear-to-b from-muted/60 to-transparent" />
         </motion.div>
       </motion.div>
     </section>
