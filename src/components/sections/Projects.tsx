@@ -168,7 +168,7 @@ const projects: Project[] = [
       },
     ],
     image: "/figma-screenshot.png",
-    link: "https://www.figma.com/design/iAIP71pgOX4RqJmSZBJwsy/Portfolio?node-id=0-1&t=InfL1ZmXGKydC5Rg-1",
+    link: "https://github.com/Brettberry07/portfolio",
     showExternalLink: true,
   },
   {
