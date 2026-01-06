@@ -2,6 +2,8 @@
 
 Live at: https://brettberry.dev
 
+Figma: [here](https://www.figma.com/design/iAIP71pgOX4RqJmSZBJwsy/Portfolio?node-id=0-1&t=KzAnvcmg2bN7nbIt-1)
+
 **Overview**
 - A fast, polished personal portfolio highlighting projects, motion design, and contact links. Built for smooth interactions, consistent typography, and responsive layouts across devices.
 
