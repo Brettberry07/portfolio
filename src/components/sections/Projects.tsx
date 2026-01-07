@@ -64,7 +64,7 @@ const projects: Project[] = [
       { text: "Context-awareness pipeline stores topic metadata and allows users to 'zoom out' from a thread into a navigable graph of past contexts." },
       { text: "Designed message schema so contexts, tags, and timestamps are queryable for fast context loading and UI rendering." },
     ],
-    image: "/context-message.png",
+    image: "/updated-areostream.png",
   },
   {
     id: 2,
