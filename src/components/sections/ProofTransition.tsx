@@ -27,7 +27,7 @@ export default function ProofTransition() {
               style={{ borderRadius: "20px" }}
             >
               <Image
-                src="/project-transition-image.png"
+                src="/images/project-transition-image.png"
                 alt="Mountain landscape"
                 fill
                 className="object-cover grayscale"
@@ -103,7 +103,7 @@ export default function ProofTransition() {
 
         {/* Title - Bottom right, much larger */}
         <motion.h2
-          className="absolute bottom-12 right-4 text-6xl font-bold tracking-tight sm:text-7xl md:bottom-16 md:right-6 md:text-9xl lg:text-[12rem]"
+          className="absolute bottom-12 right-4 text-5xl font-bold tracking-tight sm:text-6xl md:bottom-16 md:right-6 md:text-8xl lg:text-[10rem]"
           style={{ color: "#1a1a1a" }}
           variants={fadeInUp}
           initial="hidden"
@@ -111,6 +111,10 @@ export default function ProofTransition() {
           viewport={viewportSettings}
         >
           Proof?
+          <span 
+            className="absolute -bottom-2 right-0 h-1 w-20 rounded-full md:-bottom-4 md:h-1.5 md:w-28"
+            style={{ backgroundColor: "rgba(115, 115, 224, 0.5)" }}
+          />
         </motion.h2>
       </div>
     </section>

@@ -31,19 +31,20 @@ function MarqueeRow({ items, direction = "left" }: MarqueeRowProps) {
         {duplicatedItems.map((item, index) => (
           <motion.div
             key={`${item.id}-${index}`}
-            className="group relative h-44 w-72 shrink-0 overflow-hidden rounded-xl bg-zinc-800 shadow-xl md:h-52 md:w-88 lg:h-64 lg:w-105"
-            whileHover={{ scale: 1.03, y: -6 }}
-            transition={{ duration: 0.3 }}
+            className="group relative h-44 w-72 shrink-0 overflow-hidden rounded-2xl shadow-lg md:h-52 md:w-88 lg:h-64 lg:w-105"
+            style={{ backgroundColor: "#1a1a1a" }}
+            whileHover={{ scale: 1.03, y: -6, boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)" }}
+            transition={{ duration: 0.2 }}
           >
             <Image
               src={item.src}
               alt={item.alt}
               fill
-              className="object-cover object-center transition-all duration-500 group-hover:brightness-110"
+              className="object-cover object-center transition-all duration-200 group-hover:brightness-110"
               sizes="(max-width: 768px) 288px, (max-width: 1024px) 352px, 420px"
             />
             {/* Subtle border */}
-            <div className="absolute inset-0 rounded-xl border border-white/10 transition-all duration-300 group-hover:border-white/20" />
+            <div className="absolute inset-0 rounded-2xl border border-white/10 transition-all duration-200 group-hover:border-primary/30" />
           </motion.div>
         ))}
       </motion.div>

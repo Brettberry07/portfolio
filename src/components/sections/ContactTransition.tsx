@@ -24,7 +24,7 @@ export default function ContactTransition() {
             className="relative aspect-4/3 w-48 h-screen overflow-hidden md:w-80 lg:w-xl"
           >
             <Image
-              src="/contact-transition-image.png"
+              src="/images/contact-transition-image.png"
               alt="Misty forest landscape"
               fill
               className="object-cover grayscale h-screen"
@@ -78,13 +78,17 @@ export default function ContactTransition() {
               viewport={viewportSettings}
             >
               <h2 
-                className="text-6xl font-bold tracking-tight sm:text-7xl md:text-9xl lg:text-[12rem]"
+                className="relative inline-block text-5xl font-bold tracking-tight sm:text-6xl md:text-8xl lg:text-[10rem]"
                 style={{ color: "#1a1a1a" }}
               >
                 Interested?
+                <span 
+                  className="absolute -bottom-4 left-0 h-1 w-28 rounded-full md:-bottom-6 md:h-1.5 md:w-40"
+                  style={{ backgroundColor: "rgba(115, 115, 224, 0.5)" }}
+                />
               </h2>
               <p 
-                className="mt-2 text-sm italic tracking-wide md:mt-4 md:text-lg lg:text-xl"
+                className="mt-4 text-sm tracking-wide md:mt-6 md:text-lg lg:text-xl"
                 style={{ color: "#555", fontFamily: "monospace" }}
               >
                 Don&apos;t Blame You

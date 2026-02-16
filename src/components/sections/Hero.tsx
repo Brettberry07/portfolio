@@ -22,10 +22,13 @@ export default function Hero() {
       className="relative min-h-screen w-full overflow-hidden"
       aria-label="Hero section"
     >
+      {/* Gradient overlay for visual anchor */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-background via-background/80 to-muted/20 pointer-events-none" />
+      
       {/* Background Image with Parallax */}
       <motion.div className="absolute inset-0 z-0" style={{ y }}>
         <Image
-          src="/quote-image.png"
+          src="/images/quote-image.png"
           alt="Mountain landscape in grayscale"
           fill
           priority
@@ -55,14 +58,14 @@ export default function Hero() {
 
         <motion.blockquote
           variants={fadeInUp}
-          className="max-w-md text-3xl font-light italic leading-relaxed tracking-wide text-foreground/90 md:max-w-lg md:text-4xl lg:max-w-4xl lg:text-7xl"
+          className="max-w-md text-4xl font-bold leading-tight tracking-tight text-foreground md:max-w-lg md:text-5xl lg:max-w-4xl lg:text-7xl"
         >
           &ldquo;Building Solutions, Not Just Software&rdquo;
         </motion.blockquote>
 
         <motion.div
           variants={fadeIn}
-          className="mt-8 h-px w-16 bg-muted/50"
+          className="mt-8 h-1 w-16 rounded-full bg-primary/60"
         />
       </motion.div>
 

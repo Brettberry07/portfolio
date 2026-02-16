@@ -20,19 +20,19 @@ const socialLinks: SocialLink[] = [
   {
     name: "GitHub",
     href: "https://github.com/Brettberry07",
-    icon: "/github-svgrepo-com 2-2.svg",
+    icon: "/images/github-svgrepo-com 2-2.svg",
     ariaLabel: "Visit my GitHub profile",
   },
   {
     name: "Gmail",
     href: "mailto:brettberry07@gmail.com?subject=Portfolio%20Inquiry&body=Hi%20Brett,",
-    icon: "/gmail-svgrepo-com 2-2.svg",
+    icon: "/images/gmail-svgrepo-com 2-2.svg",
     ariaLabel: "Send me an email",
   },
   {
     name: "LinkedIn",
     href: "https://linkedin.com/in/brett-berry-a81b29329",
-    icon: "/linkedin-svgrepo-com 2-2.svg",
+    icon: "/images/linkedin-svgrepo-com 2-2.svg",
     ariaLabel: "Connect with me on LinkedIn",
   },
 ];
@@ -46,7 +46,7 @@ export default function Contact() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
-          src="/contact-image.png"
+          src="/images/contact-image.png"
           alt="Misty forest background"
           fill
           className="object-cover grayscale"
@@ -68,15 +68,22 @@ export default function Contact() {
           {/* Section Title */}
           <motion.h2
             variants={fadeInUp}
-            className="text-5xl font-bold italic tracking-tight text-white md:text-5xl lg:text-6xl"
+            className="text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl"
           >
             Find Me Here
           </motion.h2>
 
+          {/* Section divider */}
+          <motion.div
+            variants={fadeInUp}
+            className="h-1 w-16 rounded-full"
+            style={{ backgroundColor: "rgba(115, 115, 224, 0.6)" }}
+          />
+
           {/* Social Links */}
           <motion.div
             variants={fadeInUp}
-            className="mt-12 flex items-center gap-4 sm:gap-6 md:gap-10"
+            className="mt-8 flex items-center gap-4 sm:gap-6 md:gap-10"
           >
             {socialLinks.map((link) => (
               <motion.a
@@ -85,16 +92,26 @@ export default function Contact() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.ariaLabel}
-                className="group relative flex h-24 w-24 items-center justify-center rounded-2xl bg-zinc-800/90 transition-all duration-300 hover:scale-110 hover:bg-zinc-700 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-36 lg:w-36"
-                whileHover={{ y: -5 }}
-                whileTap={buttonTap}
+                className="group relative flex h-20 w-20 items-center justify-center rounded-2xl transition-all duration-200 sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-36 lg:w-36"
+                style={{ 
+                  backgroundColor: "rgba(39, 39, 42, 0.9)",
+                  border: "1px solid rgba(115, 115, 224, 0.2)",
+                }}
+                whileHover={{ 
+                  y: -8, 
+                  scale: 1.05,
+                  backgroundColor: "rgba(50, 50, 55, 0.95)",
+                  borderColor: "rgba(115, 115, 224, 0.5)",
+                  boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)",
+                }}
+                whileTap={{ scale: 0.95 }}
               >
                 <Image
                   src={link.icon}
                   alt={link.name}
                   width={48}
                   height={48}
-                  className="h-14 w-14 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-24 lg:w-24 transition-all duration-300 group-hover:brightness-125"
+                  className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-20 lg:w-20 transition-all duration-200 group-hover:brightness-125"
                 />
               </motion.a>
             ))}

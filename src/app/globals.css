@@ -1,21 +1,39 @@
 @import "tailwindcss";
-@import "@tailwindcss/typography";
 
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
   --muted: #888888;
+  --muted-foreground: #a1a1a1;
   --accent: #ffffff;
+  --primary: #7373E0;
+  --primary-foreground: #ffffff;
   --card: #141414;
   --card-hover: #1a1a1a;
   --border: #2a2a2a;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.6);
+  
+  /* Border Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
   --color-card: var(--card);
   --color-card-hover: var(--card-hover);
   --color-border: var(--border);
@@ -158,8 +176,71 @@ img[data-loading="true"] {
 
 /* Focus styles */
 *:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
+}
+
+/* Button base styles */
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: var(--radius-xl);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease-out;
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:active {
+  transform: scale(0.95);
+}
+
+/* Link with animated underline */
+.link-animated {
+  position: relative;
+  display: inline-block;
+}
+
+.link-animated::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 0;
+  background-color: var(--primary);
+  transition: width 0.3s ease-out;
+}
+
+.link-animated:hover::after {
+  width: 100%;
+}
+
+/* Section divider */
+.section-divider {
+  height: 1px;
+  width: 4rem;
+  background-color: rgba(115, 115, 224, 0.4);
+  margin-top: 1rem;
+}
+
+/* Card with depth */
+.card-elevated {
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  transition: all 0.3s ease-out;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-elevated:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-4px);
+  border-color: rgba(115, 115, 224, 0.4);
 }
 
 /* Hide scrollbar for marquee containers */

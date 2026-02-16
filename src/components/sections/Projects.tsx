@@ -565,7 +565,7 @@ export default function Projects() {
 
                     {/* Action Button */}
                     <motion.button
-                      className="rounded-xl py-3 text-sm font-semibold transition-colors"
+                      className="rounded-xl py-3 text-sm font-semibold transition-all duration-200"
                       style={{
                         position: "absolute",
                         bottom: "2.5rem",
@@ -574,8 +574,8 @@ export default function Projects() {
                         backgroundColor: project.color,
                         color: "#fff",
                       }}
-                      whileHover={{ scale: 1.02, opacity: 0.9 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={{ scale: 1.03, boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)" }}
+                      whileTap={{ scale: 0.95 }}
                       onClick={(e) => handleViewProject(index, e)}
                     >
                       View Project
@@ -620,7 +620,7 @@ export default function Projects() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.1, duration: 0.3 }}
             >
               {/* Card */}
               <div
@@ -704,12 +704,13 @@ export default function Projects() {
 
                 {/* Action Button */}
                 <motion.button
-                  className="shrink-0 rounded-xl py-3 text-sm font-semibold"
+                  className="shrink-0 rounded-xl py-3 text-sm font-semibold transition-all duration-200"
                   style={{
                     backgroundColor: project.color,
                     color: "#fff",
                   }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: 1.03, boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)" }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={(e) => handleViewProject(index, e)}
                 >
                   View Project

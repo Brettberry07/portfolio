@@ -93,12 +93,16 @@ export default function NameReveal() {
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <h3 
-              className="text-4xl font-bold tracking-wide md:text-6xl lg:text-8xl"
+              className="relative inline-block text-4xl font-bold tracking-wide md:text-6xl lg:text-8xl"
               style={{ 
                 color: "#000000",
               }}
             >
               Brett Berry
+              <span 
+                className="absolute left-0 -bottom-2 h-1.5 w-full rounded-full md:-bottom-3 md:h-2"
+                style={{ backgroundColor: "rgba(115, 115, 224, 0.6)" }}
+              />
             </h3>
           </motion.div>
         </div>

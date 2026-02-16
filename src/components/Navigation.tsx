@@ -74,31 +74,30 @@ export default function Navigation() {
       animate={isVisible ? "visible" : "hidden"}
     >
       <nav
-        className="flex items-center justify-center rounded-full"
+        className="flex h-14 items-center justify-center rounded-full md:h-16"
         style={{ 
           backgroundColor: "rgba(26, 26, 26, 0.85)", 
           backdropFilter: "blur(20px)",
           border: "1px solid rgba(255, 255, 255, 0.1)",
           boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
-          padding: "0.75rem 1.5rem",
+          padding: "1rem 2rem",
         }}
         aria-label="Main navigation"
       >
         {/* Nav Links */}
-        <ul className="flex items-center gap-1 md:gap-2">
+        <ul className="flex items-center gap-3 md:gap-8">
           {navLinks.map((link, index) => {
             const isActive = activeSection === link.sectionId;
             
             return (
-              <li key={link.name} className="flex items-center gap-1 md:gap-2 h-7">
+              <li key={link.name} className="flex items-center gap-3 md:gap-5 h-7">
                 <motion.a
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href, link.sectionId)}
-                  className="relative rounded-full text-sm font-medium tracking-wide transition-all duration-300 md:px-6 md:py-2.5 md:text-base"
+                  className="relative rounded-full text-sm font-medium tracking-wide transition-all duration-200 px-4 py-3 md:px-6 md:py-3 md:text-base"
                   style={{ 
                     color: isActive ? "#fff" : "rgba(255, 255, 255, 0.6)",
                     backgroundColor: isActive ? "rgba(255, 255, 255, 0.1)" : "transparent",
-                    padding: isActive ? "0.5rem 0.5rem" : "0.5rem 0.5rem",
                   }}
                   whileHover={{ 
                     color: "#fff",

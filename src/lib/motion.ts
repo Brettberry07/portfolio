@@ -160,25 +160,44 @@ export const navAnimation: Variants = {
 export const cardHover = {
   rest: {
     scale: 1,
+    y: 0,
     transition: {
-      duration: 0.3,
-      ease: [0.25, 0.1, 0.25, 1],
+      duration: 0.2,
+      ease: "easeOut",
     },
   },
   hover: {
     scale: 1.02,
+    y: -4,
     transition: {
-      duration: 0.3,
-      ease: [0.25, 0.1, 0.25, 1],
+      duration: 0.2,
+      ease: "easeOut",
     },
   },
 };
 
 export const buttonTap = {
   tap: {
-    scale: 0.98,
+    scale: 0.95,
     transition: {
       duration: 0.1,
+    },
+  },
+};
+
+export const buttonHover = {
+  rest: {
+    scale: 1,
+    transition: {
+      duration: 0.2,
+      ease: "easeOut",
+    },
+  },
+  hover: {
+    scale: 1.05,
+    transition: {
+      duration: 0.2,
+      ease: "easeOut",
     },
   },
 };
@@ -201,4 +220,32 @@ export const viewportSettingsEager = {
   once: true,
   amount: 0.1,
   margin: "-20px",
+};
+
+// Stagger children with custom delay
+export const staggerChildren = (delayPerChild: number = 0.1): Variants => ({
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: delayPerChild,
+      delayChildren: 0.05,
+    },
+  },
+});
+
+// Card entrance animation
+export const cardEntrance: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 24,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: "easeOut",
+    },
+  },
 };
