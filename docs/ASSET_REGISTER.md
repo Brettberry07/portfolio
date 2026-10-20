@@ -4,12 +4,12 @@ This register is for **production assets only**; visual inspiration screenshots 
 
 | Asset | Intended path | Status | Source / license / notes |
 |---|---|---|---|
-| Hero architectural sculpture | `public/models/hero-architecture.glb` or procedural scene | Not selected | Build procedurally with R3F, or source a license-checked optimized GLB |
-| Hero poster/fallback | `public/images/hero-poster.webp` | Missing | Render/export from the chosen sculpture; no unlicensed screenshot |
+| Hero architectural sculpture | `public/models/hero-architecture.glb` | Implemented | Innerscene Abstract loop sculpture, CC0; 159 KB GLB, 12 shared mesh instances. See `public/models/ATTRIBUTION.md` |
+| Hero poster/fallback | `public/images/hero-poster.webp` | Implemented | Transparent render exported from the actual portfolio canvas |
 | Brett portrait | `public/images/about-brett.jpg` | Missing | User supplied only |
 | Resume | `public/resume.pdf` | Missing | User-supplied current PDF only |
 | Seven project hero images | `public/images/projects/{slug}.*` | Missing | User supplied or license-cleared; respect confidential clients |
-| Small geometric motifs | Procedural lightweight meshes or CSS/SVG | Planned | Echo signature architectural forms |
+| Small geometric motifs | CSS/SVG in About, project art and Experience | Implemented | Original geometric artwork; quiet static organic accent beside the portrait slot |
 | Studio HDRI (optional) | `public/hdr/neutral-studio.hdr` | Optional | e.g. CC0 from Poly Haven, record exact source |
 
 ## Sourcing / optimization rules
@@ -30,3 +30,7 @@ This register is for **production assets only**; visual inspiration screenshots 
 - [ ] Links/GitHub/demo for relevant projects
 - [ ] A hero 3D asset or approved procedural sculptural direction
 - [ ] Sources/licenses recorded for downloaded assets
+
+## Implementation provenance — 2026-10-20
+
+The current user request prioritizes a premade asset over the register’s earlier procedural preference. The acquired CC0 loop mesh is re-composed into a ribbed architectural sculpture; texture stripping reduces 1,165,896 bytes to 158,676 bytes. Exact author/source/license, transformations and reproduction script are recorded in `public/models/ATTRIBUTION.md`. Inter Tight (variable, Latin) and DM Mono (Latin) are self-hosted WOFF2 files; their SIL Open Font License files are in `public/fonts/`. No portrait, résumé, project screenshots or external profile links have been fabricated.

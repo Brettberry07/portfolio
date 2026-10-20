@@ -50,3 +50,7 @@ Later phases: project switching via click/keyboard/swipe; all seven routes; cont
 ## Performance guidance
 
 Avoid treating raw FPS numbers as universal pass/fail; evaluate on an actual mid-range phone when feasible. WebGL must not block reading content. Optimize compressed GLB textures and model poly counts, reduce DPR under load, keep canvas isolated and asset downloads lazy, inspect `next build` output and network transfers.
+
+## Portfolio v1 verification
+
+The current suite covers the full homepage, animated/still WebGL, real poster fallback, no-JavaScript content and safe form, selector click/keyboard navigation, contact unconfigured UI, all seven case routes and unknown-project 404. Local tests reuse port 3000 because Next 16 permits a single dev process per checkout; CI defaults to 3100, configurable with `PLAYWRIGHT_PORT`. CLI visual review at 1440×900 and 390×844 also checks mobile swipe, selected-list autoscroll, long project titles and footer layout. Contact API invalid/unconfigured/anti-spam status checks were exercised with real local HTTP requests, without sending email.

@@ -39,3 +39,7 @@ Moderate Motion scroll reveals, refined 3D assets, mobile/performance optimizati
 - Run the relevant checks. Clearly identify any unavailable verification.
 - Verify responsive/keyboard/reduced-motion behavior as the feature develops.
 - Update `docs/PROGRESS.md` as a tiny durable checkpoint, not a diary.
+
+## Current implementation — 2026-10-20
+
+The user explicitly requested the full implementation in one pass. Phases 2–6 now have completed UI, routing, motion, fallbacks and browser checks. Publication, factual case-study/experience content, portrait, résumé and contact delivery configuration remain pending. Use `docs/PROGRESS.md` for the durable status; the phase descriptions above remain the design/build reference.

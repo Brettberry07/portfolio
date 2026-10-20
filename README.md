@@ -2,14 +2,14 @@
 
 **Building what's next.** A design-led portfolio for freelance clients and software engineering recruiters, featuring architectural 3D design and seven dedicated project case studies.
 
-> **Current state:** Step 1 foundation implemented: Next.js App Router, a temporary Motion/WebGL preview, and desktop/mobile browser tests. See [`docs/PROGRESS.md`](docs/PROGRESS.md) for verification and known issues. The final portfolio design is pending approval.
+> **Current state:** Full portfolio v1 implemented and browser verified: architectural WebGL hero, responsive homepage, layered project selector, seven case-study routes, experience layout, and contact integration. Factual content and email configuration remain pending; see [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
-## Start in Codex
+## Working on this repository
 
-1. Copy **all Markdown files** into the matching paths at the root of your repository (keep `docs/` and `prompts/`).
-2. Open the repo in Codex.
-3. Copy/paste **[`prompts/STEP_01_BOOTSTRAP.md`](prompts/STEP_01_BOOTSTRAP.md)** into a fresh Codex task. It inspects the repo, creates/merges the app scaffold, installs packages, and verifies the stack.
-4. Review the results and `docs/PROGRESS.md`; begin the visual hero only after setup passes.
+1. Read `docs/PROGRESS.md` for the current implementation and remaining content dependencies.
+2. Start the local app using the commands below.
+3. Consult only the relevant design, architecture, content or testing documentation for the change.
+4. Update the typed content sources with approved facts and assets; keep unknown details unpublished.
 
 ## Confirmed creative direction
 
@@ -73,7 +73,7 @@ npm run test:e2e
 npm run check
 ```
 
-Open `http://localhost:3000` after starting dev. Playwright starts an isolated dev server on port 3100 (reused locally if already running) and tests 1440×900 and 390×844. Screenshots and failure traces are saved under ignored `test-results/`. `check` runs lint, strict type checks (including generated Next route types), and a production build; browser tests run separately. No environment variables are needed for Step 1; `.env.example` reserves server-only contact configuration for a later phase.
+Open `http://localhost:3000` after starting dev. Playwright reuses the local dev server on port 3000 or starts it when needed (CI uses 3100; override with `PLAYWRIGHT_PORT`) and tests 1440×900 and 390×844. Screenshots and failure traces are saved under ignored `test-results/`. `check` runs lint, strict type checks (including generated Next route types), and a production build; browser tests run separately. No environment variables are needed to preview. Email delivery remains explicitly unavailable until all contact variables from `.env.example` are configured.
 
 ## Content policy
 
@@ -87,3 +87,19 @@ Never make up metrics, roles, private contact info, links, or personal photos. U
 - [React Three Fiber](https://r3f.docs.pmnd.rs/)
 - [Playwright Test](https://playwright.dev/docs/intro)
 - [Playwright CLI](https://github.com/microsoft/playwright/blob/main/docs/src/getting-started-cli.md)
+
+
+## Replacing pending content
+
+- `src/content/projects.ts`: seven canonical records. Add approved summaries, role, category, stack, problem, approach, solution, results and permitted links. Change `status` when verified. `heroImage` enables real imagery on the case-study cover.
+- `src/content/experience.ts`: approved roles in reverse chronological order; only `confirmed: true` entries render.
+- `src/content/site.ts`: optional user portrait, actual résumé path, public email and public profile links. Add the actual files under `public/`; absent values retain honest pending states.
+- Homepage positioning copy lives in `src/app/page.tsx`; case-study sections render the typed project fields.
+
+## Contact delivery
+
+Copy `.env.example` to `.env.local` and supply an actual Resend key, verified sender and recipient. Never commit credentials. Restart development after configuration and rebuild for production (the enabled form state is computed during page rendering/build). The `/api/contact` route validates input, rejects cross-origin and oversized requests, checks a honeypot and rate limits attempts before contacting Resend. Success requires a real provider acceptance ID. The current rate limiter is process-local; use shared storage before scaling across instances. Actual email delivery has not been exercised without real credentials.
+
+## Assets and browser review
+
+See `public/models/ATTRIBUTION.md` for the acquired CC0 sculpture and optimization. The static WebP poster is rendered from the same scene. Fonts are self-hosted with licenses alongside them. Playwright CLI captures live under ignored `output/playwright/`; repeatable smoke screenshots live under `test-results/`. No browser binaries, generated screenshots or secrets are committed.

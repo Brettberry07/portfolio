@@ -17,3 +17,7 @@
 | 2026-10-19 | Documentation-first, small task-scoped Codex prompts | Minimize repeat context usage |
 
 Log only substantive changes, not minor refactors.
+
+| 2026-10-20 | Implement full portfolio in one pass per current user request | Explicitly supersedes earlier one-phase approval gates |
+| 2026-10-20 | Acquire CC0 loop GLB and compose twelve shared ribs | Honor premade-asset priority; maintain a compact architectural hero |
+| 2026-10-20 | Public-safe pending states for unverified facts and delivery | Complete layouts without invented project, employer or personal details |
