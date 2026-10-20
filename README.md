@@ -2,7 +2,7 @@
 
 **Building what's next.** A design-led portfolio for freelance clients and software engineering recruiters, featuring architectural 3D design and seven dedicated project case studies.
 
-> **Current state:** Documents only. The application, dependencies, source files, and tests have **not** yet been created or installed. Codex does that in the Step 1 prompt.
+> **Current state:** Step 1 foundation implemented: Next.js App Router, a temporary Motion/WebGL preview, and desktop/mobile browser tests. See [`docs/PROGRESS.md`](docs/PROGRESS.md) for verification and known issues. The final portfolio design is pending approval.
 
 ## Start in Codex
 
@@ -58,22 +58,26 @@
 | [`prompts/STEP_01_BOOTSTRAP.md`](prompts/STEP_01_BOOTSTRAP.md) | First prompt to paste into Codex |
 | [`prompts/TASK_TEMPLATE.md`](prompts/TASK_TEMPLATE.md) | Short repeatable prompt pattern |
 
-## Intended commands *after* Step 1
+## Local development
+
+Use Node **24.22.0** (`.nvmrc`) and npm. With nvm installed, run `nvm install && nvm use` first. This setup session used the isolated runtime at `~/.cache/portfolio-runtime/node-v24.22.0-darwin-arm64/bin`; prepend that directory to `PATH` to use it on this Mac.
 
 ```bash
 npm ci
+npx playwright install chromium
 npm run dev
 npm run lint
 npm run typecheck
 npm run build
 npm run test:e2e
+npm run check
 ```
 
-These will not work yet: no `package.json` has been created. Codex's first task creates it and records versions and actual checks.
+Open `http://localhost:3000` after starting dev. Playwright starts an isolated dev server on port 3100 (reused locally if already running) and tests 1440×900 and 390×844. Screenshots and failure traces are saved under ignored `test-results/`. `check` runs lint, strict type checks (including generated Next route types), and a production build; browser tests run separately. No environment variables are needed for Step 1; `.env.example` reserves server-only contact configuration for a later phase.
 
 ## Content policy
 
-Never make up metrics, roles, private contact info, links, or personal photos. Use clearly labeled content TODOs and transparent missing-asset states. Do not deploy a fake contact flow. Secrets belong in `.env.local`, not Git. Step 1 creates `.env.example` and `.gitignore` as real setup files; this documentation kit deliberately contains Markdown only.
+Never make up metrics, roles, private contact info, links, or personal photos. Use clearly labeled content TODOs and transparent missing-asset states. Do not deploy a fake contact flow. Secrets belong in `.env.local`, not Git; `.env.example` contains names and comments only.
 
 ## Official references
 
