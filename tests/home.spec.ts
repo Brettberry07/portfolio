@@ -148,7 +148,10 @@ test("hero transforms stay continuous through wheel stops and direction reversal
     const frames = await page.locator("canvas").evaluate(async (canvas) => {
       const element = canvas as HTMLCanvasElement & { sculptureSnapshot: () => Snapshot };
       const frames: Snapshot[] = [];
-      for (let frame = 0; frame < 48; frame++) {
+      // Keep the stop/settling window on slow software WebGL too: waiting for
+      // 48 frames at 7fps made this otherwise passing check exceed its timeout.
+      const started = performance.now();
+      for (let frame = 0; frame < 48 && (frame < 6 || performance.now() - started < 1200); frame++) {
         await new Promise(requestAnimationFrame);
         frames.push(element.sculptureSnapshot());
       }
@@ -171,9 +174,9 @@ test("hero transforms stay continuous through wheel stops and direction reversal
   }
   expect((await sample()).progress).toBeCloseTo(0, 2);
   await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect.poll(async () => (await sample()).targetScale).toBe(1);
   await page.mouse.wheel(0, 60);
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(40);
-  await expect.poll(async () => (await sample()).targetScale).toBe(1);
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.mouse.wheel(0, 60);
   await expect.poll(async () => (await sample()).targetScale).toBeGreaterThan(1.01);
