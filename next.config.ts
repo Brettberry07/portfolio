@@ -1,8 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  reactCompiler: true,
+  // Keep repository instructions maintained by the owner.
+  agentRules: false,
+  devIndicators: false,
+  turbopack: {
+    rules: {
+      "*.css": {
+        loaders: ["@tailwindcss/turbopack"],
+        as: "*.css",
+      },
+    },
+  },
 };
 
 export default nextConfig;

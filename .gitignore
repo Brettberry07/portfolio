@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local configuration template
+!.env.example
+
+# browser artifacts
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/.playwright-cli/
+/output/playwright/
+*.log

@@ -1,96 +1,79 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
-import {
-  fadeInLeft,
-  fadeInRight,
-  staggerContainer,
-  viewportSettings,
-} from "@/lib/motion";
+import { ArrowUpRight, Plus } from "lucide-react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
+import { siteAssets } from "@/content/site";
+import { Reveal } from "@/components/motion/Reveal";
+import { WaysIWork } from "./WaysIWork";
+import "./about.css";
 
-export default function About() {
+export function About() {
+  const section = useRef<HTMLElement>(null);
+  const reducedMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: section, offset: ["start end", "end start"] });
+  const organicY = useTransform(scrollYProgress, [0, 1], [25, -35]);
+  const organicRotate = useTransform(scrollYProgress, [0, 1], [-24, -8]);
+
   return (
-    <section
-      className="relative min-h-screen w-full overflow-hidden"
-      style={{ backgroundColor: "#949494" }}
-      aria-label="About section"
-    >
-      {/* Background - Mountain image at bottom */}
-      <div className="absolute inset-0 z-0">
-        {/* Bottom 1/3 - mountain image */}
-        <div 
-          className="absolute bottom-0 left-0 right-0"
-          style={{ height: "35%" }}
-        >
-          <Image
-            src="/who-am-I-image.png"
-            alt="Mountain landscape background"
-            fill
-            className="object-cover object-bottom grayscale"
-            sizes="100vw"
-          />
-          {/* Gradient overlay for text readability */}
-          <div className="absolute inset-0 bg-black/30" />
-        </div>
+    <section className="about about-refined section-wrap" id="about" aria-labelledby="about-title" ref={section}>
+      <div className="section-topline">
+        <span className="mono">01 / A LITTLE CONTEXT</span>
+        <span className="mono">THE PERSON BEHIND THE PROJECTS</span>
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 flex min-h-screen items-center justify-center py-16">
-        <div className="mx-auto w-full max-w-7xl px-8 md:px-16 lg:px-20">
+      <div className="about-layout">
+        <div className="portrait-composition">
+          <div className="portrait-architecture" aria-hidden="true">
+            <svg viewBox="0 0 200 200" fill="none">
+              <path d="M22 63 101 20l77 43v86l-79 43-77-43V63Z M22 63l77 43 79-43 M99 106v86 M62 42l77 43v85 M62 85l77-43 M62 85v85" />
+            </svg>
+          </div>
           <motion.div
-            className="flex flex-col items-center gap-6 md:flex-row md:justify-center md:gap-12"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportSettings}
+            className="portrait-reveal"
+            initial={false}
+            whileInView={reducedMotion ? undefined : { clipPath: ["inset(7% 5% 0 5%)", "inset(0% 0% 0% 0%)"], scale: [0.96, 1] }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* Circular Image - Top on mobile, left on desktop */}
-            <motion.div
-              className="flex shrink-0 justify-center"
-              variants={fadeInLeft}
-            >
-              <div className="relative h-56 w-56 overflow-hidden rounded-full sm:h-64 sm:w-64 md:h-72 md:w-72 lg:h-96 lg:w-96">
-                <Image
-                  src="/greyscale-me.png"
-                  alt="Brett Berry - Personal photo"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 224px, (max-width: 768px) 256px, (max-width: 1024px) 288px, 384px"
-                />
-              </div>
-            </motion.div>
-
-            {/* Text Card - Below on mobile, right on desktop */}
-            <motion.div
-              className="w-full flex-1 md:w-auto"
-              variants={fadeInRight}
-            >
-              <div 
-                className="flex h-auto min-h-48 items-center justify-center p-6 sm:p-8 md:h-72 md:p-14 lg:h-96 lg:p-16"
-                style={{
-                  backgroundColor: "rgba(200, 200, 200, 0.5)",
-                  borderRadius: "20px",
-                  backdropFilter: "blur(8px)",
-                }}
-              >
-                <p 
-                  className="text-center text-sm leading-relaxed sm:text-base md:text-xl lg:text-2xl"
-                  style={{ 
-                    fontFamily: "monospace",
-                    color: "#1a1a1a",
-                  }}
-                >
-                  I am an enthusiastic and dedicated aspiring software developer aiming to solve real-world problems through innovative technology solutions.
-                  With a self taught background in computer science and a knack for problem-solving, 
-                  I specialize in building web applications that are not only functional but also user-friendly. 
-                  I'm also an upcoming freshman at the University of Arkansas studying Computer Science and attending the Honor's College
-                </p>
-              </div>
-            </motion.div>
+            <div className="portrait-placeholder" role={siteAssets.portrait ? undefined : "img"} aria-label={siteAssets.portrait ? undefined : "Reserved for Brett Berry’s portrait. Photograph coming soon."}>
+              {siteAssets.portrait ? (
+                <Image src={siteAssets.portrait.src} alt={siteAssets.portrait.alt} fill sizes="(max-width:600px) 80vw, 40vw" className="portrait-photo" />
+              ) : (
+                <>
+                  <div className="portrait-arch"><span>bb.</span></div>
+                  <div className="portrait-mark mono">A WORK IN <br />PERSPECTIVE.</div>
+                  <Plus className="portrait-plus" strokeWidth={1} aria-hidden="true" />
+                  <span className="portrait-status mono">PORTRAIT FORTHCOMING</span>
+                </>
+              )}
+            </div>
+          </motion.div>
+          <span className="portrait-caption mono">BRETT BERRY / ALWAYS BUILDING</span>
+          <motion.div className="about-organic" aria-hidden="true" style={{ y: organicY, rotate: organicRotate }}>
+            <svg viewBox="-5 -13 150 165">
+              <path className="about-organic-layer" d="M54 5C84-11 122 14 118 42C114 67 141 96 115 124C90 150 53 142 38 116C23 90-9 87 4 54C13 31 28 20 54 5Z" transform="translate(12 -9)" />
+              <path d="M54 5C84-11 122 14 118 42C114 67 141 96 115 124C90 150 53 142 38 116C23 90-9 87 4 54C13 31 28 20 54 5Z" fill="currentColor" />
+            </svg>
           </motion.div>
         </div>
+
+        <div className="about-copy">
+          <h2 id="about-title">
+            <span className="about-heading-line"><motion.span initial={false} whileInView={reducedMotion ? undefined : { y: ["28%", "0%"] }} viewport={{ once: true }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>Curiosity connects <br />the dots.</motion.span></span>
+            <span className="about-heading-line subtle-ink"><motion.span initial={false} whileInView={reducedMotion ? undefined : { y: ["28%", "0%"] }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}>I build what&apos;s <br />between them.</motion.span></span>
+          </h2>
+          <Reveal className="about-prose" delay={0.08}>
+            <p>I&apos;m Brett, a computer engineering student and multidisciplinary builder working at the intersection of software, product development, and practical problem-solving.</p>
+            <p>I take ideas from early conversations through research, design, and engineering to something people can actually use. My work spans large-scale data systems, AI applications, robotics, battery analytics, and operational improvements.</p>
+            <p>I&apos;m most interested in the problem behind a request: working directly with the people experiencing it, and building something that makes a measurable difference.</p>
+            <a className="quiet-link" href="#contact">Good things start with a conversation <ArrowUpRight size={17} /></a>
+          </Reveal>
+        </div>
       </div>
+
+      <WaysIWork />
     </section>
   );
 }

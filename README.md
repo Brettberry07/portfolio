@@ -1,35 +1,107 @@
-# Brett Berry — Portfolio
+# Brett Berry — portfolio
 
-Live at: https://brettberry.dev
+**Building what's next.** A design-led portfolio for freelance clients and software engineering recruiters, featuring architectural 3D design and seven dedicated project case studies.
 
-Figma: [here](https://www.figma.com/design/iAIP71pgOX4RqJmSZBJwsy/Portfolio?node-id=0-1&t=KzAnvcmg2bN7nbIt-1)
+> **Current state:** Full portfolio with Omer's interlocking architectural frames, continuous scroll-driven 3D, Lenis/Motion scrolling, layered section transitions, technical skills showcase and genuine résumé download. Seven project case studies and the original Contact are preserved. Portrait, approved project media and email configuration remain pending; see [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
-**Overview**
-- A fast, polished personal portfolio highlighting projects, motion design, and contact links. Built for smooth interactions, consistent typography, and responsive layouts across devices.
+## Working on this repository
 
-**Features**
-- **Sectioned experience:** Hero, About, Who Am I, Proof, Projects, Contact.
-- **Smooth animations:** Shared Framer Motion variants for headings and visuals.
-- **Mobile carousel:** Horizontal snap-scrolling cards with clipped descriptions.
-- **Project modal:** Detailed view with contained scroll and `object-contain` imagery.
-- **Consistent typography:** Harmonized heading scales; monospace labels/captions.
-- **Configurable cards:** Supports `viewMoreOnly` and `showExternalLink` options.
+1. Read `docs/PROGRESS.md` for the current implementation and remaining content dependencies.
+2. Start the local app using the commands below.
+3. Consult only the relevant design, architecture, content or testing documentation for the change.
+4. Update the typed content sources with approved facts and assets; keep unknown details unpublished.
 
-**Tech Stack**
-- **Next.js 16 (App Router)** and **React 19** for modern rendering.
-- **Tailwind CSS v4** for utility-first responsive styling.
-- **Framer Motion** for declarative animations and transitions.
-- **Lenis** for smooth, controlled scrolling behavior.
-- **TypeScript** for type safety across components.
+## Confirmed creative direction
 
-**Structure & Key Files**
-- App shell and entry: [src/app/layout.tsx](src/app/layout.tsx), [src/app/page.tsx](src/app/page.tsx)
-- Sections: [src/components/sections](src/components/sections)
-- Smooth scroll provider: [src/components/providers/SmoothScrollProvider.tsx](src/components/providers/SmoothScrollProvider.tsx)
-- Motion variants: [src/lib/motion.ts](src/lib/motion.ts)
-- Projects UI and data: [src/components/sections/Projects.tsx](src/components/sections/Projects.tsx)
+- Identity: **BRETT BERRY**, tagline **Building what's next.**
+- Feel: minimal creative studio, architectural geometry, oversized editorial type.
+- Mostly off-white/black, intentionally placed dark sections, tiny orange and blue accents.
+- Single scrolling homepage: Home → About → Projects → Experience → Contact.
+- Floating nav: Home / Projects / Experience / Contact; About is reached by scrolling.
+- Main 3D geometric/architectural hero plus smaller recurring geometric accents.
+- Projects: numbered list on the left, layered/revolving cards on the right (mobile: touch-first selector).
+- Seven projects with **individual `/projects/[slug]` case-study pages**.
+- About portrait, experience timeline with résumé link, genuine contact form.
+- Restrained, responsive motion; no distracting effects.
 
-**Design Principles**
-- Keep animations inside motion wrappers to avoid snapping.
-- Hide decorative elements on small screens to prioritize content.
-- Clip long descriptions on cards to prevent overlap with tags/actions.
+## Target tech stack
+
+| Area | Decision |
+|---|---|
+| Framework | Next.js App Router + React + TypeScript |
+| Style | Tailwind CSS + CSS design tokens |
+| 3D | Three.js + React Three Fiber + Drei |
+| Interaction & scroll animations | **Motion for React** (`npm install motion`, `motion/react`) |
+| Scrolling | Lenis React provider driven by Motion `frame.setup`; native touch and reduced-motion wheel scrolling |
+| Content | One typed local project source + separate case-study routes |
+| Forms (later) | Zod + Next.js server endpoint + Resend or similar, with anti-spam |
+| Quality | ESLint, strict TypeScript, production build, Playwright Test + CLI |
+| Deployment (later) | Vercel or other Next.js-compatible host |
+
+Motion covers section reveals, scroll-linked motion, project-stack transitions and interactive UI. The October refinement explicitly adds Lenis with `autoRaf: false`; Motion owns its frame loop. R3F applies deterministic 3D transforms from one hero-relative progress value. Keep canvas ancestors stationary to avoid measurement-driven camera jumps. No GSAP.
+
+## Documents (read selectively)
+
+| File | Role |
+|---|---|
+| [`AGENTS.md`](AGENTS.md) | Compact, always-on Codex rules |
+| [`docs/DESIGN_SPEC.md`](docs/DESIGN_SPEC.md) | Complete visual direction, sections, interactions, acceptance criteria |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Rendering, component boundaries, project types |
+| [`docs/MOTION_GUIDE.md`](docs/MOTION_GUIDE.md) | Motion + R3F recipes, ownership, reduced motion |
+| [`docs/CONTENT_INVENTORY.md`](docs/CONTENT_INVENTORY.md) | Seven project titles, missing factual content, copy guardrails |
+| [`docs/ASSET_REGISTER.md`](docs/ASSET_REGISTER.md) | 3D model, photos, résumé, copyright and optimization tracking |
+| [`docs/REFERENCES.md`](docs/REFERENCES.md) | Reference URLs and what to take from each |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Scoped implementation phases |
+| [`docs/TESTING.md`](docs/TESTING.md) | Checks and browser inspection |
+| [`docs/PROGRESS.md`](docs/PROGRESS.md) | Brief durable progress checkpoint |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md) | Fixed design/engineering choices |
+| [`prompts/STEP_01_BOOTSTRAP.md`](prompts/STEP_01_BOOTSTRAP.md) | First prompt to paste into Codex |
+| [`prompts/TASK_TEMPLATE.md`](prompts/TASK_TEMPLATE.md) | Short repeatable prompt pattern |
+
+## Local development
+
+Use Node **24.22.0** (`.nvmrc`) and npm. With nvm installed, run `nvm install && nvm use` first. This setup session used the isolated runtime at `~/.cache/portfolio-runtime/node-v24.22.0-darwin-arm64/bin`; prepend that directory to `PATH` to use it on this Mac.
+
+```bash
+npm ci
+npx playwright install chromium
+npm run dev
+npm run lint
+npm run typecheck
+npm run build
+npm run test:e2e
+npm run check
+```
+
+Open `http://localhost:3000` after starting dev. Playwright reuses the local dev server on port 3000 or starts it when needed (CI uses 3100; override with `PLAYWRIGHT_PORT`) and tests 1440×900 and 390×844. Screenshots and failure traces are saved under ignored `test-results/`. `check` runs lint, strict type checks (including generated Next route types), and a production build; browser tests run separately. No environment variables are needed to preview. Email delivery remains explicitly unavailable until all contact variables from `.env.example` are configured.
+
+## Content policy
+
+Never make up metrics, roles, private contact info, links, or personal photos. Use clearly labeled content TODOs and transparent missing-asset states. Do not deploy a fake contact flow. Secrets belong in `.env.local`, not Git; `.env.example` contains names and comments only.
+
+## Official references
+
+- [Next.js setup](https://nextjs.org/docs/app/getting-started/installation)
+- [Motion for React and Next.js](https://motion.dev/docs/react-installation)
+- [Motion scroll animations](https://motion.dev/docs/react-scroll-animations)
+- [React Three Fiber](https://r3f.docs.pmnd.rs/)
+- [Playwright Test](https://playwright.dev/docs/intro)
+- [Playwright CLI](https://github.com/microsoft/playwright/blob/main/docs/src/getting-started-cli.md)
+
+
+## Replacing pending content
+
+- `src/content/projects.ts`: seven canonical records. Add approved summaries, role, category, stack, problem, approach, solution, results and permitted links. Change `status` when verified. `heroImage` enables real imagery on the case-study cover.
+- `src/content/experience.ts`: approved company/role progression, education, and leadership, in reverse chronological order.
+- `src/content/site.ts`: optional user portrait, actual résumé path, public email and public profile links. Add the actual files under `public/`; absent values retain honest pending states.
+- Homepage positioning lives in `src/app/page.tsx` and `src/components/sections/About.tsx`; Ways I Work lives beside About. Case-study sections render the typed project fields.
+- Brett's supplied résumé is preserved unchanged at `public/resume/brett-berry-resume.pdf`; `siteAssets.resumeHref` enables the Experience section's download link. Desktop and mobile browser downloads were verified against the original file.
+- Brett supplied Omer's Sketchfab model archive. Five rectangular frames are adapted into the active hero; curves are removed. Source, CC BY 4.0 credit and the reproducible importer are documented in `public/models/ATTRIBUTION.md`.
+
+## Contact delivery
+
+Copy `.env.example` to `.env.local` and supply an actual Resend key, verified sender and recipient. Never commit credentials. Restart development after configuration and rebuild for production (the enabled form state is computed during page rendering/build). The `/api/contact` route validates input, rejects cross-origin and oversized requests, checks a honeypot and rate limits attempts before contacting Resend. Success requires a real provider acceptance ID. The current rate limiter is process-local; use shared storage before scaling across instances. Actual email delivery has not been exercised without real credentials.
+
+## Assets and browser review
+
+See `public/models/ATTRIBUTION.md` for the active CC BY 4.0 sculpture and optimization. Desktop, tablet and mobile WebP posters are rendered from the same scene. Fonts are self-hosted with licenses alongside them. Playwright CLI captures live under ignored `output/playwright/`; repeatable smoke screenshots live under `test-results/`. No browser binaries, generated screenshots or secrets are committed.

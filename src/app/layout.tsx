@@ -1,55 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import "./globals.css";
-import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const display = localFont({ src: "../../public/fonts/inter-tight-latin.woff2", variable: "--font-display", weight: "400 700", display: "swap" });
+const mono = localFont({ src: "../../public/fonts/dm-mono-latin.woff2", variable: "--font-mono", weight: "400", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Brett Berry | Developer & Engineer",
-  description:
-    "Building Solutions, Not Just Software. Portfolio of Brett Berry - a developer focused on crafting exceptional digital experiences.",
-  keywords: [
-    "developer",
-    "engineer",
-    "portfolio",
-    "web development",
-    "frontend",
-    "react",
-    "next.js",
-  ],
-  authors: [{ name: "Brett Berry" }],
-  openGraph: {
-    title: "Brett Berry | Developer & Engineer",
-    description: "Building Solutions, Not Just Software.",
-    type: "website",
-  },
+  title: { default: "Brett Berry — Building what's next.", template: "%s — Brett Berry" },
+  description: "Brett Berry. A multidisciplinary portfolio at the intersection of engineering, product, and practical problem-solving. Building what's next.",
+  openGraph: { title: "Brett Berry — Building what's next.", description: "Engineering, product, and practical problem-solving. Explore selected work by Brett Berry.", type: "website" },
+  robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <SmoothScrollProvider>
-          {/* Grain overlay */}
-          <div className="grain" aria-hidden="true" />
-          {children}
-        </SmoothScrollProvider>
-      </body>
-    </html>
-  );
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return <html lang="en" className={`${display.variable} ${mono.variable}`}><body><SmoothScroll>{children}</SmoothScroll></body></html>;
 }

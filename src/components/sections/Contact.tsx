@@ -1,105 +1,124 @@
 "use client";
 
-import { motion } from "framer-motion";
-import Image from "next/image";
-import {
-  fadeInUp,
-  staggerContainer,
-  viewportSettings,
-  buttonTap,
-} from "@/lib/motion";
+import { useRef, useState, type FormEvent } from "react";
+import { ArrowUpRight } from "lucide-react";
+import { contactSchema, type ContactErrors, type ContactField } from "@/lib/contact";
+import "./contact.css";
 
-interface SocialLink {
-  name: string;
-  href: string;
-  icon: string;
-  ariaLabel: string;
-}
+type ContactProps = { enabled?: boolean; publicEmail?: string; socialLinks?: readonly { label: string; href: string }[] };
+type SubmissionState = "idle" | "sending" | "success" | "error";
 
-const socialLinks: SocialLink[] = [
-  {
-    name: "GitHub",
-    href: "https://github.com/Brettberry07",
-    icon: "/github-svgrepo-com 2-2.svg",
-    ariaLabel: "Visit my GitHub profile",
-  },
-  {
-    name: "Gmail",
-    href: "mailto:brettberry07@gmail.com?subject=Portfolio%20Inquiry&body=Hi%20Brett,",
-    icon: "/gmail-svgrepo-com 2-2.svg",
-    ariaLabel: "Send me an email",
-  },
-  {
-    name: "LinkedIn",
-    href: "https://linkedin.com/in/brett-berry-a81b29329",
-    icon: "/linkedin-svgrepo-com 2-2.svg",
-    ariaLabel: "Connect with me on LinkedIn",
-  },
-];
+const fieldOrder: ContactField[] = ["name", "email", "organization", "message"];
 
-export default function Contact() {
+export function Contact({ enabled = false, publicEmail, socialLinks = [] }: ContactProps) {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [errors, setErrors] = useState<ContactErrors>({});
+  const [state, setState] = useState<SubmissionState>("idle");
+  const [feedback, setFeedback] = useState("");
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!enabled || state === "sending") return;
+    const form = event.currentTarget;
+    const values = Object.fromEntries(new FormData(form));
+    const result = contactSchema.safeParse(values);
+
+    if (!result.success) {
+      const nextErrors: ContactErrors = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as ContactField;
+        if (fieldOrder.includes(field)) nextErrors[field] ??= issue.message;
+      }
+      setErrors(nextErrors);
+      setState("error");
+      setFeedback("Please check the highlighted fields.");
+      const firstInvalid = fieldOrder.find((field) => nextErrors[field]);
+      if (firstInvalid) form.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus();
+      return;
+    }
+
+    setErrors({});
+    setState("sending");
+    setFeedback("");
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(result.data),
+      });
+      const data = await response.json() as { message?: string; fields?: ContactErrors };
+      if (!response.ok) {
+        setErrors(data.fields ?? {});
+        setState("error");
+        setFeedback(data.message ?? "Your message could not be sent. Please try again.");
+        const firstInvalid = fieldOrder.find((field) => data.fields?.[field]);
+        if (firstInvalid) form.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus();
+        return;
+      }
+      formRef.current?.reset();
+      setState("success");
+      setFeedback(data.message ?? "Your message is on its way. Thanks for reaching out.");
+    } catch {
+      setState("error");
+      setFeedback("We couldn’t reach the email service. Please try again in a moment.");
+    }
+  }
+
   return (
-    <section
-      className="relative min-h-[50vh] w-full overflow-hidden"
-      aria-label="Contact section"
-    >
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <Image
-          src="/contact-image.png"
-          alt="Misty forest background"
-          fill
-          className="object-cover grayscale"
-          priority
-        />
-        {/* Dark overlay for better text visibility */}
-        <div className="absolute inset-0 bg-black/30" />
-      </div>
+    <section className="contact-section" id="contact" aria-labelledby="contact-heading">
+      <div className="contact-inner">
+        <div className="contact-intro">
+          <p className="contact-eyebrow"><span>04 /</span> GET IN TOUCH</p>
+          <h2 id="contact-heading">Have something<br />in mind?<br /><span>Let’s build it.</span></h2>
+          <p className="contact-description">A project, a problem, a possibility.<br />Good things start with a conversation.</p>
+          {(publicEmail || socialLinks.length > 0) && <div className="contact-profile-links">
+            {publicEmail && <a href={`mailto:${publicEmail}`}>{publicEmail}<ArrowUpRight size={15} aria-hidden="true" /></a>}
+            {socialLinks.map((link) => <a key={link.href} href={link.href} target="_blank" rel="noreferrer">{link.label}<ArrowUpRight size={15} aria-hidden="true" /></a>)}
+          </div>}
+          <div className="contact-signal" aria-hidden="true">
+            <span className="contact-signal-mark">↗</span>
+            <span>THE NEXT CHAPTER<br />STARTS HERE.</span>
+          </div>
+        </div>
 
-      {/* Content */}
-      <div className="relative z-10 flex min-h-[50vh] flex-col items-centern justify-around px-6 py-16 md:py-24">
-        <motion.div
-          className="flex flex-col items-center text-center gap-y-24"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportSettings}
-        >
-          {/* Section Title */}
-          <motion.h2
-            variants={fadeInUp}
-            className="text-5xl font-bold italic tracking-tight text-white md:text-5xl lg:text-6xl"
-          >
-            Find Me Here
-          </motion.h2>
-
-          {/* Social Links */}
-          <motion.div
-            variants={fadeInUp}
-            className="mt-12 flex items-center gap-4 sm:gap-6 md:gap-10"
-          >
-            {socialLinks.map((link) => (
-              <motion.a
-                key={link.name}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={link.ariaLabel}
-                className="group relative flex h-24 w-24 items-center justify-center rounded-2xl bg-zinc-800/90 transition-all duration-300 hover:scale-110 hover:bg-zinc-700 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-36 lg:w-36"
-                whileHover={{ y: -5 }}
-                whileTap={buttonTap}
-              >
-                <Image
-                  src={link.icon}
-                  alt={link.name}
-                  width={48}
-                  height={48}
-                  className="h-14 w-14 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-24 lg:w-24 transition-all duration-300 group-hover:brightness-125"
-                />
-              </motion.a>
-            ))}
-          </motion.div>
-        </motion.div>
+        <form className="contact-form" ref={formRef} action="/api/contact" method="post" onSubmit={submit} noValidate aria-describedby={!enabled ? "contact-unconfigured" : undefined} aria-busy={state === "sending"}>
+          <div className="contact-field-row">
+            <div className="contact-field">
+              <label htmlFor="contact-name">Your name <span aria-hidden="true">*</span></label>
+              <input id="contact-name" name="name" autoComplete="name" required maxLength={100} placeholder="First and last name" aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? "contact-name-error" : undefined} />
+              {errors.name && <p className="contact-field-error" id="contact-name-error">{errors.name}</p>}
+            </div>
+            <div className="contact-field">
+              <label htmlFor="contact-email">Email address <span aria-hidden="true">*</span></label>
+              <input id="contact-email" name="email" type="email" autoComplete="email" required maxLength={254} placeholder="you@company.com" aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? "contact-email-error" : undefined} />
+              {errors.email && <p className="contact-field-error" id="contact-email-error">{errors.email}</p>}
+            </div>
+          </div>
+          <div className="contact-field">
+            <label htmlFor="contact-organization">Organization <span className="contact-optional">(optional)</span></label>
+            <input id="contact-organization" name="organization" autoComplete="organization" maxLength={120} placeholder="Where you’re building" aria-invalid={Boolean(errors.organization)} aria-describedby={errors.organization ? "contact-organization-error" : undefined} />
+            {errors.organization && <p className="contact-field-error" id="contact-organization-error">{errors.organization}</p>}
+          </div>
+          <div className="contact-field contact-message-field">
+            <label htmlFor="contact-message">What are you thinking? <span aria-hidden="true">*</span></label>
+            <textarea id="contact-message" name="message" rows={3} required minLength={20} maxLength={4000} placeholder="Tell me a little about your idea…" aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? "contact-message-error" : undefined} />
+            {errors.message && <p className="contact-field-error" id="contact-message-error">{errors.message}</p>}
+          </div>
+          <div className="contact-trap" aria-hidden="true">
+            <label htmlFor="contact-website">Leave this field empty</label>
+            <input id="contact-website" name="website" tabIndex={-1} autoComplete="off" />
+          </div>
+          <div className="contact-submit-row">
+            <button className="contact-submit" type="submit" disabled={!enabled || state === "sending"}>
+              <span>{state === "sending" ? "Sending message…" : "Send a message"}</span>
+              <ArrowUpRight size={21} strokeWidth={1.5} aria-hidden="true" />
+            </button>
+            <span className="contact-required-note">* Required fields</span>
+          </div>
+          {!enabled && <p className="contact-unconfigured" id="contact-unconfigured"><span aria-hidden="true" />Email delivery is not connected yet. This form isn’t accepting messages.</p>}
+          <p className={`contact-feedback${state === "error" ? " is-error" : ""}`} role="status" aria-live="polite" aria-atomic="true">{feedback}</p>
+          <noscript><style>{".contact-form .contact-submit { display: none; }"}</style><p className="contact-unconfigured">Please enable JavaScript to use this contact form.</p></noscript>
+        </form>
       </div>
     </section>
   );
