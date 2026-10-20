@@ -16,8 +16,10 @@
 | 2026-10-19 | Playwright Test + CLI where available | Browser-verified visual quality and repeatable checks |
 | 2026-10-19 | Documentation-first, small task-scoped Codex prompts | Minimize repeat context usage |
 
-Log only substantive changes, not minor refactors.
-
 | 2026-10-20 | Implement full portfolio in one pass per current user request | Explicitly supersedes earlier one-phase approval gates |
 | 2026-10-20 | Acquire CC0 loop GLB and compose twelve shared ribs | Honor premade-asset priority; maintain a compact architectural hero |
 | 2026-10-20 | Public-safe pending states for unverified facts and delivery | Complete layouts without invented project, employer or personal details |
+| 2026-10-20 | Refine the existing design; preserve Contact unchanged | User's refinement brief supersedes earlier placeholder-only content and cream Projects treatment. Projects becomes a substantial dark chapter; approved project/résumé facts, Ways I Work and distinct concept motifs replace pending content. |
+| 2026-10-20 | Temporarily retain cleared hero geometry after authenticated-download blocker | Both specified Sketchfab downloads require sign-in. Existing Innerscene CC0 mesh is enlarged/recolored; no substitute model, extracted viewer asset or unsupported download is used. Exact manual acquisition step is recorded in the model attribution document. |
+
+Log only substantive changes, not minor refactors.

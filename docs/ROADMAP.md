@@ -42,4 +42,4 @@ Moderate Motion scroll reveals, refined 3D assets, mobile/performance optimizati
 
 ## Current implementation — 2026-10-20
 
-The user explicitly requested the full implementation in one pass. Phases 2–6 now have completed UI, routing, motion, fallbacks and browser checks. Publication, factual case-study/experience content, portrait, résumé and contact delivery configuration remain pending. Use `docs/PROGRESS.md` for the durable status; the phase descriptions above remain the design/build reference.
+The user explicitly requested the full implementation in one pass. Phases 2–6 now have completed UI, routing, motion, fallbacks and browser checks. The refinement pass adds approved project and résumé facts, distinct project motifs, interactive capabilities, and richer Motion. Publication, portrait, actual résumé PDF, project screenshots and contact delivery configuration remain pending. The specified Sketchfab replacement requires an authenticated download; retain the enlarged charcoal version of the existing cleared mesh until supplied. Use `docs/PROGRESS.md` for the durable status; the phase descriptions above remain the design/build reference.

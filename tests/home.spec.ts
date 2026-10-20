@@ -21,8 +21,10 @@ test("full portfolio, live sculpture, navigation and honest contact state", asyn
   const scene = page.getByTestId("scene-host");
   await expect(scene).toHaveAttribute("data-renderer", "webgl");
   await expect(scene.locator("canvas")).toBeVisible();
-  const first = await scene.locator("canvas").screenshot();
-  await expect.poll(async () => (await scene.locator("canvas").screenshot()).equals(first)).toBe(false);
+  // Read the drawing buffer directly: element screenshots can scroll an oversized,
+  // intentionally cropped canvas out of the hero and pause its offscreen renderer.
+  const first = await scene.locator("canvas").evaluate((canvas: HTMLCanvasElement) => canvas.toDataURL());
+  await expect.poll(() => scene.locator("canvas").evaluate((canvas: HTMLCanvasElement) => canvas.toDataURL())).not.toBe(first);
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Contact" }).click();
   await expect(page.getByRole("heading", { name: "Have something in mind? Let’s build it." })).toBeInViewport();
@@ -63,6 +65,7 @@ test("all seven case studies resolve with full editorial sections", async ({ pag
 });
 
 test("reduced motion keeps the sculpture still and anchors native", async ({ page }) => {
+  const errors = collectErrors(page);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await checkContent(page);
@@ -71,6 +74,7 @@ test("reduced motion keeps the sculpture still and anchors native", async ({ pag
   const frame = await canvas.screenshot();
   expect((await canvas.screenshot()).equals(frame)).toBe(true);
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("auto");
+  expect(errors).toEqual([]);
 });
 
 test("WebGL unavailable retains the real sculpture poster and content", async ({ page }, testInfo) => {
@@ -101,4 +105,21 @@ test("no JavaScript retains semantic content, poster, anchors and safe form", as
   await expect(page.getByRole("button", { name: "Send a message" })).toBeHidden();
   await expect(page.locator(".contact-form")).toHaveAttribute("method", "post");
   await context.close();
+});
+
+test("Ways I Work supports selection, keyboard movement and contextual routes", async ({ page }) => {
+  await page.goto("/#about");
+  const product = page.getByRole("tab", { name: "02 Product development" });
+  await product.click();
+  await expect(product).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tabpanel")).toContainText("Taking ideas from early discovery");
+  await product.press("ArrowRight");
+  await expect(page.getByRole("tabpanel")).toContainText("Finding inefficiencies");
+  await page.getByRole("tab", { name: "03 Systems & automation" }).press("End");
+  const collaboration = page.getByRole("tab", { name: "04 Client collaboration" });
+  await expect(collaboration).toBeFocused();
+  await expect(collaboration).toHaveAttribute("aria-selected", "true");
+  await page.getByRole("tabpanel").getByRole("link", { name: "City of Bentonville Traffic" }).click();
+  await expect(page).toHaveURL(/\/projects\/city-of-bentonville-traffic$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("City of Bentonville Traffic.");
 });

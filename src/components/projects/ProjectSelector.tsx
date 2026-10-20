@@ -21,15 +21,22 @@ export function ProjectSelector() {
 
   useEffect(() => {
     const list = listRef.current;
-    const item = list?.children[active] as HTMLElement | undefined;
-    if (!list || !item || list.scrollWidth <= list.clientWidth) return;
-    const left = item.offsetLeft;
-    const right = left + item.offsetWidth;
-    if (left < list.scrollLeft) {
-      list.scrollTo({ left: Math.max(0, left - 4), behavior: reducedMotion ? "instant" : "smooth" });
-    } else if (right > list.scrollLeft + list.clientWidth) {
-      list.scrollTo({ left: right - list.clientWidth + 4, behavior: reducedMotion ? "instant" : "smooth" });
+    if (!list) return;
+    function keepSelectionVisible() {
+      const item = list?.children[active] as HTMLElement | undefined;
+      if (!list || !item || list.scrollWidth <= list.clientWidth) return;
+      const left = item.offsetLeft;
+      const right = left + item.offsetWidth;
+      if (left < list.scrollLeft) {
+        list.scrollTo({ left: Math.max(0, left - 4), behavior: reducedMotion ? "instant" : "smooth" });
+      } else if (right > list.scrollLeft + list.clientWidth) {
+        list.scrollTo({ left: right - list.clientWidth + 4, behavior: reducedMotion ? "instant" : "smooth" });
+      }
     }
+    keepSelectionVisible();
+    const resizeObserver = new ResizeObserver(keepSelectionVisible);
+    resizeObserver.observe(list);
+    return () => resizeObserver.disconnect();
   }, [active, reducedMotion]);
 
   function select(index: number) {
@@ -64,10 +71,10 @@ export function ProjectSelector() {
         <span>02 / SELECTED WORK</span>
         <span>Ideas made tangible.</span>
       </div>
-      <div className="selected-work__heading">
+      <motion.div className="selected-work__heading" initial={false} whileInView={reducedMotion ? undefined : { y: [24, 0] }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
         <h2 id="selected-work-title">Selected work<span>.</span></h2>
         <ArrowDownLeft aria-hidden="true" strokeWidth={1.2} />
-      </div>
+      </motion.div>
 
       <noscript>
         <nav className="project-noscript" aria-label="Project case studies">
@@ -99,7 +106,7 @@ export function ProjectSelector() {
                 >
                   <span className="project-list__number">{project.id}</span>
                   <span className="project-list__name">{project.title}</span>
-                  <span className="project-list__marker" aria-hidden="true" />
+                  {active === index ? <motion.span className="project-list__marker" layoutId="project-active-marker" aria-hidden="true" transition={reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 350, damping: 32 }} /> : null}
                 </button>
               </li>
             ))}
@@ -126,9 +133,9 @@ export function ProjectSelector() {
                   animate={{
                     x: isActive ? 0 : isNext ? 32 : 66,
                     y: isActive ? 0 : isNext ? -22 : -42,
-                    rotate: isActive ? -2 : isNext ? 3 : 7,
-                    scale: isActive ? 1 : isNext ? 0.98 : 0.95,
-                    opacity: visible ? 1 : 0,
+                    rotate: isActive ? -1.5 : isNext ? 3 : 7,
+                    scale: isActive ? 1.015 : isNext ? 0.98 : 0.95,
+                    opacity: isActive ? 1 : visible ? 0.65 : 0,
                   }}
                   transition={reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 190, damping: 27 }}
                   style={{ zIndex: isActive ? 3 : isNext ? 2 : 1, visibility: visible ? "visible" : "hidden" }}
@@ -143,10 +150,10 @@ export function ProjectSelector() {
                         <span>PROJECT / {project.id}</span>
                         <span className="project-card__cross" aria-hidden="true">+</span>
                       </div>
-                      <div className="project-card__art">
+                      <motion.div className="project-card__art" initial={false} animate={reducedMotion ? { opacity: 1, y: 0, scale: 1 } : { opacity: [0.2, 1], y: [14, 0], scale: [0.97, 1] }} transition={{ duration: 0.45, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}>
                         <ProjectArtwork project={project} variant="cover" accessible={false} />
-                      </div>
-                      <div className="project-card__content">
+                      </motion.div>
+                      <motion.div className="project-card__content" initial={false} animate={reducedMotion ? { opacity: 1, y: 0 } : { opacity: [0.2, 1], y: [10, 0] }} transition={{ duration: 0.35, delay: 0.1 }}>
                         <div className="project-card__tags">
                           <span>{project.category || "Case study"}</span>
                           <span>{project.technologies.length ? project.technologies.slice(0, 2).join(" / ") : "Details forthcoming"}</span>
@@ -156,10 +163,11 @@ export function ProjectSelector() {
                         <Link href={`/projects/${project.slug}`} className="project-card__link" draggable={false}>
                           View case study <ArrowUpRight size={22} aria-hidden="true" />
                         </Link>
-                      </div>
+                      </motion.div>
                     </>
                   ) : (
                     <button className="project-card__peek" type="button" onClick={() => select(index)} tabIndex={visible ? 0 : -1} aria-label={`Select ${project.title}`}>
+                      <div className="project-card__peek-art"><ProjectArtwork project={project} /></div>
                       <span>{project.id} / {project.title}</span>
                     </button>
                   )}

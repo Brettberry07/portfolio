@@ -6,6 +6,6 @@ export const siteAssets: {
   socialLinks: readonly { label: string; href: string }[];
 } = {
   // portrait: { src: "/images/about-brett.jpg", alt: "Brett Berry" },
-  // resumeHref: "/resume.pdf",
+  resumeHref: "/resume/brett-berry-resume.pdf",
   socialLinks: [],
 };

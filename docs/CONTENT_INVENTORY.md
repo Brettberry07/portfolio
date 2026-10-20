@@ -1,59 +1,47 @@
-# Content inventory — facts only, drafts clearly marked
+# Content inventory — approved facts and remaining inputs
 
-**Purpose:** Collect honest content without turning missing information into invented achievements. For now, only names, positioning, and section intent are confirmed. A user-supplied photo, resume, and project data can be added as they arrive.
+**Source:** Brett's Portfolio Refinement brief, supplied 2026-10-20. It supersedes earlier placeholder-only guidance. Canonical public copy lives in `src/content/projects.ts`, `src/content/experience.ts`, and `src/components/sections/About.tsx`.
 
-## Site positioning (approved)
+## Identity and About
 
-- Name: **Brett Berry**
-- Tagline: **Building what's next.**
-- Audience: software engineering recruiters **and** prospective freelance clients.
-- Framing: technical problem-solving + direct collaboration with clients + breadth in engineering and product.
-- Tone: creative, capable, human, precise, never exaggerated.
+Brett Berry · **Building what's next.** Computer engineering student and multidisciplinary builder spanning software, product, data systems, AI applications, robotics, battery analytics, and operational improvements. Approach: understand the problem with the people experiencing it, then connect research, design, and engineering. No portrait supplied; change the single `siteAssets.portrait` entry after adding `public/images/about-brett.jpg`.
 
-## Home / About copy (draft only, edit before publication)
+## Seven projects
 
-- Intro possibility: “I build products and systems around real-world problems.”
-- About headline: “At the intersection of engineering, product, and practical problem-solving.”
-- Content should emphasize how Brett approaches ambiguity, collaborates with stakeholders, and ships useful solutions. Do not assert specific employers, certifications, metrics, or degrees without approved final copy.
-- Portrait: **pending user-provided image**. No AI portrait or stock photo substituted as Brett.
+| Project / slug | Approved factual scope |
+|---|---|
+| Querry Berry / `querry-berry` | June–July 2025. Full-stack search engine; Next.js, Dockerized PostgreSQL, custom lexer/indexing pipeline processing **2.3M+ unique tokens**. |
+| Fig / `fig` | Rust scripting-language and developer-tools project. Local Rust/fig README/source and figlang extension docs verify lexer/parser/evaluator, CLI run/new commands, and VS Code syntax highlighting. No benchmark or broader tooling assumed. |
+| Tariff Ninja / `tariff-ninja` | Software Engineer Feb–July 2026; Lead Software Engineer July–Sep 2026. Human-in-the-loop RAG HTS classification, tariff opportunities, customs filings and risk forecasting; item/document/freight infrastructure supporting **1.5M+ items**; full-stack lead allocation/qualification, algorithmic company search/scoring and Apollo integration; client requirements and engineering coordination. Current commercial deployment/financial savings unspecified. |
+| Potential Energy Tech / `potential-energy-tech` | Software Engineer Intern Jan–May 2026. Battery-analysis web platform across formats/test types; **sub-second processing of 1.2M+ data points**; SaaS planning, cloud storage architecture, subscription pricing. Implementation frameworks unspecified. |
+| Amazeum / `amazeum` | Operational analysis/improvement for Scott Family Amazeum, Bentonville. Stakeholder interviews; inventory/picking/packing/shipping growth and bottlenecks; Shopify and Stock Savvy context. No completed software platform or measured gains supplied. |
+| Still On / `still-on` | Independent meeting-coordination product/MVP. Check-ins, confirmations, status and rescheduling concepts; Google/Microsoft calendar direction. Expo/React Native, TypeScript, Supabase. Feature completion/public launch not confirmed. |
+| City of Bentonville Traffic / `city-of-bentonville-traffic` | Nov–Dec 2025. ML model for traffic patterns and signal-timing evaluation; processed/visualized traffic data; presented to Traffic Department and Mayor. Adoption/measured traffic improvements unspecified. |
 
-## Featured projects (confirmed list, order approved)
+Each case study uses overview, context, role/approach, solution/workflow, outcomes, tools, and one concise remaining-content note. All project artwork is an original concept illustration, clearly labeled; it is not an application screenshot or measured data.
 
-| # | Name | Proposed slug | Case-study text & verified outcomes | Visuals |
-|---|---|---|---|---|
-| 01 | Querry Berry | `querry-berry` | Needed | Needed |
-| 02 | Fig | `fig` | Needed | Needed |
-| 03 | Tariff Ninja | `tariff-ninja` | Needed | Needed |
-| 04 | Potential Energy Tech | `potential-energy-tech` | Needed | Needed |
-| 05 | Amazeum | `amazeum` | Needed | Needed |
-| 06 | Still On | `still-on` | Needed | Needed |
-| 07 | City of Bentonville Traffic | `city-of-bentonville-traffic` | Needed | Needed |
+## Professional experience, education, leadership
 
-For **each** project ask the user for: 1–2-sentence summary, problem, constraints, Brett's specific role, approach, technologies actually used, media (UI screenshots, diagrams, prototype, video), outcomes/lessons, and permitted public links. Results can be qualitative if metrics aren't available. Clarify what is public and what is confidential before publishing client materials.
+Tariff Ninja and Potential Energy Tech roles above are verified by the user; both are in Bentonville, Arkansas. Tariff Ninja is one company entry with two dated roles.
 
-## Case-study editorial format
+- University of Arkansas, Fayetteville: B.S. Computer Engineering; Innovation & Entrepreneurship minor; GPA 4.0; expected May 2030.
+- Bentonville West High School: May 2026, High Honors, GPA 4.25; Ignite Professional Studies Technology Strand.
+- RIOT Robotics, University of Arkansas: developing low-cost impact-detection vest for a local business.
+- Founder, BWHS Competitive Programming Club: seven statewide/national awards.
+- Senior Captain, BWHS Science Olympiad: three national qualifications and state awards.
+- VEX Robotics: Arkansas State Innovate Award, two regional Innovate Awards, World Championship qualification.
+- Arkansas Hog Hacks: Most Creative Award, sixth overall as a high-school team.
 
-`PROJECT 01 / category` → bold project name → concise truthful one-liner → role and timeline (if verified) → the problem → process/decisions → solution and demo/media → results/what was learned → technology → next/previous projects → contact CTA.
+Approved toolkit: TypeScript, JavaScript, Ruby, C++, Python, Rust; Next.js, React, Rails, Docker, PostgreSQL/SQL, Git, Jupyter. Do not attribute a toolkit technology to a specific project without evidence.
 
-For missing content: structure the page elegantly using available, approved fields. During development, maintain clear internal `draft` markers and use quiet public-safe “Case study details coming soon” text rather than false facts.
+## Public links and Contact preservation
 
-## Professional experience
+Approved public email: `brettberry07@gmail.com`; GitHub: https://github.com/Brettberry07; LinkedIn: https://www.linkedin.com/in/brett-berry-a81b29329/. These appear in the footer. **The existing Contact section and its props, copy, styling, animations and API remain unchanged at Brett's explicit request.** Provider credentials remain unconfigured; a public email address is not a sending credential. No phone number is displayed.
 
-- Layout: refined vertical chronological timeline, company, title, dates, one to three measurable/meaningful verified contributions.
-- The user mentioned Tariff Ninja as relevant experience in earlier planning. **Verify final résumé and display dates and phrasing before publication.** Do not infer employer relationships from project names.
-- Resume download: requires an actual PDF supplied by Brett. Hide/disable the download CTA until a real file exists; do not create a fake résumé.
+## Supplied résumé
 
-## Contact
+Brett's supplied résumé PDF is preserved unchanged at `public/resume/brett-berry-resume.pdf`, and `siteAssets.resumeHref` enables the Experience download. No résumé content was added to public HTML as part of enabling this download.
 
-- Form: name, email, optional organization/subject, message.
-- Needs recipient mailbox, sender domain/provider configuration, and public GitHub/LinkedIn links.
-- Server-side delivery via Resend/alternative only after credentials are set; no fake success.
+## Still needed
 
-## Review checklist before launch
-
-- [ ] Photo supplied and approved for public use
-- [ ] Resume supplied and date-checked
-- [ ] All seven summaries and case studies reviewed
-- [ ] All published metrics and employer details verified
-- [ ] Asset licenses and client confidentiality confirmed
-- [ ] Contact destination and profile links correct
+Actual portrait; approved screenshots/research artifacts and permitted project links; unspecified framework/role details and feature status as noted per project; provider credentials for actual form delivery.

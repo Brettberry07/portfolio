@@ -207,3 +207,43 @@
 @media (prefers-reduced-motion: reduce) {
   .project-list__item, .project-list__marker, .project-card__link svg, .project-showcase__arrows button { transition: none; }
 }
+
+/* A continuous dark chapter, with the same paper-and-ink editorial hierarchy. */
+.selected-work { position:relative; isolation:isolate; color:#f1f0e8; background:#171817; padding-block:118px 132px; --work-line:#41423b; }
+.selected-work::before { content:""; position:absolute; z-index:-1; width:650px; height:720px; left:-440px; bottom:-300px; border-radius:40% 60% 38% 62% / 56% 38% 62% 44%; background:#0e100e; transform:rotate(22deg); }
+.selected-work__eyebrow { color:#c8c8bd; border-color:var(--work-line); }
+.selected-work__eyebrow > :first-child { font-family:var(--font-mono),monospace; }
+.selected-work__eyebrow > :last-child { color:#a5a69a; }
+.selected-work__heading { padding-bottom:80px; }
+.selected-work__heading > svg { color:#ffaa36; }
+.project-explorer__hint,.project-explorer__instruction,.project-noscript p,.project-noscript a > span { color:#a7a89c; }
+.project-list > li,.project-list > li:last-child,.project-noscript li,.project-noscript li:last-child { border-color:var(--work-line); }
+.project-list__item { color:#a3a599; min-height:72px; }
+.project-list__name { font-size:clamp(18px,1.9vw,28px); }
+.project-list__number { color:#93988a; }
+.project-list__item.is-active,.project-list__item:hover { color:#fffdf5; }
+.project-list__item.is-active .project-list__number { color:#ffaa36; }
+.project-list__marker { opacity:1; transform:none; box-shadow:0 0 0 6px #ffaa360a; }
+.project-stack { height:580px; }
+.project-stack__geometry { border-color:#3c4137; }
+.project-stack__card { background:#252723; border-color:#66695d; box-shadow:0 28px 44px -20px #0009; }
+.project-stack__card.is-behind { background:#35382f; }
+.project-card__masthead { padding:17px 23px 9px; color:#c9cdbf; }
+.project-card__art { flex:1 1 280px; min-height:215px; }
+.project-card__content { padding:19px 24px 23px; background:#252723; }
+.project-card__tags { color:#b9c3ad; font-size:9px; }
+.project-card__content h3 { font-size:clamp(29px,2.9vw,42px); margin-block:12px 10px; }
+.project-card__content p { line-height:1.6; font-size:13px; color:#c6c8be; max-width:390px; }
+.project-card__link { border-color:#53594a; padding-top:15px; margin-top:17px; min-height:39px; color:#ffbd68; }
+.project-card__peek { overflow:hidden; }
+.project-card__peek-art { position:absolute; inset:0; opacity:.36; filter:saturate(.7); pointer-events:none; }
+.project-card__peek > span { right:11px; top:24px; padding:6px 1px; color:#ecefe1; background:#252723; text-shadow:0 1px #171817; }
+.project-showcase__count > span,.project-showcase__swipe-hint { color:#b1b3a4; }
+.project-showcase__arrows button { color:#f2f1e9; border-color:#717666; }
+.project-showcase__arrows button:hover { background:#32372d; border-color:#a3ad91; }
+@media (max-width:1000px) and (min-width:701px) { .project-explorer { grid-template-columns:minmax(0,.84fr) minmax(0,1.16fr); column-gap:28px; } .project-stack { height:590px; } .project-card__content { padding:17px 16px 21px; } .project-card__art { min-height:210px; } .project-card__content h3 { font-size:29px; } .project-card__content p { font-size:12px; } .project-list__name { font-size:20px; } }
+@media (max-width:700px) { .selected-work { padding-block:76px 90px; } .selected-work__heading { padding-bottom:35px; } .project-list { scrollbar-color:#62695a transparent; } .project-list__item { min-height:46px; border-color:#505548; } .project-list__item.is-active { border-color:#a28b68; background:#33372e; } .project-list__name { font-size:13px; } .project-stack { height:560px; } .project-stack__card { right:27px; } .project-card__art { min-height:240px; } .project-card__masthead { padding-inline:18px; } .project-card__content { padding:18px 19px 21px; } .project-card__content h3 { font-size:30px; } .project-card__content p { font-size:12px; line-height:1.55; } .project-card__tags { font-size:8px; } .project-card__peek > span { right:9px; font-size:9px; } }
+/* The cropped silhouette lifts the dark chapter into the cream preceding it. */
+.selected-work { background:linear-gradient(to bottom,var(--paper,#f5f4f0) 0 55px,#171817 55px 100%); padding-top:160px; }
+.selected-work::before { width:470px; height:145px; top:0; right:-75px; left:auto; bottom:auto; background:#171817; border-radius:43% 57% 41% 59% / 65% 44% 56% 35%; transform:rotate(-6deg); }
+@media (max-width:700px) { .selected-work { padding-top:118px; background:linear-gradient(to bottom,var(--paper,#f5f4f0) 0 33px,#171817 33px 100%); } .selected-work::before { width:260px; height:95px; top:0; right:-74px; } }

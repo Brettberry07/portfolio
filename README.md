@@ -2,7 +2,7 @@
 
 **Building what's next.** A design-led portfolio for freelance clients and software engineering recruiters, featuring architectural 3D design and seven dedicated project case studies.
 
-> **Current state:** Full portfolio v1 implemented and browser verified: architectural WebGL hero, responsive homepage, layered project selector, seven case-study routes, experience layout, and contact integration. Factual content and email configuration remain pending; see [`docs/PROGRESS.md`](docs/PROGRESS.md).
+> **Current state:** Full portfolio v1 implemented and browser verified: architectural WebGL hero, responsive homepage, layered project selector, seven case-study routes, experience layout, and contact integration. Approved project and résumé facts are populated, and the supplied résumé PDF is available to download; portrait, requested Sketchfab replacement and email configuration remain pending; see [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
 ## Working on this repository
 
@@ -92,9 +92,11 @@ Never make up metrics, roles, private contact info, links, or personal photos. U
 ## Replacing pending content
 
 - `src/content/projects.ts`: seven canonical records. Add approved summaries, role, category, stack, problem, approach, solution, results and permitted links. Change `status` when verified. `heroImage` enables real imagery on the case-study cover.
-- `src/content/experience.ts`: approved roles in reverse chronological order; only `confirmed: true` entries render.
+- `src/content/experience.ts`: approved company/role progression, education, and leadership, in reverse chronological order.
 - `src/content/site.ts`: optional user portrait, actual résumé path, public email and public profile links. Add the actual files under `public/`; absent values retain honest pending states.
-- Homepage positioning copy lives in `src/app/page.tsx`; case-study sections render the typed project fields.
+- Homepage positioning lives in `src/app/page.tsx` and `src/components/sections/About.tsx`; Ways I Work lives beside About. Case-study sections render the typed project fields.
+- Brett's supplied résumé is preserved unchanged at `public/resume/brett-berry-resume.pdf`; `siteAssets.resumeHref` enables the Experience section's download link. Desktop and mobile browser downloads were verified against the original file.
+- The requested Sketchfab hero replacements require an authenticated download. Exact manual steps and licensing are in `public/models/ATTRIBUTION.md`. The existing sculpture is temporarily retained, enlarged and recolored charcoal.
 
 ## Contact delivery
 
