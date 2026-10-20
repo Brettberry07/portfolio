@@ -7,7 +7,7 @@
 - Next.js App Router, compatible current React versions, TypeScript strict, current stable Tailwind setup.
 - Server components by default; use client components only around stateful navigation, Motion, and WebGL.
 - Render text/SEO content as semantic HTML on the server. Decorative WebGL is isolated with a client-only dynamic import (`ssr: false` in a client wrapper where required) and meaningful CSS/image fallback.
-- Prefer native smooth anchor navigation where appropriate, no third-party smooth-scroll engine initially.
+- `SmoothScroll` provides Lenis at the root, advancing its native scroll from Motion's setup phase. No wrapper transforms or second RAF. Native touch, keyboard, history, no-JS anchors and reduced-motion wheel scrolling remain available.
 - Use typed static local data rather than CMS/auth/database for a portfolio.
 
 ## Target structure (created by Codex in Step 1 and expanded later)

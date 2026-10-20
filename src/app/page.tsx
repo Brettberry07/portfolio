@@ -35,7 +35,7 @@ export default function Home() {
             </Reveal>
           </div>
           <div className="sculpture-caption mono"><span className="blue-square" /> FORM / FUNCTION / FORWARD</div>
-          <p className="hero-credits mono"><a href="https://sketchfab.com/3d-models/abstract-cubes-134b55951b9545898009732180ff8ceb">ABSTRACT CUBES BY ANDYLETH</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · MODIFIED</p>
+          <p className="hero-credits mono"><a href="https://sketchfab.com/3d-models/complex-geometric-frames-and-curved-lines-model-287051b7796d4a94b5970f79cd4fc8e5">GEOMETRIC FRAMES BY OMER</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · ADAPTED</p>
           <div className="hero-bottom page-gutter"><a className="mono scroll-cue" href="#about"><ArrowDown size={14} /> SCROLL TO EXPLORE</a><span className="mono">A DIFFERENT PERSPECTIVE.</span><span className="mono">01 — 05</span></div>
         </section>
 

@@ -22,4 +22,8 @@
 | 2026-10-20 | Refine the existing design; preserve Contact unchanged | User's refinement brief supersedes earlier placeholder-only content and cream Projects treatment. Projects becomes a substantial dark chapter; approved project/résumé facts, Ways I Work and distinct concept motifs replace pending content. |
 | 2026-10-20 | Temporarily retain cleared hero geometry after authenticated-download blocker | Both specified Sketchfab downloads require sign-in. Existing Innerscene CC0 mesh is enlarged/recolored; no substitute model, extracted viewer asset or unsupported download is used. Exact manual acquisition step is recorded in the model attribution document. |
 
+| 2026-10-20 | Supplied Omer frames replace the temporary sculpture | Five premade rectangular frames are reoriented into a knot; curves removed, CC BY 4.0 attribution retained, optimized GLB 106 KB. |
+| 2026-10-20 | Add Lenis per explicit refinement request | One Motion setup loop, native touch/reduced-motion wheel input; same-page anchors preserve history and offsets. Supersedes the initial no-Lenis decision. |
+| 2026-10-20 | Apply scroll transforms exclusively inside the 3D scene | A stationary canvas avoids debounced bounding-box/camera aspect changes. One section-relative progress drives all sculpture transforms; no stop/direction targets or duplicate springs. |
+
 Log only substantive changes, not minor refactors.

@@ -2,7 +2,7 @@
 
 **Building what's next.** A design-led portfolio for freelance clients and software engineering recruiters, featuring architectural 3D design and seven dedicated project case studies.
 
-> **Current state:** Full portfolio v1 implemented and browser verified: architectural WebGL hero, responsive homepage, layered project selector, seven case-study routes, experience layout, and contact integration. Approved project and résumé facts are populated, and the supplied résumé PDF is available to download; portrait, requested Sketchfab replacement and email configuration remain pending; see [`docs/PROGRESS.md`](docs/PROGRESS.md).
+> **Current state:** Full portfolio with Omer's interlocking architectural frames, continuous scroll-driven 3D, Lenis/Motion scrolling, layered section transitions, technical skills showcase and genuine résumé download. Seven project case studies and the original Contact are preserved. Portrait, approved project media and email configuration remain pending; see [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
 ## Working on this repository
 
@@ -32,13 +32,13 @@
 | Style | Tailwind CSS + CSS design tokens |
 | 3D | Three.js + React Three Fiber + Drei |
 | Interaction & scroll animations | **Motion for React** (`npm install motion`, `motion/react`) |
-| Scrolling | Native scrolling + CSS smooth anchors with reduced-motion override |
+| Scrolling | Lenis React provider driven by Motion `frame.setup`; native touch and reduced-motion wheel scrolling |
 | Content | One typed local project source + separate case-study routes |
 | Forms (later) | Zod + Next.js server endpoint + Resend or similar, with anti-spam |
 | Quality | ESLint, strict TypeScript, production build, Playwright Test + CLI |
 | Deployment (later) | Vercel or other Next.js-compatible host |
 
-**No GSAP or Lenis initially.** Motion covers section reveals, scroll-linked motion, project-stack transitions, and interactive UI. Use `useFrame` for real-time 3D animation; do not animate one scene transform simultaneously from competing systems. If a future effect genuinely requires another animation engine, document the need first.
+Motion covers section reveals, scroll-linked motion, project-stack transitions and interactive UI. The October refinement explicitly adds Lenis with `autoRaf: false`; Motion owns its frame loop. R3F applies deterministic 3D transforms from one hero-relative progress value. Keep canvas ancestors stationary to avoid measurement-driven camera jumps. No GSAP.
 
 ## Documents (read selectively)
 
@@ -96,7 +96,7 @@ Never make up metrics, roles, private contact info, links, or personal photos. U
 - `src/content/site.ts`: optional user portrait, actual résumé path, public email and public profile links. Add the actual files under `public/`; absent values retain honest pending states.
 - Homepage positioning lives in `src/app/page.tsx` and `src/components/sections/About.tsx`; Ways I Work lives beside About. Case-study sections render the typed project fields.
 - Brett's supplied résumé is preserved unchanged at `public/resume/brett-berry-resume.pdf`; `siteAssets.resumeHref` enables the Experience section's download link. Desktop and mobile browser downloads were verified against the original file.
-- The requested Sketchfab hero replacements require an authenticated download. Exact manual steps and licensing are in `public/models/ATTRIBUTION.md`. The existing sculpture is temporarily retained, enlarged and recolored charcoal.
+- Brett supplied Omer's Sketchfab model archive. Five rectangular frames are adapted into the active hero; curves are removed. Source, CC BY 4.0 credit and the reproducible importer are documented in `public/models/ATTRIBUTION.md`.
 
 ## Contact delivery
 
@@ -104,4 +104,4 @@ Copy `.env.example` to `.env.local` and supply an actual Resend key, verified se
 
 ## Assets and browser review
 
-See `public/models/ATTRIBUTION.md` for the acquired CC0 sculpture and optimization. The static WebP poster is rendered from the same scene. Fonts are self-hosted with licenses alongside them. Playwright CLI captures live under ignored `output/playwright/`; repeatable smoke screenshots live under `test-results/`. No browser binaries, generated screenshots or secrets are committed.
+See `public/models/ATTRIBUTION.md` for the active CC BY 4.0 sculpture and optimization. Desktop, tablet and mobile WebP posters are rendered from the same scene. Fonts are self-hosted with licenses alongside them. Playwright CLI captures live under ignored `output/playwright/`; repeatable smoke screenshots live under `test-results/`. No browser binaries, generated screenshots or secrets are committed.

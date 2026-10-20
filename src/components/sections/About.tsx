@@ -25,6 +25,11 @@ export function About() {
 
       <div className="about-layout">
         <div className="portrait-composition">
+          <div className="portrait-architecture" aria-hidden="true">
+            <svg viewBox="0 0 200 200" fill="none">
+              <path d="M22 63 101 20l77 43v86l-79 43-77-43V63Z M22 63l77 43 79-43 M99 106v86 M62 42l77 43v85 M62 85l77-43 M62 85v85" />
+            </svg>
+          </div>
           <motion.div
             className="portrait-reveal"
             initial={false}
@@ -47,7 +52,10 @@ export function About() {
           </motion.div>
           <span className="portrait-caption mono">BRETT BERRY / ALWAYS BUILDING</span>
           <motion.div className="about-organic" aria-hidden="true" style={{ y: organicY, rotate: organicRotate }}>
-            <svg viewBox="0 0 130 145"><path d="M54 5C84-11 122 14 118 42C114 67 141 96 115 124C90 150 53 142 38 116C23 90-9 87 4 54C13 31 28 20 54 5Z" fill="currentColor" /></svg>
+            <svg viewBox="-5 -13 150 165">
+              <path className="about-organic-layer" d="M54 5C84-11 122 14 118 42C114 67 141 96 115 124C90 150 53 142 38 116C23 90-9 87 4 54C13 31 28 20 54 5Z" transform="translate(12 -9)" />
+              <path d="M54 5C84-11 122 14 118 42C114 67 141 96 115 124C90 150 53 142 38 116C23 90-9 87 4 54C13 31 28 20 54 5Z" fill="currentColor" />
+            </svg>
           </motion.div>
         </div>
 

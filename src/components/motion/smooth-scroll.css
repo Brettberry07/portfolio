@@ -1,0 +1,2 @@
+/* Lenis writes native scroll position; prevent CSS smooth scrolling from competing. */
+html.lenis { scroll-behavior:auto!important; }

@@ -1,26 +1,39 @@
-# Hero sculpture
+# Hero sculpture attribution
 
-- **Source mesh:** Abstract loop sculpture, by Innerscene (source credits: “Innerscene, adapted from MakeHuman CC0 assets”; mesh metadata identifies original Innerscene sculpture geometry).
-- **Source page:** https://www.innerscene.com/tools/library/3d-parts/abstract-loop-sculpture-6a4b97e1
-- **Source download:** https://www.innerscene.com/api/library/abstract-loop-sculpture-6a4b97e1/download
-- **License:** CC0 1.0 Universal — https://creativecommons.org/publicdomain/zero/1.0/
-- **Retrieved:** 2026-10-20. Source explicitly allows commercial use, modification and redistribution.
-- **Original:** 1,165,896 bytes; GLB with 2K embedded textures, 6,976 triangles including the footing.
-- **Optimized:** `hero-architecture.glb`, 158,676 bytes. `scripts/optimize-sculpture.py` removes textures and unused image data, repacks binary buffers and assigns a neutral material. Source mesh geometry is retained.
-- **Portfolio composition:** footing omitted from rendering; twelve instances of the acquired asymmetric loop share geometry. Depth, spacing, rotation, matte-charcoal materials and studio lighting are art-directed in `SculptureCanvas.tsx`. ~82,944 rendered triangles, DPR capped at 1.5. No external texture/HDRI request.
-- **Static fallback:** `public/images/hero-poster.webp`, a transparent screenshot exported from this portfolio’s R3F canvas and encoded as WebP. It is not a third-party reference screenshot.
+## Active asset — geometric rectangular frames
 
-The stacked-form and twisted-form sculptures evaluated during acquisition are not shipped. All project cover artwork is original SVG/CSS concept artwork, visibly labeled; it is not a project screenshot or deliverable.
+**Complex Geometric Frames And Curved Lines Model**, by **Omer (utopiandigital)**.
+Source: https://sketchfab.com/3d-models/complex-geometric-frames-and-curved-lines-model-287051b7796d4a94b5970f79cd4fc8e5
+License: **Creative Commons Attribution 4.0 International (CC BY 4.0)** — https://creativecommons.org/licenses/by/4.0/
 
-## Refinement — requested replacement blocked (2026-10-20)
+Brett supplied the authorized `Complex Geometric Frames and Curved Lines Model.zip` on 2026-10-20. Sketchfab's official public model metadata confirms the author and CC Attribution 4.0 license; commercial use and modification are allowed with attribution. The ZIP contains a single OBJ; the referenced MTL is absent. No authentication or download controls were bypassed.
 
-The requested assets were inspected through Sketchfab's normal model pages and download buttons:
+- **Original:** ZIP 3,813,606 bytes; OBJ 3,813,390 bytes; 30,740 triangulated surface faces plus an independent Rhino B-spline definition.
+- **Retained geometry:** five sharp rectangular frame components, **4,512 triangles / 3,120 indexed vertices**. Source frame geometry, normals and relative depth positions are retained in the GLB. Bounds: approximately 159.598 × 149.721 × 270 source units, centered at the origin.
+- **Removed:** two curved polygon components (13,760 and 12,468 triangles) and the separate free-form B-spline. No curved decorative geometry is imported into the hero.
+- **Optimization:** discard unused UVs/source material references; index matching position/normal vertices; export binary glTF. No external textures or HDRI are required.
+- **Web asset:** `public/models/geometric-frames.glb`, **106,236 bytes** (97.2% smaller than the supplied OBJ, primarily from excluding curved geometry). Meshes are `Frame-01` through `Frame-05`. The first has 1,504 triangles; each other frame has 752.
+- **Portfolio changes:** matte charcoal physically based material, studio lighting, scaling/rotation/repositioning of source frames into an interlocking architectural composition, responsive camera framing and restrained continuous scroll transforms. These are adaptations of Omer's supplied frame geometry, not a new model claimed as original.
+- **Fallback:** `public/images/hero-poster.webp`, `hero-poster-tablet.webp` and `hero-poster-mobile.webp` are transparent renders exported from the actual portfolio canvas, not copied third-party reference images.
+- **On-site credit:** “Geometric frames by Omer · CC BY 4.0 · Adapted,” with links to source and license. Keep this credit when publishing or redistributing the adapted asset/poster.
 
-- **Primary:** [Abstract Cubes, Andyleth](https://sketchfab.com/3d-models/abstract-cubes-134b55951b9545898009732180ff8ceb). Five supplied sculptures; 8,093 triangles / 3,828 vertices. Public metadata confirms downloadable and [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-- **Fallback:** [Brutalist Sculpture, tblunden](https://sketchfab.com/3d-models/brutalist-sculpture-757f03aaf76a41899f5864d79b2198ce). Page reports approximately 2.6K triangles / 1.3K vertices; CC BY 4.0.
+Reproduce from the unzipped authorized source:
 
-**Neither asset is installed.** Both official Download 3D Model buttons open a Sketchfab sign-in dialog in the available browser session; the supported `/v3/models/{id}/download` endpoints return HTTP 401 (authentication required). Download formats cannot be confirmed before authenticated access. No viewer data, download controls or authentication were bypassed.
+```sh
+node scripts/import-geometric-frames.mjs '/path/to/Complex Geometric Frames and Curved Lines Model.obj'
+```
 
-**Manual step:** Sign in to Sketchfab, open the primary source page, select **Download 3D Model**, and download the supplied glTF/GLB archive if offered (otherwise the original source archive). Place the untouched archive in `public/models/source/abstract-cubes/` or attach it to the chat. The next implementation can inspect the actual mesh and formats, select/recompose supplied geometry, optimize a GLB, replace the hero file and poster, and add accessible on-site credit: “Abstract Cubes by Andyleth, CC BY 4.0; materials/composition modified,” linked to the source and license. Use the specified fallback only if the primary geometry is unsuitable.
+The importer explicitly filters Rhino free-form curve metadata before OBJLoader parsing: the `parm` keyword would otherwise be mistaken for an OBJ point primitive. It verifies the expected connected-component structure before removing the two curves.
 
-Per the user's explicit fallback instruction, the already-cleared Innerscene mesh remains temporarily. It is now larger, matte charcoal, directionally lit and framed beneath foreground typography, with restrained pointer/idle movement and Motion scroll exit. Its geometry remains rounded; the requested sharp architectural replacement is still outstanding. Its revised transparent poster was exported from the updated canvas.
+**Source integrity (SHA-256):**
+
+- ZIP: `1c5750d3f49f0c296c4a354d9503a9a52a5f25913107d5a68646db6cebe963ae`
+- OBJ: `30fe9a597133d07bf3c9a663c10879511a837c825cde5a081326a6661a798986`
+- GLB: `0995e02208e9bf87f75dddc913f3b7d04ed74037fde3079aab39c6c1860230bd`
+
+## Earlier assets retained in the repository
+
+- **Abstract Cubes**, by **Andyleth**, https://sketchfab.com/3d-models/abstract-cubes-134b55951b9545898009732180ff8ceb — [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Brett supplied the FBX archive. `scripts/import-abstract-cubes.mjs` extracts the 1,031-triangle stepped sculpture (`Cube-04`), centers it, strips textures and applies charcoal material. `public/models/abstract-cubes.glb`: 42,676 bytes. Superseded by Omer's open rectangular geometry; not the active hero.
+- **Abstract loop sculpture**, by **Innerscene**, https://www.innerscene.com/tools/library/3d-parts/abstract-loop-sculpture-6a4b97e1 — [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). `public/models/hero-architecture.glb`: 158,676 bytes. Original 1,165,896-byte textured GLB optimized by `scripts/optimize-sculpture.py`. Superseded; not the active hero.
+
+All project cover artwork is original SVG/CSS concept artwork, visibly labeled; it is not a project screenshot or deliverable. Reference images in documentation are never published as portfolio assets.

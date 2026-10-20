@@ -1,24 +1,28 @@
 /* Hero-only composition: Contact retains its original tokens and styling. */
 .hero .hero-heading { z-index:4; }
-.hero .hero-sculpture { width:83%; height:82%; top:21%; right:-16%; z-index:1; pointer-events:none; }
-.sculpture-stage { position:absolute; inset:0; mask-image:linear-gradient(to bottom,transparent,#000 30%); }
+.hero-scene-boundary { position:absolute; inset:0; z-index:1; pointer-events:none; }
+.hero .hero-sculpture { width:112%; height:100%; top:3%; right:-29%; z-index:1; pointer-events:none; }
+.sculpture-stage { position:absolute; inset:0; mask-image:linear-gradient(to bottom,transparent 13%,#000 42%); }
 .hero .hero-copy { z-index:5; }
 .hero .hero-grid { z-index:0; }
-.hero .sculpture-caption { bottom:11%; }
+.hero .hero-bottom { z-index:6; background:linear-gradient(transparent,#f6f6f3e8 85%); }
+.hero .sculpture-caption { display:none; }
 
-.hero-credits { position:absolute; z-index:5; right:6.25%; bottom:9%; font-size:7px; color:var(--text-secondary); }
+.hero-credits { position:absolute; z-index:5; right:6.25%; bottom:10%; font-size:8px; color:#4e514b; background:#f6f6f3ed; padding:9px 12px; border-left:2px solid var(--orange); }
 .hero-credits a { text-decoration:underline; text-underline-offset:3px; }
 .footer-profiles { display:flex; gap:18px; font-size:10px; }
 .footer-profiles a { border-bottom:1px solid #777b71; padding-bottom:4px; }
 @media(min-width:601px) and (max-width:1000px) {
- .hero .hero-sculpture { width:79%; right:-16%; height:72%; top:24%; }
+ .hero .sculpture-poster { background-image:url('/images/hero-poster-tablet.webp'); }
+ .hero .hero-sculpture { width:118%; right:-48%; height:74%; top:17%; }
  .hero .hero-copy { top:48%; width:54%; }
  .hero .hero-tagline { font-size:60px; }
 }
 @media(max-width:600px) {
- .hero .hero-sculpture { width:127%; height:45%; top:22%; right:-17%; }
+ .hero .sculpture-poster { background-image:url('/images/hero-poster-mobile.webp'); }
+ .hero .hero-sculpture { width:132%; height:40%; top:24%; right:-21%; }
  .hero .sculpture-caption { top:59%; bottom:auto; right:6%; }
- .hero-credits { top:61%; bottom:auto; right:6%; font-size:6px; }
+ .hero-credits { top:61%; bottom:auto; right:6%; font-size:6px; padding:6px 8px; }
  .footer-profiles { grid-column:1/-1; gap:20px; font-size:10px; }
  .hero .hero-copy { bottom:99px; }
  .hero .sculpture-stage { mask-image:none; }

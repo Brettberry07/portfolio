@@ -74,6 +74,11 @@ test("reduced motion keeps the sculpture still and anchors native", async ({ pag
   const frame = await canvas.screenshot();
   expect((await canvas.screenshot()).equals(frame)).toBe(true);
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("auto");
+  await page.mouse.move(10, 420);
+  await page.mouse.wheel(0, 250);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(200);
+  await page.getByRole("navigation").getByRole("link", { name: "Experience" }).click();
+  await expect(page.getByRole("heading", { name: "Built on perspective." })).toBeInViewport();
   expect(errors).toEqual([]);
 });
 
@@ -90,7 +95,7 @@ test("WebGL unavailable retains the real sculpture poster and content", async ({
   await checkContent(page);
   await expect(page.locator("canvas")).toHaveCount(0);
   await expect(page.getByTestId("scene-fallback")).toBeVisible();
-  await expect(page.getByTestId("scene-fallback")).toHaveCSS("background-image", /hero-poster.webp/);
+  await expect(page.getByTestId("scene-fallback")).toHaveCSS("background-image", /hero-poster(?:-mobile|-tablet)?\.webp/);
   await page.screenshot({ path: testInfo.outputPath("webgl-fallback.png") });
   expect(errors).toEqual([]);
 });
@@ -122,4 +127,56 @@ test("Ways I Work supports selection, keyboard movement and contextual routes", 
   await page.getByRole("tabpanel").getByRole("link", { name: "City of Bentonville Traffic" }).click();
   await expect(page).toHaveURL(/\/projects\/city-of-bentonville-traffic$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("City of Bentonville Traffic.");
+});
+
+test("hero transforms stay continuous through wheel stops and direction reversals", async ({ page }, testInfo) => {
+  test.setTimeout(60_000);
+  type Snapshot = { progress: number; targetScale: number; scale: number[]; position: number[]; rotation: number[]; camera: number[]; aspect: number; width: number; height: number };
+  const errors = collectErrors(page);
+  await page.goto("/");
+  await expect(page.getByTestId("scene-host")).toHaveAttribute("data-renderer", "webgl");
+  await expect(page.locator("html")).toHaveClass(/lenis/);
+  const sample = () => page.locator("canvas").evaluate((canvas) => (canvas as HTMLCanvasElement & { sculptureSnapshot: () => Snapshot }).sculptureSnapshot());
+  const initial = await sample();
+  const base = initial.scale[0];
+  const results = [];
+  await page.mouse.move(10, 420);
+  for (const delta of [70, 70, 70, -50, -50, -50, -60]) {
+    await page.mouse.wheel(0, delta);
+    // Sample the actual Three transform every frame, including the delayed
+    // measurement window that previously changed camera aspect after a stop.
+    const frames = await page.locator("canvas").evaluate(async (canvas) => {
+      const element = canvas as HTMLCanvasElement & { sculptureSnapshot: () => Snapshot };
+      const frames: Snapshot[] = [];
+      for (let frame = 0; frame < 48; frame++) {
+        await new Promise(requestAnimationFrame);
+        frames.push(element.sculptureSnapshot());
+      }
+      return frames;
+    });
+    for (let index = 0; index < frames.length; index++) {
+      const current = frames[index];
+      expect(current.width).toBe(initial.width);
+      expect(current.height).toBe(initial.height);
+      expect(current.aspect).toBeCloseTo(initial.aspect, 8);
+      expect(current.camera).toEqual(initial.camera);
+      expect(Math.abs(current.scale[0] / base - current.targetScale)).toBeLessThan(0.002);
+      expect(current.targetScale).toBeCloseTo(1 + current.progress * 0.16, 6);
+      if (index) expect(Math.abs(current.scale[0] - frames[index - 1].scale[0])).toBeLessThan(base * 0.005);
+    }
+    const stopped = frames.at(-1)!;
+    const afterStop = await sample();
+    expect(Math.abs(stopped.scale[0] - afterStop.scale[0])).toBeLessThan(base * 0.001);
+    results.push({ delta, frames });
+  }
+  expect((await sample()).progress).toBeCloseTo(0, 2);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.mouse.wheel(0, 60);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(40);
+  await expect.poll(async () => (await sample()).targetScale).toBe(1);
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.mouse.wheel(0, 60);
+  await expect.poll(async () => (await sample()).targetScale).toBeGreaterThan(1.01);
+  await testInfo.attach("scroll-transform-frames.json", { body: JSON.stringify(results), contentType: "application/json" });
+  expect(errors).toEqual([]);
 });

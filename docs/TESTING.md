@@ -59,7 +59,13 @@ The current suite covers the full homepage, animated/still WebGL, real poster fa
 
 - Installed Playwright CLI: baseline and final screenshots of every homepage section at 1440×900, 768×1024, and 390×844. Seven case studies captured at all three widths; no overflow. Original Contact source/styles/API and global tokens remain unchanged; baseline/final appearance reviewed.
 - Interactive checks: Ways I Work hover/tap/arrows/Home/End and contextual routes; project click/keyboard/prev-next/actual touch swipe; selected mobile list stays visible after resizing.
-- Final suite: 14/14, including no-JS and WebGL fallbacks, static reduced-motion canvas, all seven routes, native anchors, honest disabled contact form, and new Ways I Work route flow. Reduced-motion now also asserts no console errors, catching SSR/client motion-style mismatches.
+- Current suite: 16 tests, including no-JS and responsive WebGL poster fallbacks, static reduced-motion canvas, all seven routes, anchors, honest disabled contact form and Ways I Work routes. Reduced-motion asserts no console errors, native wheel input and usable navigation.
 - The intentionally cropped hero canvas is sampled through its drawing buffer for idle-motion assertions. Element screenshots can scroll an oversized canvas out of view and pause its renderer; this is a test-harness artifact.
 - Reviewed and fixed hero/name contrast, mobile sculpture separation, narrow Fig terminal clipping, mobile selector visibility, and reduced-motion hydration consistency. Clean reloads have zero runtime/console errors; upstream Three.Clock deprecation remains.
-- Screenshots: ignored `output/playwright/refine-*`; test artifacts: `test-results/`. Requested Sketchfab replacement is not claimed verified: both normal downloads require sign-in.
+- Screenshots: ignored `output/playwright/refine-*` and `depth-*`; test artifacts: `test-results/`. The supplied Omer model is now integrated and visually verified at all three viewports.
+
+## Scroll-jump regression
+
+The hero exposes a read-only `canvas.sculptureSnapshot()` inspection function for actual Three scale/rotation/position, mapped progress, camera position/aspect and drawing-buffer dimensions. No per-frame DOM writes or React state are used. The regression test samples 48 frames after each of seven small wheel inputs in both directions, including the former 50ms delayed-measurement window. It checks fixed canvas dimensions/camera, scale matching `1 + progress * 0.16`, bounded adjacent-frame changes and stable stop values. Frame records are attached as JSON. It also toggles reduced motion live to verify native input and restored animation.
+
+CLI review additionally checks small scroll stops, screenshots in both directions, anchor offsets/hash history, genuine touch swipe, editable Contact fields, résumé downloads and desktop/tablet/mobile geometry framing. Local software WebGL plus tracing can make the frame-sampling case slow; it has a 60-second limit rather than weakening its continuity assertions.

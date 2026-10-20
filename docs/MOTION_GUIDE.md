@@ -1,6 +1,6 @@
 # Motion and 3D behavior guide
 
-**Read only when implementing animations, scrolling, or WebGL.** Use Motion for React as the **single HTML/UI animation system**. Avoid GSAP and Lenis in the initial build.
+**Read only when implementing animations, scrolling, or WebGL.** Motion for React owns HTML/UI animation. Brett's October refinement explicitly adds Lenis for scroll smoothing; GSAP remains excluded.
 
 ## Ownership boundaries
 
@@ -33,10 +33,18 @@
 
 ## Scroll behavior
 
-- Native scroll is the default, with `scroll-behavior: smooth` only for anchor jumps where supported; disable in `prefers-reduced-motion`.
+- `SmoothScroll` wraps server-rendered children in `ReactLenis root`. `autoRaf: false`; one Motion `frame.setup` callback advances Lenis before `useScroll` reads the native position. Cleanup cancels the callback and the provider destroys its instance.
+- Wheel smoothing uses restrained interpolation; touch stays native (`syncTouch: false`). Reduced motion disables wheel interception and the frame callback; Lenis makes anchor jumps immediate. Textareas retain native input/scroll behavior.
+- Same-page anchors preserve real hashes/history, keyboard focus and CSS scroll-padding offsets. Without JavaScript, native anchors remain functional. Disable CSS smooth scrolling while Lenis is active to prevent competing interpolation.
 - Sticky navigation uses section intersection/scroll tracking, not a permanent rerender on every scroll frame.
 - Keep browser deep links and back/forward navigation functioning.
-- Avoid intercepting the wheel, scroll-jacking, or using a scroll-smoothing library until a demonstrated requirement justifies it.
+- No mandatory snapping or scroll-jacking. Preserve normal browser navigation and user interruption of animated jumps.
+
+### Hero continuity
+
+The stationary hero-sized target supplies one `useScroll` progress value (0–1). `useTransform` maps it to restrained scale (1–1.16), rotations and diagonal translation. R3F `useFrame` reads those values directly without per-frame React state, allocation or a second spring. Lenis already smooths the native scroll position. Idle rotation never changes scale.
+
+Keep the canvas and its HTML ancestors free of scroll-linked transforms. The earlier rotated wrapper changed `getBoundingClientRect`; R3F's 50ms debounced scroll measurement resized the canvas/camera after scrolling stopped. The active scene uses stationary DOM bounds and `resize={{ scroll: false, offsetSize: true, debounce: 0 }}`. Responsive cameras change only on layout breakpoints, never scroll direction or stop events.
 
 ## 3D performance and fallbacks
 
