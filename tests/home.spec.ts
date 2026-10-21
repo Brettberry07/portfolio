@@ -116,24 +116,65 @@ test("no JavaScript retains semantic content, poster, anchors and safe form", as
   await expect(page.getByRole("heading", { name: "Selected work." })).toBeVisible();
   await expect(page.getByRole("button", { name: "Send a message" })).toBeHidden();
   await expect(page.locator(".contact-form")).toHaveAttribute("method", "post");
+  await expect(page.locator(".ways-controls")).toBeHidden();
+  await expect(page.locator(".ways-panel")).toHaveCount(4);
+  for (const panel of await page.locator(".ways-panel").all()) {
+    await panel.scrollIntoViewIfNeeded();
+    await expect(panel.getByRole("heading")).toBeInViewport();
+  }
   await context.close();
 });
 
-test("Ways I Work supports selection, keyboard movement and contextual routes", async ({ page }) => {
-  await page.goto("/#about");
-  const product = page.getByRole("tab", { name: "02 Product development" });
+test("Ways I Work scrolls horizontally, releases, reverses and supports keyboard routes", async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.goto("/");
+  const section = page.locator(".ways-work");
+  await expect(section).toHaveAttribute("data-scroll", "true");
+  // Begin at the native sticky entry, then use real wheel input through all four panels.
+  await section.evaluate(el => window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 96, behavior: "instant" }));
+  await expect.poll(() => page.locator(".ways-sticky").evaluate(el => Math.round(el.getBoundingClientRect().top))).toBe(96);
+  const distance = await section.evaluate(el => (el.getBoundingClientRect().height - innerHeight + 96) * .79 / 3);
+  await page.mouse.move(15, 400);
+  for (const index of [1, 2, 3]) {
+    await page.mouse.wheel(0, distance + (index === 1 ? distance * .06 / (.79 / 3) : 0));
+    await expect(page.locator(".ways-controls button").nth(index)).toHaveAttribute("aria-current", "step");
+    await expect.poll(() => page.locator(".ways-sticky").evaluate(el => Math.round(el.getBoundingClientRect().top))).toBe(96);
+  }
+  await page.mouse.wheel(0, 950);
+  await expect.poll(() => page.locator(".ways-sticky").evaluate(el => el.getBoundingClientRect().top)).toBeLessThan(0);
+  await page.locator(".ways-controls button").first().evaluate((el: HTMLButtonElement) => el.click());
+  await expect(page.locator(".ways-controls button").first()).toHaveAttribute("aria-current", "step");
+  const product = page.getByRole("button", { name: "02 Product development", exact: true });
   await product.click();
-  await expect(product).toHaveAttribute("aria-selected", "true");
-  await expect(page.getByRole("tabpanel")).toContainText("Taking ideas from early discovery");
+  await expect(product).toHaveAttribute("aria-current", "step");
   await product.press("ArrowRight");
-  await expect(page.getByRole("tabpanel")).toContainText("Finding inefficiencies");
-  await page.getByRole("tab", { name: "03 Systems & automation" }).press("End");
-  const collaboration = page.getByRole("tab", { name: "04 Client collaboration" });
-  await expect(collaboration).toBeFocused();
-  await expect(collaboration).toHaveAttribute("aria-selected", "true");
-  await page.getByRole("tabpanel").getByRole("link", { name: "City of Bentonville Traffic" }).click();
+  const systems = page.getByRole("button", { name: "03 Systems & automation", exact: true });
+  await expect(systems).toBeFocused();
+  await expect(systems).toHaveAttribute("aria-current", "step");
+  await page.mouse.wheel(0, -distance);
+  await expect(product).toHaveAttribute("aria-current", "step");
+  await product.press("End");
+  await expect(page.getByRole("button", { name: "04 Client collaboration", exact: true })).toBeFocused();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.locator("#way-panel-3").getByRole("link", { name: "City of Bentonville Traffic" }).click();
   await expect(page).toHaveURL(/\/projects\/city-of-bentonville-traffic$/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("City of Bentonville Traffic.");
+  expect(errors).toEqual([]);
+});
+
+test("Ways I Work shows every panel with reduced motion, including live changes", async ({ page }) => {
+  await page.goto("/");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const section = page.locator(".ways-work");
+  await expect(section).toHaveAttribute("data-scroll", "false");
+  await expect(page.locator(".ways-sticky")).toHaveCSS("position", "relative");
+  await expect(page.locator(".ways-track")).toHaveCSS("transform", "none");
+  for (const panel of await page.locator(".ways-panel").all()) {
+    await panel.scrollIntoViewIfNeeded();
+    await expect(panel.getByRole("heading")).toBeInViewport();
+    await expect(panel.getByRole("link").first()).toBeInViewport();
+  }
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await expect(section).toHaveAttribute("data-scroll", "true");
 });
 
 test("hero transforms stay continuous through wheel stops and direction reversals", async ({ page }, testInfo) => {

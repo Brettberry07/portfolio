@@ -71,9 +71,7 @@ export function About() {
           </h2>
           </RevealSequence>
           <Reveal className="about-prose">
-            <p>I&apos;m Brett, a computer science student and multidisciplinary builder working at the intersection of software, product development, and practical problem-solving.</p>
-            <p>I take ideas from early conversations through research, design, and engineering to something people can actually use. My work spans large-scale data systems, AI applications, robotics, battery analytics, and operational improvements.</p>
-            <p>I&apos;m most interested in the problem behind a request: working directly with the people experiencing it, and building something that makes a measurable difference.</p>
+            <p>I&apos;m Brett, a computer engineering student who builds software and products around real-world problems. I work directly with the people experiencing them, connecting research, design, and engineering to turn early ideas into something useful.</p>
             <a className="quiet-link" href="#contact">Good things start with a conversation <ArrowUpRight size={17} /></a>
           </Reveal>
         </div>
