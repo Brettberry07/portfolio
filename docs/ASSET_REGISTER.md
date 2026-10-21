@@ -10,6 +10,7 @@ This register covers **production assets**. Inspiration screenshots in `docs/ref
 | Résumé | `public/resume/brett-berry-resume.pdf` | Implemented | Brett's supplied current PDF; 55,171 bytes, one page; exact byte match to original |
 | Seven project hero images | `public/images/projects/{slug}.*` | Missing | User-supplied or license-cleared; respect confidential clients |
 | Geometric / organic motifs | CSS/SVG in homepage sections and project art | Implemented | Original lightweight decorative artwork; no third-party reference images copied |
+| Experience trade globe / double AA batteries | `src/components/sections/ExperienceIllustrations.tsx` | Implemented | Original inline SVG line art authored for Brett’s October 21 experience brief. Supplied globe image used only as a composition reference; no reference bitmap published. |
 | Studio HDRI | Not required | Omitted | Local procedural studio lighting avoids an external HDRI download |
 
 ## Sourcing and optimization
