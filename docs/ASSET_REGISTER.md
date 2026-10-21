@@ -4,7 +4,7 @@ This register covers **production assets**. Inspiration screenshots in `docs/ref
 
 | Asset | Intended path | Status | Source / license / notes |
 |---|---|---|---|
-| Hero architectural frames | `public/models/geometric-frames.glb` | Implemented | Brett-supplied Omer OBJ; CC BY 4.0; five sharp rectangular frames, 4,512 triangles, 106,236 bytes. Curved parts removed. Attribution and reproduction: `public/models/ATTRIBUTION.md` |
+| Hero architectural frames | `public/models/geometric-frames.glb` | Implemented | Brett-supplied Omer OBJ; CC BY 4.0; five alternating white/orange rectangular frames and both black curved surfaces, 30,740 triangles, 580,596 bytes. Original arrangement retained. Attribution and reproduction: `public/models/ATTRIBUTION.md` |
 | Hero poster/fallback | `public/images/hero-poster{,-tablet,-mobile}.webp` | Implemented | Three responsive transparent renders exported from the portfolio's actual canvas; same source attribution applies |
 | Brett portrait | `public/images/about-brett.jpg` | Missing | User-supplied only; clean replaceable portrait slot remains |
 | Résumé | `public/resume/brett-berry-resume.pdf` | Implemented | Brett's supplied current PDF; 55,171 bytes, one page; exact byte match to original |
@@ -31,7 +31,7 @@ This register covers **production assets**. Inspiration screenshots in `docs/ref
 
 ## Implementation provenance — 2026-10-20
 
-The current hero uses Omer's premade frame geometry under CC BY 4.0. The 3.81 MB OBJ is reduced to a 106 KB GLB by excluding curved components, unused UV/material data and indexing vertices. Five frames retain their source geometry; the scene applies matte charcoal materials, architectural composition and studio lighting. The source archive is retained outside the public directory, supplied by Brett.
+The current hero uses Omer's full premade geometry under CC BY 4.0. On 2026-10-21 Brett supplied the OBJ again with a reference showing white parallel frames and a black winding line. The 3.81 MB OBJ is reduced to a 580 KB GLB by discarding unused UV/material data and indexing vertices. All seven polygon components and their relative placement remain; only independent free-form B-spline metadata is excluded. The scene uses alternating porcelain/orange frame materials, a charcoal line and studio lighting. The source archive remains outside the public directory.
 
 The previous Andyleth Abstract Cubes (CC BY 4.0, 42.7 KB selected stepped mesh) and Innerscene loop (CC0, 159 KB) remain documented as superseded assets. Neither is the current hero.
 

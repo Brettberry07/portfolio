@@ -25,18 +25,16 @@ export default function Home() {
             <div className="hero-kicker mono"><span className="status-dot" /> ENGINEERING × PRODUCT × POSSIBILITY</div>
             <HeroName />
           </div>
-          <div className="hero-grid" aria-hidden="true"><span>+</span><span>+</span><span>+</span><span>+</span></div>
           <HeroSculpture />
           <div className="hero-copy page-gutter">
-            <Reveal>
+            <Reveal delay={0.16}>
               <p className="hero-tagline">Building<br /> what&apos;s <span className="next-word">next<svg viewBox="0 0 220 20" aria-hidden="true"><path d="M3 13C58 2 134 4 214 9" /></svg></span>.</p>
-              <p className="hero-description">Software, product, and systems.<br />Built around real-world problems.</p>
+              <p className="hero-description">Built around real world problems.</p>
               <a className="text-link" href="#projects">Explore the work <span className="round-arrow"><ArrowUpRight size={19} /></span></a>
             </Reveal>
           </div>
-          <div className="sculpture-caption mono"><span className="blue-square" /> FORM / FUNCTION / FORWARD</div>
           <p className="hero-credits mono"><a href="https://sketchfab.com/3d-models/complex-geometric-frames-and-curved-lines-model-287051b7796d4a94b5970f79cd4fc8e5">GEOMETRIC FRAMES BY OMER</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · ADAPTED</p>
-          <div className="hero-bottom page-gutter"><a className="mono scroll-cue" href="#about"><ArrowDown size={14} /> SCROLL TO EXPLORE</a><span className="mono">A DIFFERENT PERSPECTIVE.</span><span className="mono">01 — 05</span></div>
+          <div className="hero-bottom page-gutter"><a className="mono scroll-cue" href="#about"><ArrowDown size={14} /> SCROLL TO EXPLORE</a></div>
         </section>
 
         <About />

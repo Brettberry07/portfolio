@@ -112,3 +112,6 @@ img,svg { max-width:100%; }
 @media (max-width:600px) { .hero-tagline br::after { content:" "; } }
 .portrait-photo { object-fit:cover; }
 @media (min-width:601px) and (max-width:1000px) { .hero-sculpture { right:0; width:60%; height:57%; top:35%; } }
+
+/* Entrance motion never controls access to content, including live preference changes. */
+@media(prefers-reduced-motion:reduce) { .entrance,.entrance-sequence .entrance { transform:none!important; clip-path:none!important; opacity:1!important; } }

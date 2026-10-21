@@ -1,5 +1,7 @@
 "use client";
 
+import { revealTransition, revealVariants, useRevealViewport } from "@/components/motion/revealViewport";
+
 import Link from "next/link";
 import { ArrowDownToLine, ArrowUpRight } from "lucide-react";
 import { motion, useReducedMotion, useScroll } from "motion/react";
@@ -18,30 +20,43 @@ const skillGroups = [
   { name: "Infrastructure & Tools", tools: ["Docker", "Git", "Jupyter"] },
 ] as const;
 
-/** One repeatable vector pattern; dot radii grow into a solid field, without animated DOM dots. */
+/** Reused vector columns follow a broad organic contour and merge into Contact. */
 function HalftoneTransition() {
-  const dotField = (spacing: number, rows: number) => Array.from({ length: rows }, (_, row) => {
-    const radius = 0.18 + Math.pow(row / (rows - 1), 1.65) * spacing * 0.87;
+  const dotColumn = (spacing: number, rows: number) => Array.from({ length: rows }, (_, row) => {
+    const growth = Math.min(1, row / (rows - 4));
+    const radius = Number((0.18 + Math.pow(growth, 1.65) * spacing * 0.87).toFixed(3));
     const x = spacing / 2;
     const y = row * spacing + spacing / 2;
     return `M${x - radius},${y}a${radius},${radius} 0 1,0 ${radius * 2},0a${radius},${radius} 0 1,0 -${radius * 2},0`;
   }).join("");
-
+  const field = (id: string, width: number, height: number, spacing: number, rows: number) => (
+    <svg className={`halftone-${id}`} width="100%" height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <g id={`skills-dots-${id}`}>
+          <path d={dotColumn(spacing, rows)} />
+          {/* Overlap column edges so fractional SVG scaling cannot expose paper seams. */}
+          <rect x={-1} y={height * 0.84} width={spacing + 2} height={height} />
+        </g>
+      </defs>
+      {Array.from({ length: Math.ceil(width / spacing) + 2 }, (_, column) => {
+        const x = (column - 1) * spacing;
+        const t = x / width;
+        // Two long curves create an asymmetric rise and dip across the page.
+        const y = height * (0.1 * Math.sin(t * Math.PI * 2 - 0.8) + 0.035 * Math.sin(t * Math.PI * 4 + 0.5));
+        return <use key={column} href={`#skills-dots-${id}`} x={x} y={y.toFixed(3)} />;
+      })}
+    </svg>
+  );
   return <div className="skills-halftone" aria-hidden="true">
-    <svg className="halftone-desktop" width="100%" height="360" xmlns="http://www.w3.org/2000/svg">
-      <defs><pattern id="skills-dots-desktop" width="18" height="360" patternUnits="userSpaceOnUse"><path d={dotField(18, 20)} /></pattern></defs>
-      <rect width="100%" height="360" fill="url(#skills-dots-desktop)" /><rect y="350" width="100%" height="10" />
-    </svg>
-    <svg className="halftone-mobile" width="100%" height="252" xmlns="http://www.w3.org/2000/svg">
-      <defs><pattern id="skills-dots-mobile" width="14" height="252" patternUnits="userSpaceOnUse"><path d={dotField(14, 18)} /></pattern></defs>
-      <rect width="100%" height="252" fill="url(#skills-dots-mobile)" /><rect y="242" width="100%" height="10" />
-    </svg>
+    {field("desktop", 1440, 360, 18, 20)}
+    {field("mobile", 392, 252, 14, 18)}
   </div>;
 }
 
 export function Experience({ resumeHref }: ExperienceProps) {
   const timelineRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
+  const viewport = useRevealViewport();
   const { scrollYProgress } = useScroll({ target: timelineRef, offset: ["start 75%", "end 65%"] });
 
   return (
@@ -66,8 +81,8 @@ export function Experience({ resumeHref }: ExperienceProps) {
           <motion.span className="exp-progress" aria-hidden="true" style={{ scaleY: scrollYProgress }} />
         <ol className="exp-timeline" aria-label="Professional experience, most recent first">
           {experience.map((entry, index) => (
-            <motion.li className="exp-entry" key={entry.company} initial={false} whileInView={reducedMotion ? undefined : { y: [22, 0] }} viewport={{ once: true, amount: 0.16 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
-              <motion.span className="exp-node" aria-hidden="true" initial={false} whileInView={reducedMotion ? undefined : { scale: [0.7, 1] }} viewport={{ once: true }} transition={{ duration: 0.5 }} />
+            <motion.li className="exp-entry entrance" key={entry.company} initial="rest" animate={reducedMotion ? "enter" : undefined} whileInView="enter" viewport={viewport} variants={revealVariants} transition={revealTransition}>
+              <motion.span className="exp-node entrance" aria-hidden="true" variants={{ rest: { scale: 0.85 }, enter: { scale: 1, transition: { ...revealTransition, delay: 0.18 } } }} />
               <div className="exp-entry-meta mono"><span>{entry.dates}</span><span>0{index + 1}</span></div>
               <h3>{entry.company}</h3>
               <span className="exp-location mono">{entry.location}</span>
@@ -87,10 +102,10 @@ export function Experience({ resumeHref }: ExperienceProps) {
           <span className="mono exp-eyebrow">A FOUNDATION IN CURIOSITY</span>
           <h3>Always<br /><span className="subtle-ink">learning.</span></h3>
           <p>Engineering in the classroom. Building, competing, and collaborating beyond it.</p>
-          <motion.div className="exp-organic" aria-hidden="true" initial={false} whileInView={reducedMotion ? undefined : { y: [22, 0], rotate: [-15, -8] }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>
+          <div className="exp-organic" aria-hidden="true">
             <svg viewBox="0 -40 620 650"><path className="exp-organic-underlay" d="M-55 68C11-44 142-30 193 36C245 103 296 3 378 36C466 72 417 173 482 221C553 274 632 335 566 433C502 527 401 455 321 508C217 578 94 533 70 445C45 358-59 397-86 302C-108 225-110 162-55 68Z" /><path d="M-80 95C-14-17 109-12 160 54C212 121 270 15 352 48C440 84 391 186 456 234C527 287 599 348 533 446C469 540 379 464 299 517C195 587 63 535 39 447C14 360-80 406-107 311C-129 234-135 189-80 95Z" fill="currentColor" /></svg>
             <i />
-          </motion.div>
+          </div>
         </Reveal>
         <div className="exp-supporting">
           <div className="exp-education" aria-labelledby="education-title">

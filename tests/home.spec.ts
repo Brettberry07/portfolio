@@ -71,8 +71,15 @@ test("reduced motion keeps the sculpture still and anchors native", async ({ pag
   await checkContent(page);
   await expect(page.getByTestId("scene-host")).toHaveAttribute("data-renderer", "webgl");
   const canvas = page.getByTestId("scene-host").locator("canvas");
-  const frame = await canvas.screenshot();
-  expect((await canvas.screenshot()).equals(frame)).toBe(true);
+  // The overscan canvas extends outside the viewport. Element screenshots scroll
+  // the page and include animated HTML overlays; compare actual WebGL pixels.
+  const frames = await canvas.evaluate(async (element: HTMLCanvasElement) => {
+    await new Promise(requestAnimationFrame);
+    const first = element.toDataURL();
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    return [first, element.toDataURL()];
+  });
+  expect(frames[1]).toBe(frames[0]);
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("auto");
   await page.mouse.move(10, 420);
   await page.mouse.wheel(0, 250);
@@ -164,7 +171,9 @@ test("hero transforms stay continuous through wheel stops and direction reversal
       expect(current.aspect).toBeCloseTo(initial.aspect, 8);
       expect(current.camera).toEqual(initial.camera);
       expect(Math.abs(current.scale[0] / base - current.targetScale)).toBeLessThan(0.002);
-      expect(current.targetScale).toBeCloseTo(1 + current.progress * 0.16, 6);
+      const p = current.progress;
+      const expectedScale = p <= 0.4 ? 1 + p * 0.1 : p <= 0.75 ? 1.04 - (p - 0.4) * (0.03 / 0.35) : 1.01 - (p - 0.75) * 0.12;
+      expect(current.targetScale).toBeCloseTo(expectedScale, 6);
       if (index) expect(Math.abs(current.scale[0] - frames[index - 1].scale[0])).toBeLessThan(base * 0.005);
     }
     const stopped = frames.at(-1)!;
@@ -179,7 +188,79 @@ test("hero transforms stay continuous through wheel stops and direction reversal
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(40);
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.mouse.wheel(0, 60);
-  await expect.poll(async () => (await sample()).targetScale).toBeGreaterThan(1.01);
+  await expect.poll(async () => (await sample()).targetScale).toBeGreaterThan(1.005);
+  await page.waitForTimeout(800); // Let the preceding wheel input finish before the larger stage checks.
+  for (const progress of [0.4, 0.75, 0.95, 0.75, 0.4, 0]) {
+    const target = await page.locator("#home").evaluate((hero, p) => hero.getBoundingClientRect().height * p, progress);
+    await page.mouse.wheel(0, target - await page.evaluate(() => scrollY));
+    await expect.poll(async () => (await sample()).progress).toBeCloseTo(progress, 2);
+    const snapshot = await sample();
+    expect(snapshot.targetScale).toBeLessThanOrEqual(1.04);
+    expect(snapshot.width).toBe(initial.width);
+    expect(snapshot.height).toBe(initial.height);
+    const bounds = await page.evaluate(() => ({
+      heroBottom: document.querySelector("#home")!.getBoundingClientRect().bottom,
+      aboutTop: document.querySelector("#about-title")!.getBoundingClientRect().top,
+      clipping: getComputedStyle(document.querySelector(".hero-scene-boundary")!).overflow,
+    }));
+    expect(bounds.clipping).toBe("clip");
+    expect(bounds.heroBottom).toBeLessThan(bounds.aboutTop);
+  }
   await testInfo.attach("scroll-transform-frames.json", { body: JSON.stringify(results), contentType: "application/json" });
   expect(errors).toEqual([]);
+});
+
+test("entrances wait for the reading area and progress without a backward jump", async ({ page }, testInfo) => {
+  await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.getByTestId("scene-host")).toHaveAttribute("data-renderer", "webgl");
+  // Let the initial shader compilation/render finish before timing an entrance.
+  // Software WebGL can block JS sampling while a compositor animation continues.
+  await page.locator("canvas").evaluate(async () => {
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+  });
+  const sequence = page.locator(".about-copy .entrance-sequence");
+  const lines = page.locator(".about-heading-line > span");
+  const height = page.viewportSize()!.height;
+  const top = await sequence.evaluate((element) => element.getBoundingClientRect().top + scrollY);
+  const poses = () => lines.evaluateAll((elements) => elements.map((element) => new DOMMatrixReadOnly(getComputedStyle(element).transform).m42));
+
+  // Content is already readable at the bottom, but has not spent its entrance.
+  await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), top - height * 0.8);
+  await expect.poll(poses).toEqual([18, 18]);
+  await page.waitForTimeout(200);
+  expect(await poses()).toEqual([18, 18]);
+
+  // Both lines share one stationary cue; the second follows the first.
+  // Start recording in the same browser task as the trigger; a protocol round
+  // trip can miss an entire compositor animation under software-WebGL load.
+  const frames = await lines.first().evaluate(async (element, target) => {
+    const lines = element.closest("h2")!.querySelectorAll(".entrance");
+    const frames: { time: number; y: number[] }[] = [];
+    const start = performance.now();
+    window.scrollTo({ top: target, behavior: "instant" });
+    while (performance.now() - start < 1800) {
+      await new Promise(requestAnimationFrame);
+      frames.push({ time: performance.now() - start, y: Array.from(lines, (line) => new DOMMatrixReadOnly(getComputedStyle(line).transform).m42) });
+    }
+    return frames;
+  }, top - height * 0.43);
+  await testInfo.attach("entrance-frames.json", { body: JSON.stringify(frames), contentType: "application/json" });
+  let previous = [18, 18];
+  for (const frame of frames) {
+    for (let line = 0; line < 2; line++) {
+      expect(frame.y[line]).toBeGreaterThanOrEqual(-0.05);
+      expect(frame.y[line]).toBeLessThanOrEqual(previous[line] + 0.05);
+    }
+    expect(frame.y[0]).toBeLessThanOrEqual(frame.y[1] + 0.05);
+    previous = frame.y;
+  }
+  expect(frames.some((frame) => frame.y[1] - frame.y[0] > 1)).toBe(true);
+  await expect.poll(poses).toEqual([0, 0]);
+  await page.screenshot({ path: testInfo.outputPath("reading-area.png") });
+  // Once is intentional: returning to a section must not reset visible text.
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+  await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), top - height * 0.43);
+  expect(await poses()).toEqual([0, 0]);
 });

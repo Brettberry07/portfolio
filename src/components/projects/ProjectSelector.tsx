@@ -1,5 +1,7 @@
 "use client";
 
+import { Reveal } from "@/components/motion/Reveal";
+
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion, type PanInfo } from "motion/react";
@@ -71,10 +73,10 @@ export function ProjectSelector() {
         <span>02 / SELECTED WORK</span>
         <span>Ideas made tangible.</span>
       </div>
-      <motion.div className="selected-work__heading" initial={false} whileInView={reducedMotion ? undefined : { y: [24, 0] }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
+      <Reveal className="selected-work__heading">
         <h2 id="selected-work-title">Selected work<span>.</span></h2>
         <ArrowDownLeft aria-hidden="true" strokeWidth={1.2} />
-      </motion.div>
+      </Reveal>
 
       <noscript>
         <nav className="project-noscript" aria-label="Project case studies">
@@ -89,7 +91,7 @@ export function ProjectSelector() {
         </nav>
       </noscript>
 
-      <div className="project-explorer" onKeyDown={onKeyDown}>
+      <Reveal className="project-explorer" onKeyDown={onKeyDown}>
         <div className="project-explorer__index">
           <p className="project-explorer__hint" id="project-explorer-hint">Seven projects. Different perspectives.</p>
           <ol ref={listRef} className="project-list" aria-label="Select a project">
@@ -184,7 +186,7 @@ export function ProjectSelector() {
             </div>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
