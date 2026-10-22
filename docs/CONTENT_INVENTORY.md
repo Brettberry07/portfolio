@@ -24,7 +24,7 @@ Each case study uses overview, context, role/approach, solution/workflow, outcom
 
 Tariff Ninja and Potential Energy Tech roles above are verified by the user; both are in Bentonville, Arkansas. Tariff Ninja is one company entry with two dated roles.
 
-- University of Arkansas, Fayetteville: B.S. Computer Engineering; Innovation & Entrepreneurship minor; GPA 4.0; expected May 2030.
+- University of Arkansas, Fayetteville: B.S. Computer Engineering; Innovation & Entrepreneurship and Mathematics minors; GPA 4.0; expected May 2030.
 - Bentonville West High School: May 2026, High Honors, GPA 4.25; Ignite Professional Studies Technology Strand.
 - RIOT Robotics, University of Arkansas: developing low-cost impact-detection vest for a local business.
 - Founder, BWHS Competitive Programming Club: seven statewide/national awards.
@@ -32,7 +32,7 @@ Tariff Ninja and Potential Energy Tech roles above are verified by the user; bot
 - VEX Robotics: Arkansas State Innovate Award, two regional Innovate Awards, World Championship qualification.
 - Arkansas Hog Hacks: Most Creative Award, sixth overall as a high-school team.
 
-Approved toolkit: TypeScript, JavaScript, Ruby, C++, Python, Rust; Next.js, React, Rails, Docker, PostgreSQL/SQL, Git, Jupyter. Do not attribute a toolkit technology to a specific project without evidence.
+Approved toolkit: TypeScript, JavaScript, Ruby, C++, Python, Rust; Next.js, React, React Native, Tailwind CSS, Rails, Supabase, Docker, PostgreSQL/SQL, Git, Jupyter. Do not attribute a toolkit technology to a specific project without evidence.
 
 ## Public links and Contact preservation
 

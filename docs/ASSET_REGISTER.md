@@ -4,12 +4,14 @@ This register covers **production assets**. Inspiration screenshots in `docs/ref
 
 | Asset | Intended path | Status | Source / license / notes |
 |---|---|---|---|
-| Hero architectural frames | `public/models/geometric-frames.glb` | Implemented | Brett-supplied Omer OBJ; CC BY 4.0; five sharp rectangular frames, 4,512 triangles, 106,236 bytes. Curved parts removed. Attribution and reproduction: `public/models/ATTRIBUTION.md` |
+| Hero architectural frames | `public/models/geometric-frames.glb` | Implemented | Brett-supplied Omer OBJ; CC BY 4.0; five alternating white/orange rectangular frames and both black curved surfaces, 30,740 triangles, 580,596 bytes. Original arrangement retained. Attribution and reproduction: `public/models/ATTRIBUTION.md` |
 | Hero poster/fallback | `public/images/hero-poster{,-tablet,-mobile}.webp` | Implemented | Three responsive transparent renders exported from the portfolio's actual canvas; same source attribution applies |
 | Brett portrait | `public/images/about-brett.jpg` | Missing | User-supplied only; clean replaceable portrait slot remains |
 | Résumé | `public/resume/brett-berry-resume.pdf` | Implemented | Brett's supplied current PDF; 55,171 bytes, one page; exact byte match to original |
 | Seven project hero images | `public/images/projects/{slug}.*` | Missing | User-supplied or license-cleared; respect confidential clients |
 | Geometric / organic motifs | CSS/SVG in homepage sections and project art | Implemented | Original lightweight decorative artwork; no third-party reference images copied |
+| Experience trade globe / double AA batteries | `src/components/sections/ExperienceIllustrations.tsx` | Implemented | Original inline SVG line art authored for Brett’s October 21 experience brief. Supplied globe image used only as a composition reference; no reference bitmap published. |
+| Toolkit technology icons | `src/components/sections/Toolkit.tsx`, `public/icons/toolkit/*.svg` | Implemented | Ten SVG marks supplied by Brett in chat (Next.js, Python, TypeScript, PostgreSQL, JavaScript, Tailwind CSS, SQL, C++, Rust, Rails), cleaned of empty carrier groups/IDs and normalized to currentColor. Original path geometry/viewBoxes retained; masks inherit the category palette. Supplied markup carries SVGRepo identifiers; individual source URLs/license metadata were not provided. Seven remaining glyphs use the existing ISC-licensed `lucide-react` dependency. |
 | Studio HDRI | Not required | Omitted | Local procedural studio lighting avoids an external HDRI download |
 
 ## Sourcing and optimization
@@ -31,7 +33,7 @@ This register covers **production assets**. Inspiration screenshots in `docs/ref
 
 ## Implementation provenance — 2026-10-20
 
-The current hero uses Omer's premade frame geometry under CC BY 4.0. The 3.81 MB OBJ is reduced to a 106 KB GLB by excluding curved components, unused UV/material data and indexing vertices. Five frames retain their source geometry; the scene applies matte charcoal materials, architectural composition and studio lighting. The source archive is retained outside the public directory, supplied by Brett.
+The current hero uses Omer's full premade geometry under CC BY 4.0. On 2026-10-21 Brett supplied the OBJ again with a reference showing white parallel frames and a black winding line. The 3.81 MB OBJ is reduced to a 580 KB GLB by discarding unused UV/material data and indexing vertices. All seven polygon components and their relative placement remain; only independent free-form B-spline metadata is excluded. The scene uses alternating porcelain/orange frame materials, a charcoal line and studio lighting. The source archive remains outside the public directory.
 
 The previous Andyleth Abstract Cubes (CC BY 4.0, 42.7 KB selected stepped mesh) and Innerscene loop (CC0, 159 KB) remain documented as superseded assets. Neither is the current hero.
 

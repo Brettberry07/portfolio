@@ -14,7 +14,9 @@
 
 - Install `motion` and use `import { motion, AnimatePresence, useScroll, useTransform, useSpring, useReducedMotion } from "motion/react"` in **client** components.
 - For a simple presentational motion element in a Next.js server component, consider `motion/react-client` when appropriate; don't accidentally import client-only hooks into a server component.
-- Use `whileInView` for simple reveals, with clear initial content defaults and conservative offsets.
+- Use `whileInView` with an explicit initial pose and scalar targets for entrances. Never combine `initial={false}` with offset keyframe arrays: that renders the final layout, then jumps backward when the observer fires. Shared `useRevealViewport` observes only the upper 62% of viewport height (resize-aware pixel margin; IntersectionObserver percentages use width). Content remains readable before entry; no opacity-zero gates.
+- Shared entrances move 18px over 1.05s with a gradual `[0.4,0,0.2,1]` curve. Heading statements share one stationary `RevealSequence` with 160ms overlap; 45% of the entire heading must enter the reading area first, keeping the second statement clear of the bottom edge. Portrait scale is only 0.985 → 1; prose waits for its own reading-area cue on mobile. Timeline markers inherit their entry’s trigger. Avoid nested observers/transform animations on an already moving ornament. Projects’ heading leads the explorer; the hero supporting statement follows the name by 160ms.
+- Entrances run once; reverse scrolling does not reset them. Reduced-motion CSS immediately removes transforms, including on live preference changes. The root no-JS style restores the final pose, including clipped text lines. Keep hero scroll transforms unchanged.
 - Use `useScroll` + `useTransform` to drive scroll progress within a section, and `useSpring` only to smooth values when useful.
 - Use `AnimatePresence` only for genuinely entering/leaving content, e.g. project-specific summaries or overlay states. For the layered cards, `layout` or carefully controlled x/y/scale/opacity spring transitions are appropriate.
 - Use Motion pointer and drag gestures on mobile-friendly controls, but preserve tapping, arrows, keyboard, and accessible state indications.
@@ -29,6 +31,8 @@
 
 **Experience:** thin progress line and timeline nodes reveal as they enter viewport. All experience information remains available without motion.
 
+**Toolkit:** Four native sticky stages keep a borderless technology grid fixed to the left of a black/orange editorial panel. Three centered 5–7–5 icon columns become compact rows on phones; ten user-supplied SVG marks share the color system with seven Lucide glyphs. One Motion scroll value selects the category with a small threshold dead band; glyphs activate once the grid enters view, with 80ms staggering and scale 1 → 1.06. No wheel or touch interception. Numbered buttons support direct navigation and arrows/Home/End. Short viewports (<780px tall, or <820px on phones), reduced motion and no-JS show every category in normal flow.
+
 **Contact:** dark transition via layout/background changes, not full-screen flashing; concise form feedback; no fake network success.
 
 ## Scroll behavior
@@ -42,9 +46,9 @@
 
 ### Hero continuity
 
-The stationary hero-sized target supplies one `useScroll` progress value (0–1). `useTransform` maps it to restrained scale (1–1.16), rotations and diagonal translation. R3F `useFrame` reads those values directly without per-frame React state, allocation or a second spring. Lenis already smooths the native scroll position. Idle rotation never changes scale.
+The stationary hero-sized target supplies one `useScroll` progress value (0–1, hero top to hero bottom). At 0 / 40 / 75 / 100%, scale maps to 1 / 1.04 / 1.01 / 0.98. Rotation leads the motion: X changes 4° and Y 10°, halved on mobile. Right/up translation increases during the retreat and exit. R3F reads all values directly in `useFrame`, without per-frame React state, allocations or an additional spring. Lenis already smooths the native scroll position. Idle motion never changes scale.
 
-Keep the canvas and its HTML ancestors free of scroll-linked transforms. The earlier rotated wrapper changed `getBoundingClientRect`; R3F's 50ms debounced scroll measurement resized the canvas/camera after scrolling stopped. The active scene uses stationary DOM bounds and `resize={{ scroll: false, offsetSize: true, debounce: 0 }}`. Responsive cameras change only on layout breakpoints, never scroll direction or stop events.
+Keep canvas HTML ancestors stationary. The earlier rotated wrapper changed `getBoundingClientRect`; R3F's debounced measurement resized the camera after scrolling stopped. Preserve `resize={{ scroll: false, offsetSize: true, debounce: 0 }}` and page-width camera breakpoints. The model's base scale is 12% smaller, with responsive right-weighted framing. The stationary hero boundary clips both WebGL and poster before About, with a short feather over its final 4% to soften the edge. No sculpture can cross the About divider, heading or portrait. The poster uses the matching 12% reduction. The latest user-requested hero refinement supersedes the previous overflow/no-mask direction. Reduced motion keeps a static scene and the same section boundary.
 
 ## 3D performance and fallbacks
 

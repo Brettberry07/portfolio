@@ -4,7 +4,7 @@ export type Experience = {
   location: string;
   dates: string;
   roles: readonly { title: string; dates: string }[];
-  highlights: readonly string[];
+  summary: string;
   emphasis: { value: string; label: string };
   projectSlug: string;
 };
@@ -18,11 +18,7 @@ export const experience: readonly Experience[] = [
       { title: "Lead Software Engineer", dates: "July – September 2026" },
       { title: "Software Engineer", dates: "February – July 2026" },
     ],
-    highlights: [
-      "Developed human-in-the-loop, retrieval-augmented AI classification for HTS codes, customs filings, tariff-saving opportunities, and tariff-risk forecasting.",
-      "Built data infrastructure for document processing, item management, and freight tracking, alongside a full-stack lead allocation tool with company search, scoring, and Apollo integration.",
-      "Worked directly with clients to define requirements, led engineering planning, and coordinated technical implementation across projects.",
-    ],
+    summary: "Led the development of AI-powered customs and trade software, building large-scale data infrastructure, automated workflows, and customer-focused tools.",
     emphasis: { value: "1.5M+", label: "items supported by the data infrastructure" },
     projectSlug: "tariff-ninja",
   },
@@ -33,10 +29,7 @@ export const experience: readonly Experience[] = [
     roles: [
       { title: "Software Engineer Intern", dates: "January – May 2026" },
     ],
-    highlights: [
-      "Developed a battery-analysis web platform spanning multiple file formats and test types, with a high-performance calculation system.",
-      "Contributed to SaaS planning, cloud storage architecture, and subscription pricing strategy—connecting engineering decisions with the product around them.",
-    ],
+    summary: "Developed high-performance battery analysis software and contributed to the architecture and product strategy of a data-driven SaaS platform.",
     emphasis: { value: "1.2M+", label: "data points processed in under a second" },
     projectSlug: "potential-energy-tech",
   },
@@ -48,16 +41,8 @@ export const education = [
     location: "Fayetteville",
     dates: "EXPECTED MAY 2030",
     qualification: "B.S. Computer Engineering",
-    detail: "Minor in Innovation & Entrepreneurship",
+    detail: "Minors in Innovation & Entrepreneurship and Mathematics",
     note: "4.0 GPA",
-  },
-  {
-    institution: "Bentonville West High School",
-    location: "",
-    dates: "GRADUATED MAY 2026",
-    qualification: "High Honors",
-    detail: "Ignite Professional Studies · Technology Strand",
-    note: "4.25 GPA",
   },
 ] as const;
 

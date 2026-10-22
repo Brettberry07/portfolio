@@ -14,5 +14,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en" className={`${display.variable} ${mono.variable}`}><body><SmoothScroll>{children}</SmoothScroll></body></html>;
+  return <html lang="en" className={`${display.variable} ${mono.variable}`}><body><noscript><style>{`.entrance{transform:none!important;clip-path:none!important}`}</style></noscript><SmoothScroll>{children}</SmoothScroll></body></html>;
 }

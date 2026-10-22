@@ -1,9 +1,9 @@
 /**
- * Import Brett's authorized OBJ download; retain only the five architectural frames.
+ * Import Brett's authorized OBJ download; retain all five frames and both winding polygon components.
  * Source: Omer, CC BY 4.0. See public/models/ATTRIBUTION.md for attribution.
  * Usage: node scripts/import-geometric-frames.mjs /path/to/model.obj [output.glb]
- * Keeps supplied frame vertices/normals and relative placement. Removes two curved
- * polygon components plus the separate unsupported Rhino B-spline declaration.
+ * Keeps supplied vertices/normals and relative placement. Only the independent
+ * unsupported Rhino B-spline declaration is omitted; its polygon surfaces remain.
  */
 import fs from "node:fs";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
@@ -43,19 +43,24 @@ for (let index = 0; index < positions.count; index += 3) {
 }
 const sorted = [...components.values()].sort((a, b) => b.triangles.length - a.triangles.length);
 if (sorted.length !== 7 || sorted[0].triangles.length !== 13760 || sorted[1].triangles.length !== 12468) throw new Error("Expected five frames and two curved components; inspect changed input.");
-const frames = sorted.slice(2);
-const bounds = frames.reduce((box, frame) => box.union(frame.bounds), new Box3());
+// Alternate by physical depth, rather than connected-component triangle count.
+const frames = sorted.slice(2).sort((a, b) => b.bounds.min.z - a.bounds.min.z);
+const parts = [...sorted.slice(0, 2), ...frames];
+const bounds = parts.reduce((box, frame) => box.union(frame.bounds), new Box3());
 const center = bounds.getCenter(new Vector3());
 const output = new Group();
-output.name = "Architectural frames — Omer";
+output.name = "Architectural frames and winding line — Omer";
 output.userData = {
   author: "Omer (utopiandigital)", license: "CC BY 4.0",
   source: "https://sketchfab.com/3d-models/complex-geometric-frames-and-curved-lines-model-287051b7796d4a94b5970f79cd4fc8e5",
-  modifications: "Removed curved components and B-spline; centered frames; omitted source materials and UVs; assigned matte charcoal."
+  modifications: "Retained all polygon components and source arrangement; centered; omitted independent B-spline and unused UVs; assigned alternating porcelain/orange frames and charcoal curves."
 };
-const material = new MeshStandardMaterial({ name: "Matte charcoal", color: "#252824", roughness: 0.82, metalness: 0.05 });
+const frameMaterial = new MeshStandardMaterial({ name: "Porcelain frames", color: "#f4f8f8", roughness: 0.48, metalness: 0.04 });
+// Studio-compensated orange renders close to the site accent (#ffac42).
+const orangeMaterial = new MeshStandardMaterial({ name: "Accent orange frames", color: "#ff8f28", roughness: 0.48, metalness: 0.04 });
+const curveMaterial = new MeshStandardMaterial({ name: "Charcoal winding line", color: "#171b1b", roughness: 0.6, metalness: 0.08 });
 const statistics = [];
-for (const [index, frame] of frames.entries()) {
+for (const [index, frame] of parts.entries()) {
   const vertexData = [], normalData = [];
   for (const triangle of frame.triangles) for (let vertex = triangle; vertex < triangle + 3; vertex++) {
     vertexData.push(positions.getX(vertex) - center.x, positions.getY(vertex) - center.y, positions.getZ(vertex) - center.z);
@@ -65,8 +70,9 @@ for (const [index, frame] of frames.entries()) {
   part.setAttribute("position", new Float32BufferAttribute(vertexData, 3));
   part.setAttribute("normal", new Float32BufferAttribute(normalData, 3));
   const indexed = mergeVertices(part, 0.000001);
-  const mesh = new Mesh(indexed, material);
-  mesh.name = `Frame-${String(index + 1).padStart(2, "0")}`;
+  const curve = index < 2;
+  const mesh = new Mesh(indexed, curve ? curveMaterial : (index - 2) % 2 === 1 ? orangeMaterial : frameMaterial);
+  mesh.name = curve ? `Curve-${index + 1}` : `Frame-${String(index - 1).padStart(2, "0")}`;
   output.add(mesh);
   statistics.push({ name: mesh.name, triangles: frame.triangles.length, vertices: indexed.getAttribute("position").count, dimensions: frame.bounds.getSize(new Vector3()).toArray(), center: frame.bounds.getCenter(new Vector3()).sub(center).toArray() });
 }
