@@ -111,3 +111,33 @@
   .ways-work .ways-panel { min-height:420px; padding:30px 0; }
   .ways-work .ways-controls,.ways-work .ways-progress,.ways-work .ways-scroll-hint { display:none; }
 }
+
+.ways-mobile-hint { display:none; }
+/* Phones use an independent native carousel; vertical scrolling never pins it. */
+@media(max-width:600px) {
+  .ways-work[data-scroll] { height:auto; margin-block:95px 110px; }
+  .ways-work[data-scroll] .ways-sticky { position:relative; top:auto; height:auto; max-height:none; }
+  .ways-work .ways-surface { padding:28px 6vw 46px; }
+  .ways-work .ways-heading { align-items:flex-end; padding-bottom:20px; }
+  .ways-work .ways-eyebrow { font-size:8px; margin-bottom:9px; }
+  .ways-work .ways-heading h3 { font-size:30px; }
+  .ways-work[data-scroll] .ways-scroll-hint { display:flex; gap:7px; font-size:8px; color:#56584f; padding-bottom:3px; }
+  .ways-desktop-hint { display:none; }
+  .ways-mobile-hint { display:inline; }
+  .ways-scroll-hint svg { transform:rotate(-90deg); width:12px; }
+  .ways-work[data-scroll] .ways-window { overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; overscroll-behavior-x:contain; scrollbar-width:none; }
+  .ways-window::-webkit-scrollbar { display:none; }
+  .ways-work[data-scroll] .ways-track { display:flex; width:100%; height:auto; transform:none!important; }
+  .ways-work[data-scroll] .ways-panel { flex:0 0 100%; min-height:0; padding:23px 2px 24px; gap:25px; scroll-snap-align:start; scroll-snap-stop:always; border-bottom:0; }
+  .ways-panel-top>.mono { font-size:9px; }
+  .ways-work .ways-glyph,.ways-work .ways-folio { display:none; }
+  .ways-work .ways-statement h4 { font-size:32px; line-height:1.08; max-width:100%; }
+  .ways-work .ways-statement p { font-size:14px; line-height:1.55; margin-top:18px; max-width:100%; }
+  .ways-work .ways-examples { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 18px; }
+  .ways-work .ways-examples>.mono { grid-column:1/-1; font-size:8px; margin-bottom:0; }
+  .ways-work .ways-examples>a { display:grid; grid-template-columns:minmax(0,1fr) auto; align-self:stretch; min-height:44px; font-size:12px; line-height:1.35; }
+  .ways-work[data-mobile="true"] .ways-controls { display:grid; gap:12px; padding-top:12px; }
+  .ways-work .ways-controls button { min-height:44px; }
+  .ways-work .ways-controls button>.mono { width:28px; height:28px; }
+  .ways-work[data-scroll] .ways-progress { display:none; }
+}

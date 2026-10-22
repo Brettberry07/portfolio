@@ -27,6 +27,8 @@
 
 **About:** photo mask/scale-in, gentle copy reveal, restrained geometric accent. Text always remains visible if JS or reduced motion is disabled.
 
+**Ways I Work:** Desktop keeps its vertical-progress-driven sticky horizontal sequence. Phones (≤600px) use a native horizontal scroll-snap carousel in normal document flow: swiping or numbered controls changes cards, while vertical scrolling simply passes the section. Track native scroll position for the current control; never map mobile vertical progress to cards. Reduced motion makes control-driven scrolling immediate; no-JS retains native horizontal access.
+
 **Projects:** active list item moves/highlights; cards transition between stacked transforms (x/y/rotate/scale/opacity/depth feeling); animation ~0.35–0.65s. Never hide the active card CTA. Swipes change selected index, not the page scroll direction.
 
 **Experience:** thin progress line and timeline nodes reveal as they enter viewport. All experience information remains available without motion.

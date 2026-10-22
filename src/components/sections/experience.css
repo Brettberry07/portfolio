@@ -129,14 +129,17 @@
  .refined-experience .exp-impact { margin-top:24px; padding-top:20px; gap:20px; }
  .refined-experience .exp-impact strong { font-size:44px; }
  .refined-experience .exp-impact>span { max-width:135px; font-size:11px; }
- .refined-experience .exp-foundation { grid-template-columns:1fr; gap:34px; margin-top:65px; padding-top:28px; }
+ .refined-experience .exp-foundation { position:relative; isolation:isolate; grid-template-columns:1fr; gap:26px; margin-top:65px; padding-top:28px; }
  .refined-experience .exp-foundation-intro,.refined-experience .exp-foundation-art,.refined-experience .exp-supporting { grid-column:auto; grid-row:auto; }
+ .refined-experience .exp-foundation-intro { padding-left:88px; }
+ .refined-experience .exp-foundation-art { position:absolute; top:38px; left:-145px; width:210px; z-index:-1; pointer-events:none; }
  .refined-experience .exp-foundation-intro>h3 { font-size:48px; margin-top:22px; }
  .refined-experience .exp-foundation-intro>p { font-size:13px; margin-top:20px; max-width:270px; }
- .refined-experience .exp-organic { display:block; width:315px; margin:0 0 -5px -36%; transform:rotate(-8deg); }
+ .refined-experience .exp-organic { display:block; width:100%; margin:0; transform:rotate(-8deg); }
  .refined-experience .exp-organic i { width:17px; height:17px; right:4%; }
  .refined-experience .exp-school h4 { font-size:23px; }
- .refined-experience .exp-school { padding:24px 0; }
+ .refined-experience .exp-school { padding:10px 0 24px; }
+ .refined-experience .exp-school h4 { margin-top:8px; }
  .refined-experience .exp-leadership { margin-top:32px; }
  .refined-experience .exp-recognition li { display:grid; grid-template-columns:.9fr 1fr; gap:5px 17px; padding:22px 0; }
  .refined-experience .exp-recognition h4 { font-size:13px; }
