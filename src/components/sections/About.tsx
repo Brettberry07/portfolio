@@ -71,7 +71,7 @@ export function About() {
           </h2>
           </RevealSequence>
           <Reveal className="about-prose">
-            <p>I&apos;m Brett, a computer engineering student who builds software and products around real-world problems. I work directly with the people experiencing them, connecting research, design, and engineering to turn early ideas into something useful.</p>
+            <p>I&apos;m Brett, a computer science student who builds software and products around real-world problems. I work directly with the people experiencing them, connecting research, design, and engineering to turn early ideas into something useful.</p>
             <a className="quiet-link" href="#contact">Good things start with a conversation <ArrowUpRight size={17} /></a>
           </Reveal>
         </div>

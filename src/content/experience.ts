@@ -40,7 +40,7 @@ export const education = [
     institution: "University of Arkansas",
     location: "Fayetteville",
     dates: "EXPECTED MAY 2030",
-    qualification: "B.S. Computer Engineering",
+    qualification: "B.S. Computer Science",
     detail: "Minors in Innovation & Entrepreneurship and Mathematics",
     note: "4.0 GPA",
   },
