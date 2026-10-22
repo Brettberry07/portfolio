@@ -26,6 +26,7 @@ test("full portfolio, live sculpture, navigation and honest contact state", asyn
   const first = await scene.locator("canvas").evaluate((canvas: HTMLCanvasElement) => canvas.toDataURL());
   await expect.poll(() => scene.locator("canvas").evaluate((canvas: HTMLCanvasElement) => canvas.toDataURL())).not.toBe(first);
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
+  if (testInfo.project.name === "mobile") await page.locator(".mobile-navigation summary").click();
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Contact" }).click();
   await expect(page.getByRole("heading", { name: "Have something in mind? Let’s build it." })).toBeInViewport();
   await expect(page.getByRole("button", { name: "Send a message" })).toBeDisabled();
@@ -64,7 +65,7 @@ test("all seven case studies resolve with full editorial sections", async ({ pag
   expect((await request.get("/projects/not-a-project")).status()).toBe(404);
 });
 
-test("reduced motion keeps the sculpture still and anchors native", async ({ page }) => {
+test("reduced motion keeps the sculpture still and anchors native", async ({ page }, testInfo) => {
   const errors = collectErrors(page);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
@@ -84,6 +85,7 @@ test("reduced motion keeps the sculpture still and anchors native", async ({ pag
   await page.mouse.move(10, 420);
   await page.mouse.wheel(0, 250);
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(200);
+  if (testInfo.project.name === "mobile") await page.locator(".mobile-navigation summary").click();
   await page.getByRole("navigation").getByRole("link", { name: "Experience" }).click();
   await expect(page.getByRole("heading", { name: "Built on perspective." })).toBeInViewport();
   expect(errors).toEqual([]);
@@ -125,7 +127,8 @@ test("no JavaScript retains semantic content, poster, anchors and safe form", as
   await context.close();
 });
 
-test("Ways I Work scrolls horizontally, releases, reverses and supports keyboard routes", async ({ page }) => {
+test("Ways I Work scrolls horizontally, releases, reverses and supports keyboard routes", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === "mobile", "Mobile uses an independent native carousel");
   const errors = collectErrors(page);
   await page.goto("/");
   const section = page.locator(".ways-work");
@@ -161,7 +164,7 @@ test("Ways I Work scrolls horizontally, releases, reverses and supports keyboard
   expect(errors).toEqual([]);
 });
 
-test("Ways I Work shows every panel with reduced motion, including live changes", async ({ page }) => {
+test("Ways I Work shows every panel with reduced motion, including live changes", async ({ page }, testInfo) => {
   await page.goto("/");
   await page.emulateMedia({ reducedMotion: "reduce" });
   const section = page.locator(".ways-work");
@@ -174,7 +177,7 @@ test("Ways I Work shows every panel with reduced motion, including live changes"
     await expect(panel.getByRole("link").first()).toBeInViewport();
   }
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  await expect(section).toHaveAttribute("data-scroll", "true");
+  await expect(section).toHaveAttribute("data-scroll", testInfo.project.name === "mobile" ? "false" : "true");
 });
 
 test("hero transforms stay continuous through wheel stops and direction reversals", async ({ page }, testInfo) => {
@@ -268,10 +271,14 @@ test("entrances wait for the reading area and progress without a backward jump",
   const poses = () => lines.evaluateAll((elements) => elements.map((element) => new DOMMatrixReadOnly(getComputedStyle(element).transform).m42));
 
   // Content is already readable at the bottom, but has not spent its entrance.
-  await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), top - height * 0.8);
+  await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), top - height * 0.65);
   await expect.poll(poses).toEqual([18, 18]);
   await page.waitForTimeout(200);
   expect(await poses()).toEqual([18, 18]);
+  for (const wrapper of await page.locator(".about-heading-line").all()) {
+    await expect(wrapper).toHaveCSS("overflow", "visible");
+  }
+  await page.screenshot({ path: testInfo.outputPath("before-entrance.png") });
 
   // Both lines share one stationary cue; the second follows the first.
   // Start recording in the same browser task as the trigger; a protocol round
@@ -304,4 +311,75 @@ test("entrances wait for the reading area and progress without a backward jump",
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), top - height * 0.43);
   expect(await poses()).toEqual([0, 0]);
+});
+
+
+test("mobile menu supports keyboard dismissal, outside tap and native no-JS navigation", async ({ page, browser }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile", "Mobile disclosure only");
+  await page.goto("/");
+  const menu = page.locator(".mobile-navigation");
+  const toggle = menu.locator("summary");
+  await expect(page.locator(".navigation")).toBeHidden();
+  await toggle.focus();
+  await page.keyboard.press("Enter");
+  await expect(menu).toHaveAttribute("open", "");
+  await expect(menu.getByRole("link")).toHaveCount(4);
+  await page.keyboard.press("Tab");
+  await expect(menu.getByRole("link", { name: "Home", exact: true })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(menu).not.toHaveAttribute("open");
+  await expect(toggle).toBeFocused();
+  await toggle.click();
+  await page.locator("#hero-title").click({ force: true });
+  await expect(menu).not.toHaveAttribute("open");
+  await toggle.click();
+  await menu.getByRole("link", { name: "Projects", exact: true }).click();
+  await expect(menu).not.toHaveAttribute("open");
+  await expect(page).toHaveURL(/#projects$/);
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  const nativePage = await context.newPage();
+  await nativePage.goto("/");
+  await nativePage.locator(".mobile-navigation summary").click();
+  await nativePage.getByRole("navigation").getByRole("link", { name: "Contact" }).click();
+  await expect(nativePage).toHaveURL(/#contact$/);
+  await context.close();
+});
+
+
+test("mobile Ways I Work swipes independently and lets vertical scrolling pass", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile", "Phone carousel only");
+  await page.goto("/");
+  const section = page.locator(".ways-work");
+  const viewport = page.locator(".ways-window");
+  const controls = page.locator(".ways-controls button");
+  await expect(section).toHaveAttribute("data-mobile", "true");
+  await expect(section).toHaveAttribute("data-scroll", "false");
+  await section.evaluate(el => window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 100, behavior: "instant" }));
+  await expect(page.locator(".ways-sticky")).toHaveCSS("position", "relative");
+  await expect(page.locator(".ways-folio").first()).toBeHidden();
+  const y = await page.evaluate(() => scrollY);
+  const box = (await viewport.boundingBox())!;
+  const cdp = await page.context().newCDPSession(page);
+  const touchY = box.y + 100;
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: 330, y: touchY }] });
+  for (const x of [290, 240, 190, 140, 80]) {
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x, y: touchY }] });
+    await page.waitForTimeout(30);
+  }
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await expect(controls.nth(1)).toHaveAttribute("aria-current", "step");
+  expect(Math.abs(await page.evaluate(() => scrollY) - y)).toBeLessThan(3);
+  await controls.nth(1).press("End");
+  await expect(controls.nth(3)).toBeFocused();
+  await expect(controls.nth(3)).toHaveAttribute("aria-current", "step");
+  await expect(page.locator("#way-panel-3 h4")).toBeInViewport();
+  await page.mouse.move(180, touchY);
+  await page.mouse.wheel(0, 850);
+  await expect.poll(() => section.evaluate(el => el.getBoundingClientRect().bottom)).toBeLessThan(100);
+  await expect(controls.nth(3)).toHaveAttribute("aria-current", "step");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await controls.first().click();
+  await expect(controls.first()).toHaveAttribute("aria-current", "step");
+  await expect(page.locator("#way-panel-0 h4")).toBeInViewport();
 });

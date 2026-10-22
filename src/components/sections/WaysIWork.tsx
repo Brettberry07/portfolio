@@ -35,7 +35,14 @@ const ways = [
   },
 ] as const;
 
-const heightQuery = "(min-height: 651px)";
+const heightQuery = "(min-width: 601px) and (min-height: 651px)";
+const mobileQuery = "(max-width: 600px)";
+function subscribeMobile(notify: () => void) {
+  const query = window.matchMedia(mobileQuery);
+  query.addEventListener("change", notify);
+  return () => query.removeEventListener("change", notify);
+}
+const mobileSnapshot = () => window.matchMedia(mobileQuery).matches;
 function subscribe(notify: () => void) {
   const query = window.matchMedia(heightQuery);
   query.addEventListener("change", notify);
@@ -48,6 +55,8 @@ const finish = 0.85;
 
 export function WaysIWork() {
   const section = useRef<HTMLDivElement>(null);
+  const carousel = useRef<HTMLDivElement>(null);
+  const mobile = useSyncExternalStore(subscribeMobile, mobileSnapshot, serverSnapshot);
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
   const [active, setActive] = useState(0);
   const canPin = useSyncExternalStore(subscribe, clientSnapshot, serverSnapshot);
@@ -59,11 +68,16 @@ export function WaysIWork() {
   const progress = useTransform(scrollYProgress, [start, finish], [0, 1]);
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
+    if (!scrollEnabled) return;
     const next = Math.round(Math.max(0, Math.min(1, (value - start) / (finish - start))) * (ways.length - 1));
     setActive((current) => current === next ? current : next);
   });
 
   function goTo(index: number) {
+    if (mobile && carousel.current) {
+      carousel.current.scrollTo({ left: index * carousel.current.clientWidth, behavior: reducedMotion ? "instant" : "smooth" });
+      return;
+    }
     if (!section.current || !scrollEnabled) return;
     const bounds = section.current.getBoundingClientRect();
     const distance = bounds.height - window.innerHeight + 96;
@@ -85,7 +99,7 @@ export function WaysIWork() {
   }
 
   return (
-    <div className="ways-work" ref={section} data-scroll={scrollEnabled} aria-labelledby="ways-title">
+    <div className="ways-work" ref={section} data-scroll={scrollEnabled} data-mobile={mobile} aria-labelledby="ways-title">
       <div className="ways-sticky">
         <div className="ways-layer ways-layer-orange" aria-hidden="true" />
         <div className="ways-layer ways-layer-black" aria-hidden="true" />
@@ -93,9 +107,13 @@ export function WaysIWork() {
         <div className="ways-surface">
           <header className="ways-heading">
             <div><span className="mono ways-eyebrow">A CONNECTED APPROACH</span><h3 id="ways-title">Ways I work<span>.</span></h3></div>
-            <span className="mono ways-scroll-hint">SCROLL TO EXPLORE <ArrowDown size={14} aria-hidden="true" /></span>
+            <span className="mono ways-scroll-hint"><span className="ways-desktop-hint">SCROLL TO EXPLORE</span><span className="ways-mobile-hint">SWIPE TO EXPLORE</span> <ArrowDown size={14} aria-hidden="true" /></span>
           </header>
-          <div className="ways-window">
+          <div className="ways-window" ref={carousel} onScroll={(event) => {
+            if (!mobile) return;
+            const { scrollLeft, clientWidth } = event.currentTarget;
+            setActive(Math.max(0, Math.min(ways.length - 1, Math.round(scrollLeft / clientWidth))));
+          }}>
             <motion.div className="ways-track" style={{ x: scrollEnabled ? x : 0 }}>
               {ways.map((way, index) => (
                 <article className="ways-panel" id={`way-panel-${index}`} key={way.title} aria-labelledby={`way-title-${index}`} onFocusCapture={() => { if (active !== index) goTo(index); }}>

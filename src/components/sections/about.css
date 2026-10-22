@@ -17,7 +17,8 @@
 .about-refined .about-copy::after { content:""; position:absolute; z-index:-1; pointer-events:none; inset:-18px -24px; background:linear-gradient(var(--paper) 0%,#f6f6f3f2 25%,#f6f6f300 60%); filter:blur(14px); }
 .about-refined .about-copy::before { content:""; display:block; width:43px; height:4px; margin:0 0 23px; background:var(--orange); }
 .about-refined .about-copy h2 { font-size:clamp(44px,4.65vw,74px); line-height:1.02; letter-spacing:-.055em; margin-bottom:32px; }
-.about-refined .about-heading-line { display:block; overflow:hidden; padding-bottom:.08em; margin-bottom:-.08em; }
+/* The 18px resting pose must stay readable before the entrance begins. */
+.about-refined .about-heading-line { display:block; overflow:visible; padding-bottom:.08em; margin-bottom:-.08em; }
 .about-refined .about-heading-line>span { display:block; }
 .about-refined .about-heading-line.subtle-ink { margin-top:6px; color:#858580; }
 .about-refined .about-copy p { font-size:17px; line-height:1.65; max-width:470px; margin-bottom:15px; }
