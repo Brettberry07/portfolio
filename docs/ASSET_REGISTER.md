@@ -11,6 +11,7 @@ This register covers **production assets**. Inspiration screenshots in `docs/ref
 | Seven project hero images | `public/images/projects/{slug}.*` | Missing | User-supplied or license-cleared; respect confidential clients |
 | Geometric / organic motifs | CSS/SVG in homepage sections and project art | Implemented | Original lightweight decorative artwork; no third-party reference images copied |
 | Experience trade globe / double AA batteries | `src/components/sections/ExperienceIllustrations.tsx` | Implemented | Original inline SVG line art authored for Brett’s October 21 experience brief. Supplied globe image used only as a composition reference; no reference bitmap published. |
+| Toolkit technology icons | `src/components/sections/Toolkit.tsx`, `public/icons/toolkit/*.svg` | Implemented | Ten SVG marks supplied by Brett in chat (Next.js, Python, TypeScript, PostgreSQL, JavaScript, Tailwind CSS, SQL, C++, Rust, Rails), cleaned of empty carrier groups/IDs and normalized to currentColor. Original path geometry/viewBoxes retained; masks inherit the category palette. Supplied markup carries SVGRepo identifiers; individual source URLs/license metadata were not provided. Seven remaining glyphs use the existing ISC-licensed `lucide-react` dependency. |
 | Studio HDRI | Not required | Omitted | Local procedural studio lighting avoids an external HDRI download |
 
 ## Sourcing and optimization

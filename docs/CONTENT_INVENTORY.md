@@ -32,7 +32,7 @@ Tariff Ninja and Potential Energy Tech roles above are verified by the user; bot
 - VEX Robotics: Arkansas State Innovate Award, two regional Innovate Awards, World Championship qualification.
 - Arkansas Hog Hacks: Most Creative Award, sixth overall as a high-school team.
 
-Approved toolkit: TypeScript, JavaScript, Ruby, C++, Python, Rust; Next.js, React, Rails, Docker, PostgreSQL/SQL, Git, Jupyter. Do not attribute a toolkit technology to a specific project without evidence.
+Approved toolkit: TypeScript, JavaScript, Ruby, C++, Python, Rust; Next.js, React, React Native, Tailwind CSS, Rails, Supabase, Docker, PostgreSQL/SQL, Git, Jupyter. Do not attribute a toolkit technology to a specific project without evidence.
 
 ## Public links and Contact preservation
 

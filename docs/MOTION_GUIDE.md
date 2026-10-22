@@ -31,6 +31,8 @@
 
 **Experience:** thin progress line and timeline nodes reveal as they enter viewport. All experience information remains available without motion.
 
+**Toolkit:** Four native sticky stages keep a borderless technology grid fixed to the left of a black/orange editorial panel. Three centered 5–7–5 icon columns become compact rows on phones; ten user-supplied SVG marks share the color system with seven Lucide glyphs. One Motion scroll value selects the category with a small threshold dead band; glyphs activate once the grid enters view, with 80ms staggering and scale 1 → 1.06. No wheel or touch interception. Numbered buttons support direct navigation and arrows/Home/End. Short viewports (<780px tall, or <820px on phones), reduced motion and no-JS show every category in normal flow.
+
 **Contact:** dark transition via layout/background changes, not full-screen flashing; concise form feedback; no fake network success.
 
 ## Scroll behavior

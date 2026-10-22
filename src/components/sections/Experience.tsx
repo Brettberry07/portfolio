@@ -9,17 +9,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Reveal } from "@/components/motion/Reveal";
 import { education, experience, leadership } from "@/content/experience";
 import { DoubleAABatteryIllustration, TradeGlobeIllustration } from "./ExperienceIllustrations";
+import { Toolkit } from "./Toolkit";
 import "./experience.css";
 
 type ExperienceProps = { resumeHref?: string };
-
-// Approved résumé toolkit plus the documented Still On product stack.
-const skillGroups = [
-  { name: "Languages", tools: ["TypeScript", "JavaScript", "Python", "C++", "Rust", "Ruby"] },
-  { name: "Frontend & Product", tools: ["React", "Next.js", "React Native", "Tailwind CSS"] },
-  { name: "Backend & Data", tools: ["PostgreSQL", "SQL", "Ruby on Rails", "Supabase"] },
-  { name: "Infrastructure & Tools", tools: ["Docker", "Git", "Jupyter"] },
-] as const;
 
 /** Reused vector columns follow a broad organic contour and merge into Contact. */
 function HalftoneTransition() {
@@ -166,21 +159,7 @@ export function Experience({ resumeHref }: ExperienceProps) {
           </div>
         </div>
       </div>
-      <div className="exp-toolkit" aria-labelledby="toolkit-title">
-        <Reveal className="exp-toolkit-intro">
-          <span className="mono exp-eyebrow">A SELECTED TOOLKIT</span>
-          <h3 id="toolkit-title">The tools<br />behind<br /><span className="subtle-ink">the work.</span></h3>
-          <p>Different problems call for different tools. These are the technologies I use to turn ideas into working systems.</p>
-          <Link href="#projects">See them in the work <ArrowUpRight size={17} aria-hidden="true" /></Link>
-          <div className="exp-toolkit-frame" aria-hidden="true"><i /><i /><i /></div>
-        </Reveal>
-        <div className="exp-skills">
-          {skillGroups.map((group, index) => <Reveal className="exp-skill-group" key={group.name} delay={index * 0.045}>
-            <div className="exp-skill-label"><span className="mono">0{index + 1}</span><h4>{group.name}</h4></div>
-            <ul>{group.tools.map((tool) => <li key={tool}>{tool}</li>)}</ul>
-          </Reveal>)}
-        </div>
-      </div>
+      <Toolkit />
     </section>
     <HalftoneTransition /></>
   );
