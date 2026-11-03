@@ -1,5 +1,13 @@
 # Current checkpoint
 
+**Scroll-up idle timeout — 2026-11-03:** Reused the 1.5-second idle timer when upward scrolling reveals navigation; continued upward movement resets it. Anchor jumps remain protected and keyboard/open-menu interaction stays usable. Lint/types pass; live desktop/mobile reveal and idle-hide checks pass, including reduced motion.
+
+**Navigation idle timer — 2026-11-03:** Added a 1.5-second idle timeout after anchor completion, preserving visibility throughout the jump. Manual scroll cancels the timer and resumes directional hiding; keyboard/menu interaction remains usable. Live desktop timer and mobile cancellation checks pass; lint/types pass.
+
+**Navigation simplification — 2026-11-03:** Removed arrival timers and automatic dismissal at Brett’s request. Kept the compact square design, orange selected text, direct clicked selection and visibility throughout anchor jumps. Manual downward scrolling hides the bar; upward scrolling reveals it. Lint/types pass; live desktop/mobile checks verify no automatic hiding after arrival and both scroll directions.
+
+**Navigation dismissal timing — 2026-11-03:** Arrival pause is now 1.5 seconds; only downward scrolling dismisses early. Upward wheel/touch/keyboard input preserves the pause, while manual interruption of an unfinished jump still releases tracking. Live desktop timing and mobile direction checks pass; lint/types pass.
+
 **Navigation visibility states — 2026-11-03:** Jumping and arrival now explicitly override manual-scroll hiding at render time. Bar remains visible throughout the jump and hides after 1.2 seconds on arrival or a manual scroll, whichever happens first. Touch dismissal uses movement rather than a tap. Live desktop/mobile frame checks (51/53 frames) confirm it stays on screen for the entire jump; timer and early manual-scroll dismissal both pass. Lint/types pass; desktop/mobile screenshots reviewed.
 
 **Navigation arrival pause — 2026-11-03:** At Brett’s clarification, navigation now remains visible for 1.2 seconds after anchor animation completes, then hides. New navigation and manual scroll cancel the pending timer; open menus and keyboard focus remain usable. Lint/types pass. Live-preview checks at 1440×900 and 390×844 confirm visibility during the arrival pause and automatic hiding afterward.

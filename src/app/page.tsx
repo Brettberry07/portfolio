@@ -44,7 +44,7 @@ export default function Home() {
         <Toolkit />
         <Contact publicEmail={siteAssets.publicEmail} socialLinks={siteAssets.socialLinks} enabled={Boolean(process.env.RESEND_API_KEY?.trim() && process.env.CONTACT_TO_EMAIL?.trim() && process.env.CONTACT_FROM_EMAIL?.trim())} />
       </main>
-      <footer className="site-footer"><div className="footer-inner container"><a href="#home" className="footer-name">BRETT BERRY</a><span className="mono">© 2026 · BUILDING WHAT&apos;S NEXT.</span><div className="footer-profiles"><a href={`mailto:${siteAssets.publicEmail}`}>Email</a>{siteAssets.socialLinks.map((link) => <a key={link.href} href={link.href}>{link.label}</a>)}</div><a href="#home" className="mono back-top">BACK TO TOP <ArrowUpRight size={16} /></a></div></footer>
+      <footer className="site-footer"><div className="footer-inner container"><a href="#home" className="footer-name">BRETT BERRY</a><span className="mono">© 2026 · BUILDING WHAT&apos;S NEXT.</span><div className="footer-profiles"><a href={`mailto:${siteAssets.publicEmail}`}>Email</a>{siteAssets.socialLinks.map((link) => <a key={link.href} href={link.href}>{link.label}</a>)}</div><a href="#home" className="mono back-top">BACK TO TOP <ArrowUpRight size={16} /></a></div><p className="footer-credits mono container"><a href="https://sketchfab.com/3d-models/complex-geometric-frames-and-curved-lines-model-287051b7796d4a94b5970f79cd4fc8e5">GEOMETRIC FRAMES BY OMER</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · ADAPTED</p></footer>
     </>
   );
 }

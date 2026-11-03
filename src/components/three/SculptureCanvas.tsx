@@ -12,10 +12,11 @@ export type SculptureTransforms = Record<"progress" | "scale" | "rotationX" | "r
 function ResponsiveCamera() {
   const canvasWidth = useThree((state) => state.size.width);
   const width = Math.min(canvasWidth, window.innerWidth);
-  const position: [number, number, number] = width <= 600 ? [6.7, 4.2, 9.7] : width <= 1000 ? [6.3, 3.8, 9.4] : [5.8, 3.6, 8.2];
+  const mobile = width <= 600;
+  const position: [number, number, number] = mobile ? [6.7, 2.6, 9.7] : width <= 1000 ? [6.3, 3.8, 9.4] : [5.8, 3.6, 8.2];
   // Overscan adds vertical drawing room without enlarging or clipping the model.
   const fov = width <= 600 ? 34 : width <= 1000 ? 43.2053 : 40.4751;
-  return <StudioCamera makeDefault position={position} fov={fov} onUpdate={(camera) => camera.lookAt(0, 0, 0)} />;
+  return <StudioCamera makeDefault position={position} fov={fov} onUpdate={(camera) => camera.lookAt(mobile ? -0.65 : 0, mobile ? -0.4 : 0, 0)} />;
 }
 
 function Sculpture({ animate, reduced, onReady, pointer, transforms }: { animate: boolean; reduced: boolean; onReady: () => void; pointer: RefObject<{ x: number; y: number }>; transforms: SculptureTransforms }) {
@@ -66,7 +67,7 @@ function Sculpture({ animate, reduced, onReady, pointer, transforms }: { animate
   useFrame(({ clock }) => {
     if (!group.current) return;
     const scroll = reduced ? 0 : transforms.progress.get();
-    const base = mobile ? 0.6864 : tablet ? 0.528 : 0.704;
+    const base = mobile ? 1.12 : tablet ? 0.528 : 0.704;
     group.current.scale.setScalar(base * (reduced ? 1 : transforms.scale.get()));
     group.current.rotation.x = reduced ? 0.06 : 0.06 + (transforms.rotationX.get() - 0.06) * (mobile ? 0.5 : 1) + pointer.current.y * 0.012;
     group.current.rotation.y = reduced ? -0.19 : -0.19 + (transforms.rotationY.get() + 0.19) * (mobile ? 0.5 : 1) + pointer.current.x * 0.02;

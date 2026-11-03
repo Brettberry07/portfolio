@@ -8,14 +8,19 @@
 .hero-sculpture:has(.sculpture-canvas.is-ready) .sculpture-poster { opacity:0; }
 .hero-credits { position:absolute; z-index:6; right:max(var(--gutter),calc((100% - 1480px)/2 + var(--gutter))); bottom:24px; max-width:50%; font-size:10px; color:var(--text-secondary); line-height:1.5; }
 .hero-credits a { text-decoration:underline; text-underline-offset:3px; }
+.footer-credits { display:none; }
 @media(min-width:601px) and (max-width:1000px) {
  .sculpture-poster { background-image:url('/images/hero-poster-tablet.webp'); }
  .hero-sculpture { width:170%; right:-80%; height:145%; top:-10%; }
 }
 @media(max-width:600px) {
- .sculpture-poster { background-image:url('/images/hero-poster-mobile.webp'); }
- .hero-sculpture { width:112%; height:clamp(270px,37svh,320px); top:125px; right:-13%; }
- .hero-credits { left:24px; right:24px; bottom:24px; max-width:none; font-size:10px; }
+ /* Trim the camera's transparent headroom; space against the visible geometry. */
+ .hero-scene-boundary { position:relative; inset:auto; height:226px; margin-block:12px; mask-image:none; }
+ .sculpture-poster { background-image:url('/images/hero-poster-mobile.webp'); background-size:auto 250px; transform:none; }
+ .hero-sculpture { width:100%; height:250px; top:-24px; right:-28%; }
+ .hero-credits { display:none; }
+ .footer-credits { display:block; margin-top:0; padding-block:0 24px; color:#bdbdb6; font-size:10px; line-height:1.6; }
+ .footer-credits a { text-decoration:underline; text-underline-offset:3px; }
 }
 @media(prefers-reduced-motion:reduce) {
  .hero-sculpture,.sculpture-stage,.hero-heading h1 { transform:none!important; }
