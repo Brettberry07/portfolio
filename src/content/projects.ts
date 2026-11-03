@@ -7,7 +7,9 @@ export type Project = {
   id: string;
   slug: string;
   title: string;
+  shortTitle?: string;
   summary?: string;
+  cardHook: string;
   category?: string;
   role?: string;
   period?: string;
@@ -16,6 +18,8 @@ export type Project = {
   toolsNote?: string;
   status: "draft" | "verified";
   heroImage?: string;
+  heroImageAlt?: string;
+  heroImageCaption?: string;
   overview?: string;
   problem?: string;
   approach?: string;
@@ -27,15 +31,16 @@ export type Project = {
   links?: { label: string; href: string }[];
 };
 
-export const projects: Project[] = [
+const projectRecords: Project[] = [
   {
-    id: "01", slug: "querry-berry", title: "Querry Berry",
+    id: "01", slug: "querry-berry",
+    cardHook: "2.3M+ unique tokens indexed by a custom-built search engine.", title: "Querry Berry",
     summary: "A custom search engine, from raw language to searchable data. Built around a lexer and an index of 2.3 million unique tokens collected by a custom async web crawler.",
     category: "Search & data systems", role: "Full-stack development", period: "June–July 2025", stage: "Search engineering project",
-    technologies: ["Next.js", "PostgreSQL", "Docker"], status: "verified",
+    technologies: ["Next.js", "PostgreSQL", "Docker", "Tailwind CSS"], status: "verified",
     overview: "Querry Berry is a full-stack search engine with a Next.js application and a Dockerized PostgreSQL backend. The project explores the complete path from crawling the web for links, to processing text, storing an index, and retrieving useful results.",
     problem: "Search depends on work that happens long before a query is entered. Text must be broken into useful units, indexed consistently, and organized so it can be retrieved. The challenge was to build that underlying system alongside the application people interact with.",
-    approach: "I worked across the full stack: the web crawler,the search interface, backend data infrastructure, custom lexer, and indexing pipeline. The focus was understanding how those parts fit together rather than treating search as a frontend feature.",
+    approach: "I worked across the full stack: the web crawler, the search interface, backend data infrastructure, custom lexer, and indexing pipeline. The focus was understanding how those parts fit together rather than treating search as a frontend feature.",
     solution: "A custom lexer and indexing pipeline process text into searchable tokens. PostgreSQL provides the data foundation, Docker defines the backend environment, and Next.js connects the search experience to the retrieval system.",
     results: "The indexing pipeline handled more than 2.3 million unique tokens. The result is an end-to-end engineering project spanning language processing, data infrastructure, and search retrieval.",
     highlights: [{ value: "2.3M+", label: "unique tokens processed" }, { value: "Full stack", label: "interface, indexing & storage" }],
@@ -44,10 +49,11 @@ export const projects: Project[] = [
       { title: "Index", description: "An indexing pipeline organizes unique tokens." },
       { title: "Retrieve", description: "Search connects the interface to stored data." },
     ],
-    contentNote: "Original interface captures and a public repository link are still to be added. The visual above is an editorial illustration of the indexing concept.",
+    contentNote: "The visual above diagrams the documented approach; it is not a product screenshot. Approved project captures, artifacts, and public links are still to be added.",
   },
   {
-    id: "02", slug: "fig", title: "Fig",
+    id: "02", slug: "fig",
+    cardHook: "A scripting language built from scratch in Rust.", title: "Fig",
     summary: "A scripting language built in Rust. A lexer, parser, evaluator, and small CLI make the journey from source code to execution visible.",
     category: "Language & developer tools", role: "Language & tooling development", stage: "Language development project",
     technologies: ["Rust", "Cargo", "VS Code syntax grammar"], status: "verified",
@@ -62,14 +68,15 @@ export const projects: Project[] = [
       { title: "Parse", description: "Build a representation of the program." },
       { title: "Evaluate", description: "Execute through the interpreter and CLI." },
     ],
-    contentNote: "Editor captures and public repository links are still to be added. The terminal is a concept illustration of the CLI workflow.",
+    contentNote: "The visual above diagrams the documented approach; it is not a product screenshot. Approved project captures, artifacts, and public links are still to be added.",
   },
   {
-    id: "03", slug: "tariff-ninja", title: "Tariff Ninja",
+    id: "03", slug: "tariff-ninja",
+    cardHook: "Trade data infrastructure supporting 1.5M+ items.", title: "Tariff Ninja",
     summary: "Human-in-the-loop AI for trade classification, supported by data systems for 1.5 million+ items and client-facing engineering.",
     category: "AI & trade infrastructure", role: "Software Engineer → Lead Software Engineer", period: "February–September 2026", stage: "Professional engineering engagement",
-    technologies: ["AI retrieval", "Data infrastructure", "Apollo integration"], status: "verified",
-    toolsNote: "These are verified system capabilities and integrations. The underlying language and framework stack has not been specified.",
+    technologies: ["Ruby", "Ruby on Rails", "SQL", "AI retrieval", "Data infrastructure", "Apollo integration"], status: "verified",
+    toolsNote: "Ruby, Ruby on Rails, and SQL are confirmed project tools, alongside the documented AI capabilities and Apollo integration.",
     overview: "At Tariff Ninja, I developed across AI-assisted classification, trade data infrastructure, and full-stack internal tools. I joined as a Software Engineer in February 2026 and progressed to Lead Software Engineer in July, concluding the engagement in September 2026.",
     problem: "Trade workflows combine complex classification decisions, changing tariff exposure, documents, freight information, and item records. Useful systems need to connect those moving parts while keeping people involved in decisions that require judgment.",
     approach: "I partnered directly with clients to define requirements and deliver features. As Lead Software Engineer, I led engineering planning, platform development, and technical implementation across projects while coordinating the engineering work.",
@@ -81,10 +88,11 @@ export const projects: Project[] = [
       { title: "Connect", description: "Bring item, document, and freight information together." },
       { title: "Classify", description: "Support trade decisions with AI and human review." },
     ],
-    contentNote: "Client-approved interface captures, a detailed framework stack, and public links have not been supplied. The classification and freight illustration is conceptual.",
+    contentNote: "The visual above diagrams the documented approach; it is not a product screenshot. Approved project captures, artifacts, and public links are still to be added.",
   },
   {
-    id: "04", slug: "potential-energy-tech", title: "Potential Energy Tech",
+    id: "04", slug: "potential-energy-tech",
+    cardHook: "1.2M+ battery data points processed in under a second.", title: "Potential Energy Tech",
     summary: "Battery analytics built for real test data. A calculation system processes 1.2 million+ data points in under a second.",
     category: "Battery analytics & product", role: "Software Engineer Intern", period: "January–May 2026", stage: "Professional internship",
     technologies: ["Battery analysis", "Calculation systems", "Cloud storage planning"], status: "verified",
@@ -100,15 +108,16 @@ export const projects: Project[] = [
       { title: "Calculate", description: "Process substantial battery-test datasets quickly." },
       { title: "Analyze", description: "Bring the results into a web analysis platform." },
     ],
-    contentNote: "Approved product screenshots and detailed implementation tools are still to be added. The cells and chart are illustrative, not a real test result.",
+    contentNote: "The visual above diagrams the documented approach; it is not a product screenshot. Approved project captures, artifacts, and public links are still to be added.",
   },
   {
-    id: "05", slug: "amazeum", title: "McMillon Innovation Studios & The Amazeum",
+    id: "05", slug: "amazeum",
+    cardHook: "Finding the bottlenecks between an order and its shipment.", title: "McMillon Innovation Studios & The Amazeum", shortTitle: "Amazeum",
     summary: "Understanding how a growing organization picks, packs, and ships—and where practical operational improvements can make a difference.",
     category: "Operations & systems analysis", role: "Operational research & analysis", stage: "McMillon Innovation Studios engagement", period: "Fall 2026",
-    technologies: ["Shopify", "Stock Savvy", "Workflow analysis"], status: "verified",
-    toolsNote: "Shopify and Stock Savvy are systems involved in the organization's workflows, not software platforms built as part of this project.",
-    overview: "Being apart of the McMillon Innovation Studios gave me the oppurtunity to collaborate with The Aamzeum, this project involves the Scott Family Amazeum in Bentonville and its fulfillment operations. As order volume grows, the work examines how picking, packing, inventory, and shipping workflows can scale with the organization.",
+    technologies: ["React", "JavaScript", "Shopify", "Stock Savvy", "Workflow analysis"], status: "verified",
+    toolsNote: "React and JavaScript are confirmed project tools. Shopify and Stock Savvy are systems involved in the organization's existing workflows; no completed platform or measured operational gains are claimed.",
+    overview: "Through McMillon Innovation Studios, I collaborate with the Scott Family Amazeum in Bentonville on its fulfillment operations. As order volume grows, the work examines how picking, packing, inventory, and shipping workflows can scale with the organization.",
     problem: "Growth puts pressure on the details of daily operations: where inventory lives, how orders are picked, how packing flows, and how information moves between systems. Understanding those details comes before proposing a new tool or process.",
     approach: "The focus is stakeholder interviews, understanding warehouse workflows, and studying inventory handling and fulfillment processes. Shopify and Stock Savvy are part of the existing operational context.",
     solution: "The project translates operational findings into opportunities for practical improvement. It examines bottlenecks and the relationship between people, physical inventory, and the systems supporting picking, packing, and shipping.",
@@ -119,10 +128,11 @@ export const projects: Project[] = [
       { title: "Map", description: "Understand inventory, picking, packing, and shipping." },
       { title: "Improve", description: "Translate bottlenecks into practical opportunities." },
     ],
-    contentNote: "An approved workflow map, research artifacts, and any implemented outcomes are still to be added. The warehouse drawing is a conceptual operational illustration.",
+    contentNote: "The visual above diagrams the documented approach; it is not a product screenshot. Approved project captures, artifacts, and public links are still to be added.",
   },
   {
-    id: "06", slug: "still-on", title: "Still On",
+    id: "06", slug: "still-on",
+    cardHook: "An MVP built around one question: are we still on?", title: "Still On",
     summary: "A meeting companion that makes a simple question easier to answer: are we still on? An independent product and MVP project.",
     category: "Independent product / MVP", role: "Product thinking & development", stage: "Independent product / MVP",
     technologies: ["Expo / React Native", "TypeScript", "Supabase", "Calendar integrations"], status: "verified",
@@ -138,14 +148,15 @@ export const projects: Project[] = [
       { title: "Check in", description: "Make confirming attendance a quick interaction." },
       { title: "Coordinate", description: "Share status and make rescheduling simpler." },
     ],
-    contentNote: "The phone visual is an illustrative UI concept, not a production screenshot. Feature completion, live integrations, and a public release link are still to be confirmed.",
+    contentNote: "The visual above diagrams the documented approach; it is not a product screenshot. Approved project captures, artifacts, and public links are still to be added.",
   },
   {
-    id: "07", slug: "city-of-bentonville-traffic", title: "City of Bentonville Traffic",
+    id: "07", slug: "city-of-bentonville-traffic",
+    cardHook: "Traffic research presented to the city’s Traffic Department and Mayor.", title: "City of Bentonville Traffic",
     summary: "Machine learning and traffic-data analysis in service of a community question: how could signal timing work better?",
     category: "Machine learning & civic research", role: "Model development, analysis & presentation", period: "November–December 2025", stage: "Civic research project",
-    technologies: ["Machine learning", "Data analysis", "Data visualization"], status: "verified",
-    toolsNote: "The underlying language and machine-learning libraries have not been specified.",
+    technologies: ["Python", "Jupyter", "Machine learning", "Data analysis", "Data visualization"], status: "verified",
+    toolsNote: "Python and Jupyter are confirmed project tools. Specific machine-learning libraries have not been supplied.",
     overview: "This project used machine learning to analyze traffic patterns and evaluate traffic-signal timing improvements in Bentonville. It combined processing and visualizing traffic data with communicating the research to local decision-makers.",
     problem: "Signal timing is an engineering problem with a visible effect on everyday life. Traffic data can help evaluate opportunities, but the analysis also needs to be clear and useful to people making decisions about the community.",
     approach: "I developed a machine-learning model, processed and visualized traffic data, and translated the work into a presentation for a nontechnical audience.",
@@ -157,9 +168,17 @@ export const projects: Project[] = [
       { title: "Model", description: "Analyze patterns and evaluate signal timing." },
       { title: "Communicate", description: "Present findings to local decision-makers." },
     ],
-    contentNote: "Approved research charts, model details, and presentation visuals have not been supplied. The intersection graphic is conceptual and does not represent a measured traffic outcome.",
+    contentNote: "The visual above diagrams the documented approach; it is not a product screenshot. Approved project captures, artifacts, and public links are still to be added.",
   },
 ];
+
+// Display order is independent of stable public slugs.
+const projectOrder = ["tariff-ninja", "potential-energy-tech", "querry-berry", "fig", "amazeum", "still-on", "city-of-bentonville-traffic"];
+export const projects: Project[] = projectOrder.map((slug, index) => {
+  const project = projectRecords.find((entry) => entry.slug === slug);
+  if (!project) throw new Error(`Missing portfolio project: ${slug}`);
+  return { ...project, id: String(index + 1).padStart(2, "0") };
+});
 
 export function getProjectBySlug(slug: string): Project | undefined {
   return projects.find((project) => project.slug === slug);

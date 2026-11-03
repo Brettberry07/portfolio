@@ -7,5 +7,9 @@ export const siteAssets: {
 } = {
   // portrait: { src: "/images/about-brett.jpg", alt: "Brett Berry" },
   resumeHref: "/resume/brett-berry-resume.pdf",
-  socialLinks: [],
+  publicEmail: "brettberry07@gmail.com",
+  socialLinks: [
+    { label: "GitHub", href: "https://github.com/Brettberry07" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/brett-berry-a81b29329/" },
+  ],
 };

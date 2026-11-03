@@ -14,39 +14,43 @@ async function checkContent(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 }
 
-test("full portfolio, live sculpture, navigation and honest contact state", async ({ page }, testInfo) => {
+test("work-first portfolio keeps the live sculpture and contact routes accessible", async ({ page }, testInfo) => {
   const errors = collectErrors(page);
   await page.goto("/");
   await checkContent(page);
   const scene = page.getByTestId("scene-host");
   await expect(scene).toHaveAttribute("data-renderer", "webgl");
-  await expect(scene.locator("canvas")).toBeVisible();
-  // Read the drawing buffer directly: element screenshots can scroll an oversized,
-  // intentionally cropped canvas out of the hero and pause its offscreen renderer.
   const first = await scene.locator("canvas").evaluate((canvas: HTMLCanvasElement) => canvas.toDataURL());
   await expect.poll(() => scene.locator("canvas").evaluate((canvas: HTMLCanvasElement) => canvas.toDataURL())).not.toBe(first);
+  expect(await page.locator("main > section").evaluateAll((sections) => sections.map(section => section.id))).toEqual(["home", "projects", "about", "experience", "education", "toolkit", "contact"]);
+  const gap = await page.evaluate(() => document.querySelector("#projects")!.getBoundingClientRect().top - document.querySelector("#home")!.getBoundingClientRect().bottom);
+  expect(Math.abs(gap)).toBeLessThan(1);
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
   if (testInfo.project.name === "mobile") await page.locator(".mobile-navigation summary").click();
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Contact" }).click();
   await expect(page.getByRole("heading", { name: "Have something in mind? Let’s build it." })).toBeInViewport();
-  await expect(page.getByRole("button", { name: "Send a message" })).toBeDisabled();
-  await expect(page.getByText("Email delivery is not connected yet.", { exact: false })).toBeVisible();
-  await page.getByLabel("Your name", { exact: false }).fill("Portfolio visitor");
-  await expect(page.getByLabel("Your name", { exact: false })).toHaveValue("Portfolio visitor");
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect(page.locator("#contact").getByRole("link", { name: "brettberry07@gmail.com" })).toHaveAttribute("href", "mailto:brettberry07@gmail.com");
+  await expect(page.getByLabel("Organization", { exact: false })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 
-test("project selection supports click, keyboard and case-study navigation", async ({ page }) => {
+test("project selection is deliberate, keyboard and touch accessible, and opens stable routes", async ({ page }, testInfo) => {
   await page.goto("/#projects");
-  await page.getByRole("button", { name: "03 Tariff Ninja", exact: true }).click();
   await expect(page.locator("#active-project-card h3")).toHaveText("Tariff Ninja");
-  await page.getByRole("button", { name: "03 Tariff Ninja", exact: true }).press("ArrowRight");
+  if (testInfo.project.name === "mobile") {
+    await page.getByRole("combobox", { name: "SELECT A PROJECT" }).selectOption("1");
+  } else {
+    const first = page.getByRole("button", { name: /^01 Tariff Ninja/ });
+    await first.click();
+    await first.press("ArrowRight");
+    await expect(page.getByRole("button", { name: /^02 Potential Energy Tech/ })).toBeFocused();
+    await first.hover();
+  }
   await expect(page.locator("#active-project-card h3")).toHaveText("Potential Energy Tech");
   await page.getByRole("button", { name: "Next project", exact: true }).click();
-  await expect(page.locator("#active-project-card h3")).toHaveText("Amazeum");
+  await expect(page.locator("#active-project-card h3")).toHaveText("Querry Berry");
   await page.getByRole("button", { name: "Previous project", exact: true }).click();
-  await page.getByRole("link", { name: "View case study", exact: true }).click();
+  await page.locator("#active-project-card").getByRole("link", { name: "View case study", exact: true }).click();
   await expect(page).toHaveURL(/\/projects\/potential-energy-tech$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Potential Energy Tech.");
   await expect(page.getByRole("link", { name: "Back to selected work" })).toBeVisible();
@@ -87,7 +91,7 @@ test("reduced motion keeps the sculpture still and anchors native", async ({ pag
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(200);
   if (testInfo.project.name === "mobile") await page.locator(".mobile-navigation summary").click();
   await page.getByRole("navigation").getByRole("link", { name: "Experience" }).click();
-  await expect(page.getByRole("heading", { name: "Built on perspective." })).toBeInViewport();
+  await expect(page.getByRole("heading", { name: "Built through experience." })).toBeInViewport();
   expect(errors).toEqual([]);
 });
 
@@ -109,75 +113,21 @@ test("WebGL unavailable retains the real sculpture poster and content", async ({
   expect(errors).toEqual([]);
 });
 
-test("no JavaScript retains semantic content, poster, anchors and safe form", async ({ browser }, testInfo) => {
+test("no JavaScript retains every project, supporting content, anchors and safe form", async ({ browser }, testInfo) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: testInfo.project.use.viewport });
   const page = await context.newPage();
   await page.goto("/");
   await checkContent(page);
   await expect(page.getByTestId("scene-fallback")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Selected work." })).toBeVisible();
+  await expect(page.locator(".project-noscript a")).toHaveCount(7);
+  await expect(page.locator(".project-interactive")).toBeHidden();
   await expect(page.getByRole("button", { name: "Send a message" })).toBeHidden();
   await expect(page.locator(".contact-form")).toHaveAttribute("method", "post");
-  await expect(page.locator(".ways-controls")).toBeHidden();
-  await expect(page.locator(".ways-panel")).toHaveCount(4);
-  for (const panel of await page.locator(".ways-panel").all()) {
-    await panel.scrollIntoViewIfNeeded();
-    await expect(panel.getByRole("heading")).toBeInViewport();
-  }
+  await expect(page.locator(".toolkit-group")).toHaveCount(4);
+  await expect(page.getByRole("heading", { name: "Teams & activities" })).toBeVisible();
+  await page.locator(".project-noscript a").nth(4).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("McMillon Innovation Studios & The Amazeum.");
   await context.close();
-});
-
-test("Ways I Work scrolls horizontally, releases, reverses and supports keyboard routes", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name === "mobile", "Mobile uses an independent native carousel");
-  const errors = collectErrors(page);
-  await page.goto("/");
-  const section = page.locator(".ways-work");
-  await expect(section).toHaveAttribute("data-scroll", "true");
-  // Begin at the native sticky entry, then use real wheel input through all four panels.
-  await section.evaluate(el => window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 96, behavior: "instant" }));
-  await expect.poll(() => page.locator(".ways-sticky").evaluate(el => Math.round(el.getBoundingClientRect().top))).toBe(96);
-  const distance = await section.evaluate(el => (el.getBoundingClientRect().height - innerHeight + 96) * .79 / 3);
-  await page.mouse.move(15, 400);
-  for (const index of [1, 2, 3]) {
-    await page.mouse.wheel(0, distance + (index === 1 ? distance * .06 / (.79 / 3) : 0));
-    await expect(page.locator(".ways-controls button").nth(index)).toHaveAttribute("aria-current", "step");
-    await expect.poll(() => page.locator(".ways-sticky").evaluate(el => Math.round(el.getBoundingClientRect().top))).toBe(96);
-  }
-  await page.mouse.wheel(0, 950);
-  await expect.poll(() => page.locator(".ways-sticky").evaluate(el => el.getBoundingClientRect().top)).toBeLessThan(0);
-  await page.locator(".ways-controls button").first().evaluate((el: HTMLButtonElement) => el.click());
-  await expect(page.locator(".ways-controls button").first()).toHaveAttribute("aria-current", "step");
-  const product = page.getByRole("button", { name: "02 Product development", exact: true });
-  await product.click();
-  await expect(product).toHaveAttribute("aria-current", "step");
-  await product.press("ArrowRight");
-  const systems = page.getByRole("button", { name: "03 Systems & automation", exact: true });
-  await expect(systems).toBeFocused();
-  await expect(systems).toHaveAttribute("aria-current", "step");
-  await page.mouse.wheel(0, -distance);
-  await expect(product).toHaveAttribute("aria-current", "step");
-  await product.press("End");
-  await expect(page.getByRole("button", { name: "04 Client collaboration", exact: true })).toBeFocused();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.locator("#way-panel-3").getByRole("link", { name: "City of Bentonville Traffic" }).click();
-  await expect(page).toHaveURL(/\/projects\/city-of-bentonville-traffic$/);
-  expect(errors).toEqual([]);
-});
-
-test("Ways I Work shows every panel with reduced motion, including live changes", async ({ page }, testInfo) => {
-  await page.goto("/");
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  const section = page.locator(".ways-work");
-  await expect(section).toHaveAttribute("data-scroll", "false");
-  await expect(page.locator(".ways-sticky")).toHaveCSS("position", "relative");
-  await expect(page.locator(".ways-track")).toHaveCSS("transform", "none");
-  for (const panel of await page.locator(".ways-panel").all()) {
-    await panel.scrollIntoViewIfNeeded();
-    await expect(panel.getByRole("heading")).toBeInViewport();
-    await expect(panel.getByRole("link").first()).toBeInViewport();
-  }
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await expect(section).toHaveAttribute("data-scroll", testInfo.project.name === "mobile" ? "false" : "true");
 });
 
 test("hero transforms stay continuous through wheel stops and direction reversals", async ({ page }, testInfo) => {
@@ -254,65 +204,38 @@ test("hero transforms stay continuous through wheel stops and direction reversal
   expect(errors).toEqual([]);
 });
 
-test("entrances wait for the reading area and progress without a backward jump", async ({ page }, testInfo) => {
+test("entrances stay readable, settle monotonically and do not replay", async ({ page }) => {
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.getByTestId("scene-host")).toHaveAttribute("data-renderer", "webgl");
-  // Let the initial shader compilation/render finish before timing an entrance.
-  // Software WebGL can block JS sampling while a compositor animation continues.
-  await page.locator("canvas").evaluate(async () => {
-    await new Promise(requestAnimationFrame);
-    await new Promise(requestAnimationFrame);
-  });
-  const sequence = page.locator(".about-copy .entrance-sequence");
-  const lines = page.locator(".about-heading-line > span");
+  const heading = page.locator(".about-layout > .entrance").first();
   const height = page.viewportSize()!.height;
-  const top = await sequence.evaluate((element) => element.getBoundingClientRect().top + scrollY);
-  const poses = () => lines.evaluateAll((elements) => elements.map((element) => new DOMMatrixReadOnly(getComputedStyle(element).transform).m42));
-
-  // Content is already readable at the bottom, but has not spent its entrance.
-  await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), top - height * 0.65);
-  await expect.poll(poses).toEqual([18, 18]);
-  await page.waitForTimeout(200);
-  expect(await poses()).toEqual([18, 18]);
-  for (const wrapper of await page.locator(".about-heading-line").all()) {
-    await expect(wrapper).toHaveCSS("overflow", "visible");
-  }
-  await page.screenshot({ path: testInfo.outputPath("before-entrance.png") });
-
-  // Both lines share one stationary cue; the second follows the first.
-  // Start recording in the same browser task as the trigger; a protocol round
-  // trip can miss an entire compositor animation under software-WebGL load.
-  const frames = await lines.first().evaluate(async (element, target) => {
-    const lines = element.closest("h2")!.querySelectorAll(".entrance");
-    const frames: { time: number; y: number[] }[] = [];
-    const start = performance.now();
+  const top = await heading.evaluate(element => element.getBoundingClientRect().top + scrollY - 18);
+  const pose = () => heading.evaluate(element => new DOMMatrixReadOnly(getComputedStyle(element).transform).m42);
+  await page.evaluate(y => window.scrollTo({ top: y, behavior: "instant" }), top - height * .8);
+  await expect.poll(pose).toBe(18);
+  const frames = await heading.evaluate(async (element, target) => {
+    const frames: number[] = [];
     window.scrollTo({ top: target, behavior: "instant" });
-    while (performance.now() - start < 1800) {
+    const start = performance.now();
+    while (performance.now() - start < 1600) {
       await new Promise(requestAnimationFrame);
-      frames.push({ time: performance.now() - start, y: Array.from(lines, (line) => new DOMMatrixReadOnly(getComputedStyle(line).transform).m42) });
+      frames.push(new DOMMatrixReadOnly(getComputedStyle(element).transform).m42);
     }
     return frames;
-  }, top - height * 0.43);
-  await testInfo.attach("entrance-frames.json", { body: JSON.stringify(frames), contentType: "application/json" });
-  let previous = [18, 18];
-  for (const frame of frames) {
-    for (let line = 0; line < 2; line++) {
-      expect(frame.y[line]).toBeGreaterThanOrEqual(-0.05);
-      expect(frame.y[line]).toBeLessThanOrEqual(previous[line] + 0.05);
-    }
-    expect(frame.y[0]).toBeLessThanOrEqual(frame.y[1] + 0.05);
-    previous = frame.y;
+  }, top - height * .45);
+  let previous = 18;
+  for (const value of frames) {
+    expect(value).toBeGreaterThanOrEqual(-.05);
+    expect(value).toBeLessThanOrEqual(previous + .05);
+    previous = value;
   }
-  expect(frames.some((frame) => frame.y[1] - frame.y[0] > 1)).toBe(true);
-  await expect.poll(poses).toEqual([0, 0]);
-  await page.screenshot({ path: testInfo.outputPath("reading-area.png") });
-  // Once is intentional: returning to a section must not reset visible text.
+  await expect.poll(pose).toBe(0);
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
-  await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), top - height * 0.43);
-  expect(await poses()).toEqual([0, 0]);
+  await page.evaluate(y => window.scrollTo({ top: y, behavior: "instant" }), top - height * .45);
+  expect(await pose()).toBe(0);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(heading).toHaveCSS("transform", "none");
 });
-
 
 test("mobile menu supports keyboard dismissal, outside tap and native no-JS navigation", async ({ page, browser }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile", "Mobile disclosure only");
@@ -346,40 +269,86 @@ test("mobile menu supports keyboard dismissal, outside tap and native no-JS navi
 });
 
 
-test("mobile Ways I Work swipes independently and lets vertical scrolling pass", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "mobile", "Phone carousel only");
+test("supporting sections remain compact and navigation follows the new reading order", async ({ page }, testInfo) => {
   await page.goto("/");
-  const section = page.locator(".ways-work");
-  const viewport = page.locator(".ways-window");
-  const controls = page.locator(".ways-controls button");
-  await expect(section).toHaveAttribute("data-mobile", "true");
-  await expect(section).toHaveAttribute("data-scroll", "false");
-  await section.evaluate(el => window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 100, behavior: "instant" }));
-  await expect(page.locator(".ways-sticky")).toHaveCSS("position", "relative");
-  await expect(page.locator(".ways-folio").first()).toBeHidden();
-  const y = await page.evaluate(() => scrollY);
-  const box = (await viewport.boundingBox())!;
-  const cdp = await page.context().newCDPSession(page);
-  const touchY = box.y + 100;
-  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: 330, y: touchY }] });
-  for (const x of [290, 240, 190, 140, 80]) {
-    await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x, y: touchY }] });
-    await page.waitForTimeout(30);
+  for (const [id, destination] of [["about", "Projects"], ["education", "Experience"], ["toolkit", "Experience"], ["contact", "Contact"]]) {
+    await page.locator(`#${id}`).evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + scrollY - 110, behavior: "instant" }));
+    await expect(page.locator(`.navigation a[href="#${destination.toLowerCase()}"]`)).toHaveAttribute("aria-current", "location");
   }
-  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-  await expect(controls.nth(1)).toHaveAttribute("aria-current", "step");
-  expect(Math.abs(await page.evaluate(() => scrollY) - y)).toBeLessThan(3);
-  await controls.nth(1).press("End");
-  await expect(controls.nth(3)).toBeFocused();
-  await expect(controls.nth(3)).toHaveAttribute("aria-current", "step");
-  await expect(page.locator("#way-panel-3 h4")).toBeInViewport();
-  await page.mouse.move(180, touchY);
-  await page.mouse.wheel(0, 850);
-  await expect.poll(() => section.evaluate(el => el.getBoundingClientRect().bottom)).toBeLessThan(100);
-  await expect(controls.nth(3)).toHaveAttribute("aria-current", "step");
+  expect(await page.locator(".toolkit").evaluate(element => getComputedStyle(element).position)).toBe("static");
+  await expect(page.locator(".toolkit-group")).toHaveCount(4);
+  await expect(page.locator(".education-activities li")).toHaveCount(5);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await controls.first().click();
-  await expect(controls.first()).toHaveAttribute("aria-current", "step");
-  await expect(page.locator("#way-panel-0 h4")).toBeInViewport();
+  const baseline = testInfo.project.name === "mobile" ? 9741 : 12052;
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThan(baseline * .7);
+  await page.locator(".toolkit").evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + scrollY - 110, behavior: "instant" }));
+  const before = await page.evaluate(() => scrollY);
+  await page.mouse.move(10, 420);
+  await page.mouse.wheel(0, 400);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before + 300);
+});
+
+// Two production builds exercise the real enabled prop without modifying account
+// credentials. Configured requests are intercepted before they reach the API.
+test("unconfigured contact is explicit and cannot submit", async ({ page }) => {
+  test.skip(process.env.CONTACT_TEST_STATE !== "unconfigured", "Requires a build with empty provider environment variables");
+  await page.goto("/#contact");
+  await expect(page.getByRole("button", { name: "Send a message" })).toBeDisabled();
+  await expect(page.getByText("Email delivery is not connected yet.", { exact: false })).toBeVisible();
+});
+
+test("configured contact validates, focuses errors, sends once and handles provider failures", async ({ page }) => {
+  test.skip(process.env.CONTACT_TEST_STATE !== "configured", "Requires a build with test provider environment variables");
+  let calls = 0;
+  let release: (() => void) | undefined;
+  let mode = "pending";
+  await page.route("**/api/contact", async (route) => {
+    calls++;
+    if (mode === "network") return route.abort();
+    if (mode === "pending") await new Promise<void>(resolve => { release = resolve; });
+    if (mode === "field") return route.fulfill({ status: 400, json: { message: "Please check your email.", fields: { email: "Use a valid email address." } } });
+    if (mode === "unconfigured") return route.fulfill({ status: 503, json: { message: "Email delivery is not connected yet. Your message has not been sent." } });
+    if (mode === "limited") return route.fulfill({ status: 429, json: { message: "Too many attempts. Please try again in 15 minutes." } });
+    return route.fulfill({ status: 200, json: { message: "Your message is on its way. Thanks for reaching out." } });
+  });
+  await page.goto("/#contact");
+  const submit = page.getByRole("button", { name: "Send a message", exact: true });
+  await expect(submit).toBeEnabled();
+  await submit.click();
+  await expect(page.getByLabel("Your name", { exact: false })).toBeFocused();
+  expect(calls).toBe(0);
+  const fill = async () => {
+    await page.getByLabel("Your name", { exact: false }).fill("Portfolio visitor");
+    await page.getByLabel("Email address", { exact: false }).fill("visitor@example.com");
+    await page.getByLabel("What are you thinking?", { exact: false }).fill("I would like to discuss an engineering project with you.");
+  };
+  await fill();
+  await submit.click();
+  await expect(page.getByRole("button", { name: "Sending message…" })).toBeDisabled();
+  await expect(page.locator(".contact-form")).toHaveAttribute("aria-busy", "true");
+  await expect.poll(() => Boolean(release)).toBe(true);
+  release!();
+  await expect(page.getByRole("status")).toContainText("Your message is on its way.");
+  await expect(page.getByLabel("Your name", { exact: false })).toBeEmpty();
+  expect(calls).toBe(1);
+  await fill();
+  mode = "field";
+  await submit.click();
+  await expect(page.getByLabel("Email address", { exact: false })).toBeFocused();
+  await expect(page.getByLabel("Email address", { exact: false })).toHaveAttribute("aria-invalid", "true");
+  for (const [failure, message] of [["network", "We couldn’t reach the email service"], ["unconfigured", "Your message has not been sent"], ["limited", "Too many attempts"]]) {
+    mode = failure;
+    await submit.click();
+    await expect(page.getByRole("status")).toContainText(message);
+    await expect(page.getByLabel("Your name", { exact: false })).toHaveValue("Portfolio visitor");
+    await expect(submit).toBeEnabled();
+  }
+});
+
+
+test("toolkit links use the supplied project technologies", async ({ page }) => {
+  await page.goto("/#toolkit");
+  for (const [tool, slug] of [["Ruby", "tariff-ninja"], ["Ruby on Rails", "tariff-ninja"], ["SQL", "tariff-ninja"], ["Python", "city-of-bentonville-traffic"], ["Jupyter", "city-of-bentonville-traffic"], ["Tailwind CSS", "querry-berry"], ["React", "amazeum"], ["JavaScript", "amazeum"]]) {
+    await expect(page.locator("#toolkit").getByRole("link", { name: new RegExp(`^${tool} —`) })).toHaveAttribute("href", `/projects/${slug}`);
+  }
 });

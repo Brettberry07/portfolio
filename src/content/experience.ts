@@ -18,7 +18,7 @@ export const experience: readonly Experience[] = [
       { title: "Lead Software Engineer", dates: "July – September 2026" },
       { title: "Software Engineer", dates: "February – July 2026" },
     ],
-    summary: "Led the development of AI-powered customs and trade software, building large-scale data infrastructure, automated workflows, and customer-focused tools.",
+    summary: "Built AI-assisted trade tools, item infrastructure, and internal applications in direct collaboration with clients.",
     emphasis: { value: "1.5M+", label: "items supported by the data infrastructure" },
     projectSlug: "tariff-ninja",
   },
@@ -29,7 +29,7 @@ export const experience: readonly Experience[] = [
     roles: [
       { title: "Software Engineer Intern", dates: "January – May 2026" },
     ],
-    summary: "Developed high-performance battery analysis software and contributed to the architecture and product strategy of a data-driven SaaS platform.",
+    summary: "Developed battery-analysis software and contributed to cloud architecture, SaaS planning, and subscription pricing.",
     emphasis: { value: "1.2M+", label: "data points processed in under a second" },
     projectSlug: "potential-energy-tech",
   },
@@ -48,8 +48,8 @@ export const education = [
 
 export const leadership = [
   { organization: "RIOT Robotics", context: "University of Arkansas", description: "Developing a low-cost impact-detection vest for a local business." },
-  { organization: "Competitive Programming Club", context: "Founder · Bentonville West", description: "Founded the club and led it to seven statewide and national awards." },
-  { organization: "Science Olympiad", context: "Senior Captain · Bentonville West", description: "Led the team to three national qualifications and state awards." },
-  { organization: "VEX Robotics", context: "Engineering & competition", description: "Arkansas State Innovate Award, two regional Innovate Awards, and World Championship qualification." },
-  { organization: "Arkansas Hog Hacks", context: "Hackathon recognition", description: "Most Creative Award and sixth overall as a high-school team." },
+  { organization: "Competitive Programming Club", context: "Founder · Bentonville West", description: "Seven statewide and national awards." },
+  { organization: "Science Olympiad", context: "Senior Captain · Bentonville West", description: "Three national qualifications and state awards." },
+  { organization: "VEX Robotics", context: "Engineering & competition", description: "Arkansas State and two regional Innovate Awards; World Championship qualification." },
+  { organization: "Arkansas Hog Hacks", context: "Hackathon recognition", description: "Most Creative Award; sixth overall as a high-school team." },
 ] as const;

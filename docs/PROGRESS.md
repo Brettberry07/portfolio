@@ -1,5 +1,7 @@
 # Current checkpoint
 
+**Text-only project card stack — 2026-11-02:** Preserved the current left selector and project order; restored a layered charcoal card stack with titles and one short verified hook per project, without images or diagrams. Added card-edge selection and drag/swipe while retaining arrows, keyboard navigation, mobile select, reduced motion and no-JS links. Lint/types/build and six targeted browser regressions pass; CLI checks cover actual touch swipe, adjacent selection and reduced motion. Reviewed 1440×900 and 390×844, including the longest title, with no horizontal overflow. Screenshots: ignored `output/playwright/project-cards-*`.
+
 **Mobile Always Learning — 2026-10-22:** Took the organic artwork out of grid flow and positioned a smaller 210px version behind the introduction, bleeding off the left edge with text clearance. Education follows the introduction after 26px; school top padding reduced to 10px and university heading margin tightened. All changes are inside the phone breakpoint; desktop and Reveal animations unchanged. Lint passes; 390×844, 320×640 and 1440×900 screenshots reviewed without horizontal overflow or text obstruction. Artifacts: ignored `output/playwright/learning-compact-*`.
 
 **Ways project links — 2026-10-22:** Mobile project links now sit side by side across the bottom of each card, with equal columns, aligned arrows and 44px touch targets. Long titles wrap within their column. Desktop unchanged. Lint passes; 390×844, 320×640 and 1440×900 screenshots reviewed with no horizontal overflow.

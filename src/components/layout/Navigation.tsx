@@ -19,15 +19,30 @@ export function Navigation({ caseStudy = false }: { caseStudy?: boolean }) {
   }, []);
   useEffect(() => {
     if (caseStudy) return;
-    const observer = new IntersectionObserver((entries) => {
-      const entry = entries.find((item) => item.isIntersecting);
-      if (entry) setActive(entry.target.id === "about" ? "home" : entry.target.id);
-    }, { rootMargin: "-15% 0px -55% 0px" });
-    ["home", "about", "projects", "experience", "contact"].forEach((id) => {
-      const section = document.getElementById(id);
-      if (section) observer.observe(section);
-    });
-    return () => observer.disconnect();
+    // Read the last section above the navigation's reading line, including
+    // intermediate sections that share a destination after the work-first reorder.
+    const ids = ["home", "projects", "about", "experience", "education", "toolkit", "contact"];
+    const sections = ids.map((id) => document.getElementById(id)).filter((section): section is HTMLElement => Boolean(section));
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+      const current = atBottom ? "contact" : sections.findLast((section) => section.getBoundingClientRect().top <= 150)?.id ?? "home";
+      const destination = current === "about" ? "projects" : ["education", "toolkit"].includes(current) ? "experience" : current;
+      setActive((previous) => previous === destination ? previous : destination);
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+    const observer = new ResizeObserver(schedule);
+    sections.forEach((section) => observer.observe(section));
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    schedule();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      cancelAnimationFrame(frame);
+    };
   }, [caseStudy]);
   const links = destinations.map((label) => {
     const id = label.toLowerCase();

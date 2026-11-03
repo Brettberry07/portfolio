@@ -1,192 +1,88 @@
 "use client";
 
-import { Reveal } from "@/components/motion/Reveal";
-
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion, type PanInfo } from "motion/react";
-import { ArrowDownLeft, ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { projects } from "@/content/projects";
-import { ProjectArtwork } from "@/components/projects/ProjectArtwork";
+import { motion, useReducedMotion } from "motion/react";
 import "./project-selector.css";
-
-function relativePosition(index: number, active: number) {
-  const distance = (index - active + projects.length) % projects.length;
-  return distance > projects.length / 2 ? distance - projects.length : distance;
-}
 
 export function ProjectSelector() {
   const [active, setActive] = useState(0);
-  const listRef = useRef<HTMLOListElement>(null);
+  const buttons = useRef<(HTMLButtonElement | null)[]>([]);
+  const project = projects[active];
   const reducedMotion = useReducedMotion();
-  const selectedProject = projects[active];
+  const select = (index: number) => setActive((index + projects.length) % projects.length);
 
-  useEffect(() => {
-    const list = listRef.current;
-    if (!list) return;
-    function keepSelectionVisible() {
-      const item = list?.children[active] as HTMLElement | undefined;
-      if (!list || !item || list.scrollWidth <= list.clientWidth) return;
-      const left = item.offsetLeft;
-      const right = left + item.offsetWidth;
-      if (left < list.scrollLeft) {
-        list.scrollTo({ left: Math.max(0, left - 4), behavior: reducedMotion ? "instant" : "smooth" });
-      } else if (right > list.scrollLeft + list.clientWidth) {
-        list.scrollTo({ left: right - list.clientWidth + 4, behavior: reducedMotion ? "instant" : "smooth" });
-      }
-    }
-    keepSelectionVisible();
-    const resizeObserver = new ResizeObserver(keepSelectionVisible);
-    resizeObserver.observe(list);
-    return () => resizeObserver.disconnect();
-  }, [active, reducedMotion]);
-
-  function select(index: number) {
-    setActive((index + projects.length) % projects.length);
-  }
-
-  function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    if (["ArrowDown", "ArrowRight"].includes(event.key)) {
-      event.preventDefault();
-      select(active + 1);
-    } else if (["ArrowUp", "ArrowLeft"].includes(event.key)) {
-      event.preventDefault();
-      select(active - 1);
-    } else if (event.key === "Home") {
-      event.preventDefault();
-      select(0);
-    } else if (event.key === "End") {
-      event.preventDefault();
-      select(projects.length - 1);
-    }
-  }
-
-  function onDragEnd(_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) {
-    if (Math.abs(info.offset.x) > 45 || Math.abs(info.velocity.x) > 350) {
-      select(active + (info.offset.x < 0 ? 1 : -1));
-    }
+  function handleKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next: number;
+    if (event.key === "ArrowDown" || event.key === "ArrowRight") next = (index + 1) % projects.length;
+    else if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = (index - 1 + projects.length) % projects.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = projects.length - 1;
+    else return;
+    event.preventDefault();
+    select(next);
+    buttons.current[next]?.focus({ preventScroll: true });
   }
 
   return (
     <section id="projects" className="selected-work" aria-labelledby="selected-work-title">
-      <div className="selected-work__eyebrow">
-        <span>02 / SELECTED WORK</span>
-        <span>Ideas made tangible.</span>
-      </div>
-      <Reveal className="selected-work__heading">
-        <h2 id="selected-work-title">Selected work<span>.</span></h2>
-        <ArrowDownLeft aria-hidden="true" strokeWidth={1.2} />
-      </Reveal>
-
-      <noscript>
-        <nav className="project-noscript" aria-label="Project case studies">
-          <p>Explore the work.</p>
-          <ol>
-            {projects.map((project) => (
-              <li key={project.slug}>
-                <Link href={`/projects/${project.slug}`}><span>{project.id}</span>{project.title}<ArrowUpRight size={20} aria-hidden="true" /></Link>
-              </li>
-            ))}
-          </ol>
-        </nav>
-      </noscript>
-
-      <Reveal className="project-explorer" onKeyDown={onKeyDown}>
-        <div className="project-explorer__index">
-          <p className="project-explorer__hint" id="project-explorer-hint">Seven projects. Different perspectives.</p>
-          <ol ref={listRef} className="project-list" aria-label="Select a project">
-            {projects.map((project, index) => (
-              <li key={project.slug}>
-                <button
-                  type="button"
-                  className={`project-list__item${active === index ? " is-active" : ""}`}
-                  onClick={() => select(index)}
-                  onMouseEnter={() => select(index)}
-                  onFocus={() => select(index)}
-                  aria-pressed={active === index}
-                  aria-controls="active-project-card"
-                >
-                  <span className="project-list__number">{project.id}</span>
-                  <span className="project-list__name">{project.title}</span>
-                  {active === index ? <motion.span className="project-list__marker" layoutId="project-active-marker" aria-hidden="true" transition={reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 350, damping: 32 }} /> : null}
+      <div className="container section-wrap">
+        <div className="section-topline mono"><span>01 / SELECTED WORK</span><span>Engineering, in practice.</span></div>
+        <header className="selected-work__heading"><h2 className="section-title" id="selected-work-title">Selected work.</h2><p>Client problems, independent projects,<br className="desktop-break" /> and the systems behind them.</p></header>
+        <noscript><style>{`.project-interactive{display:none!important}`}</style><nav className="project-noscript" aria-label="Project case studies"><ol>{projects.map((entry) => <li key={entry.slug}><Link href={`/projects/${entry.slug}`}>{entry.id} / {entry.title}<ArrowUpRight size={20} /></Link></li>)}</ol></nav></noscript>
+        <div className="project-explorer project-interactive">
+          <div className="project-explorer__index">
+            <p className="project-explorer__hint mono">SELECT A PROJECT</p>
+            <ol className="project-list" aria-label="Select a project">
+              {projects.map((entry, index) => <li key={entry.slug}>
+                <button type="button" ref={(element) => { buttons.current[index] = element; }} className={`project-list__item${active === index ? " is-active" : ""}`} onClick={() => select(index)} onKeyDown={(event) => handleKey(event, index)} aria-pressed={active === index} aria-controls="active-project-card">
+                  <span className="project-list__number mono">{entry.id}</span><span className="project-list__identity"><span>{entry.shortTitle ?? entry.title}</span>{index < 2 && <small>Professional engineering</small>}</span><ArrowUpRight size={18} aria-hidden="true" />
                 </button>
-              </li>
-            ))}
-          </ol>
-          <p className="project-explorer__instruction">Select a project. Explore the thinking.</p>
-        </div>
-
-        <div className="project-showcase" role="region" aria-roledescription="carousel" aria-label="Selected project showcase" aria-describedby="project-explorer-hint">
-          <div className="project-stack">
-            <div className="project-stack__geometry" aria-hidden="true" />
-            {projects.map((project, index) => {
-              const position = relativePosition(index, active);
-              const isActive = position === 0;
-              const isNext = position === 1;
-              const isPrevious = position === -1;
-              const visible = isActive || isNext || isPrevious;
-              return (
-                <motion.article
-                  key={project.slug}
-                  id={isActive ? "active-project-card" : undefined}
-                  className={`project-stack__card${isActive ? " is-active" : " is-behind"}`}
-                  aria-hidden={!visible}
-                  initial={false}
-                  animate={{
-                    x: isActive ? 0 : isNext ? 32 : 66,
-                    y: isActive ? 0 : isNext ? -22 : -42,
-                    rotate: isActive ? -1.5 : isNext ? 3 : 7,
-                    scale: isActive ? 1.015 : isNext ? 0.98 : 0.95,
-                    opacity: isActive ? 1 : visible ? 0.65 : 0,
-                  }}
-                  transition={reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 190, damping: 27 }}
-                  style={{ zIndex: isActive ? 3 : isNext ? 2 : 1, visibility: visible ? "visible" : "hidden" }}
-                  drag={isActive ? "x" : false}
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={reducedMotion ? 0 : 0.12}
-                  onDragEnd={onDragEnd}
-                >
-                  {isActive ? (
-                    <>
-                      <div className="project-card__masthead">
-                        <span>PROJECT / {project.id}</span>
-                        <span className="project-card__cross" aria-hidden="true">+</span>
+              </li>)}
+            </ol>
+          </div>
+          <div className="project-mobile-select"><label className="mono" htmlFor="project-choice">SELECT A PROJECT</label><select id="project-choice" value={active} onChange={(event) => select(Number(event.target.value))}>{projects.map((entry, index) => <option key={entry.slug} value={index}>{entry.id} / {entry.shortTitle ?? entry.title}</option>)}</select></div>
+          <div className="project-showcase" role="region" aria-label="Selected project preview">
+            <div className="project-stack">
+              {[2, 1, 0].map((depth) => {
+                const index = (active + depth) % projects.length;
+                const entry = projects[index];
+                const isActive = depth === 0;
+                return (
+                  <motion.article
+                    key={entry.slug}
+                    id={isActive ? "active-project-card" : undefined}
+                    className={`project-card${isActive ? " is-front" : " is-behind"}`}
+                    aria-labelledby={isActive ? "active-project-title" : undefined}
+                    initial={false}
+                    animate={{ x: `${depth * 6}%`, y: depth * -18, rotate: depth * 3, scale: 1 - depth * 0.035 }}
+                    transition={{ duration: reducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ zIndex: 3 - depth }}
+                    drag={isActive ? "x" : false}
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={0.12}
+                    onDragEnd={(_, info) => {
+                      if (Math.abs(info.offset.x) > 45) select(active + (info.offset.x < 0 ? 1 : -1));
+                    }}
+                  >
+                    {isActive ? <>
+                      <div className="project-card__topline mono"><span>PROJECT / {entry.id}</span><span aria-hidden="true">+</span></div>
+                      <div className="project-card__content">
+                        <h3 id="active-project-title">{entry.shortTitle ?? entry.title}</h3>
+                        <p className="project-card__hook">{entry.cardHook}</p>
                       </div>
-                      <motion.div className="project-card__art" initial={false} animate={reducedMotion ? { opacity: 1, y: 0, scale: 1 } : { opacity: [0.2, 1], y: [14, 0], scale: [0.97, 1] }} transition={{ duration: 0.45, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}>
-                        <ProjectArtwork project={project} variant="cover" accessible={false} />
-                      </motion.div>
-                      <motion.div className="project-card__content" initial={false} animate={reducedMotion ? { opacity: 1, y: 0 } : { opacity: [0.2, 1], y: [10, 0] }} transition={{ duration: 0.35, delay: 0.1 }}>
-                        <div className="project-card__tags">
-                          <span>{project.category || "Case study"}</span>
-                          <span>{project.technologies.length ? project.technologies.slice(0, 2).join(" / ") : "Details forthcoming"}</span>
-                        </div>
-                        <h3>{project.title}</h3>
-                        <p>{project.summary || "Case study details coming soon."}</p>
-                        <Link href={`/projects/${project.slug}`} className="project-card__link" draggable={false}>
-                          View case study <ArrowUpRight size={22} aria-hidden="true" />
-                        </Link>
-                      </motion.div>
-                    </>
-                  ) : (
-                    <button className="project-card__peek" type="button" onClick={() => select(index)} tabIndex={visible ? 0 : -1} aria-label={`Select ${project.title}`}>
-                      <div className="project-card__peek-art"><ProjectArtwork project={project} /></div>
-                      <span>{project.id} / {project.title}</span>
-                    </button>
-                  )}
-                </motion.article>
-              );
-            })}
-          </div>
-          <div className="project-showcase__controls">
-            <span className="project-showcase__count" aria-live="polite" aria-atomic="true"><b>{selectedProject.id}</b><span>/ 07</span><span className="sr-only"> — {selectedProject.title}</span></span>
-            <span className="project-showcase__swipe-hint">Drag to explore</span>
-            <div className="project-showcase__arrows">
-              <button type="button" onClick={() => select(active - 1)} aria-label="Previous project"><ArrowLeft size={20} aria-hidden="true" /></button>
-              <button type="button" onClick={() => select(active + 1)} aria-label="Next project"><ArrowRight size={20} aria-hidden="true" /></button>
+                      <Link className="project-card__link" href={`/projects/${entry.slug}`}>View case study <ArrowUpRight size={22} aria-hidden="true" /></Link>
+                    </> : <button className="project-card__peek mono" type="button" onClick={() => select(index)} aria-label={`Select ${entry.title}`}><span>{entry.id} / {entry.shortTitle ?? entry.title}</span><span aria-hidden="true">+</span></button>}
+                  </motion.article>
+                );
+              })}
             </div>
+            <div className="project-showcase__controls"><p className="mono" aria-live="polite" aria-atomic="true">{project.id} / {String(projects.length).padStart(2, "0")}<span className="sr-only"> — {project.title}</span></p><div><span className="project-showcase__gesture">Drag to explore</span><button type="button" onClick={() => select(active - 1)} aria-label="Previous project"><ArrowLeft size={20} /></button><button type="button" onClick={() => select(active + 1)} aria-label="Next project"><ArrowRight size={20} /></button></div></div>
           </div>
         </div>
-      </Reveal>
+      </div>
     </section>
   );
 }

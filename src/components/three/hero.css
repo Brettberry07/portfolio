@@ -1,48 +1,22 @@
-/* Hero-only composition: Contact retains its original tokens and styling. */
-/* Keep the stationary canvas bounded to the hero, including the static poster. */
-#main { overflow-x:clip; }
-.hero { overflow:clip; margin-bottom:0; background:var(--paper); }
-.hero .hero-heading { z-index:4; }
+/* Stationary bounds preserve R3F measurements and the established scene motion. */
 .hero-scene-boundary { position:absolute; inset:0; z-index:1; pointer-events:none; overflow:clip; mask-image:linear-gradient(to bottom,#000 0%,#000 96%,transparent 100%); }
-.hero .hero-sculpture { width:160%; height:150%; top:4%; right:-66%; z-index:1; pointer-events:none; }
-.sculpture-stage { position:absolute; inset:0; }
-.hero .sculpture-poster { transform:scale(.88); }
-.hero .hero-copy { z-index:5; top:49%; width:49%; }
-.hero .hero-tagline { font-size:clamp(58px,5.75vw,96px); line-height:1.02; letter-spacing:-.06em; max-width:560px; }
-.hero .hero-description { margin-top:28px; }
-.hero .hero-bottom { z-index:6; background:transparent; }
-.hero .sculpture-caption { display:none; }
-
-.hero-credits { position:absolute; z-index:5; right:4.2%; bottom:27px; font-size:8px; color:#4e514b; padding:0; }
+.hero-sculpture { position:absolute; width:160%; height:150%; top:4%; right:-66%; pointer-events:none; }
+.sculpture-stage,.sculpture-canvas,.sculpture-poster { position:absolute; inset:0; }
+.sculpture-canvas { opacity:0; transition:opacity .7s; }
+.sculpture-canvas.is-ready { opacity:1; }
+.sculpture-poster { background:url('/images/hero-poster.webp') center/contain no-repeat; transform:scale(.88); }
+.hero-sculpture:has(.sculpture-canvas.is-ready) .sculpture-poster { opacity:0; }
+.hero-credits { position:absolute; z-index:6; right:max(var(--gutter),calc((100% - 1480px)/2 + var(--gutter))); bottom:24px; max-width:50%; font-size:10px; color:var(--text-secondary); line-height:1.5; }
 .hero-credits a { text-decoration:underline; text-underline-offset:3px; }
-.footer-profiles { display:flex; gap:18px; font-size:10px; }
-.footer-profiles a { border-bottom:1px solid #777b71; padding-bottom:4px; }
 @media(min-width:601px) and (max-width:1000px) {
- .hero .sculpture-poster { background-image:url('/images/hero-poster-tablet.webp'); }
- .hero .hero-sculpture { width:170%; right:-80%; height:145%; top:-10%; }
- .hero .hero-copy { top:48%; width:54%; }
- .hero .hero-tagline { font-size:60px; }
+ .sculpture-poster { background-image:url('/images/hero-poster-tablet.webp'); }
+ .hero-sculpture { width:170%; right:-80%; height:145%; top:-10%; }
 }
 @media(max-width:600px) {
- .hero { height:90svh; min-height:710px; max-height:780px; margin-bottom:0; }
- .hero .masthead { height:80px; align-items:center; padding-bottom:0; }
- .hero .edition { display:none; }
- .hero .hero-heading { padding-top:20px; }
- .hero .hero-kicker { margin-bottom:15px; }
- .hero h1 { font-size:12.8vw; }
- .hero .sculpture-poster { background-image:url('/images/hero-poster-mobile.webp'); }
- .hero .hero-sculpture { width:112%; height:clamp(300px,41.5svh,350px); top:151px; right:-13%; }
- .hero .hero-copy { top:auto; bottom:95px; width:100%; }
- .hero .hero-tagline { font-size:46px; line-height:1.02; max-width:300px; }
- .hero .hero-tagline br { display:initial; }
- .hero .hero-description { margin-top:20px; }
- .hero .text-link { display:flex; justify-content:space-between; width:100%; margin-top:18px; min-height:44px; }
- .hero .round-arrow { width:44px; height:44px; }
- .hero .hero-bottom { height:65px; pointer-events:none; }
- .hero .scroll-cue { display:none; }
- .hero-credits { top:auto; bottom:25px; left:6%; right:6%; font-size:7px; padding:0; max-width:none; text-align:left; }
- .footer-profiles { grid-column:1/-1; gap:20px; font-size:10px; }
+ .sculpture-poster { background-image:url('/images/hero-poster-mobile.webp'); }
+ .hero-sculpture { width:112%; height:clamp(270px,37svh,320px); top:125px; right:-13%; }
+ .hero-credits { left:24px; right:24px; bottom:24px; max-width:none; font-size:10px; }
 }
 @media(prefers-reduced-motion:reduce) {
- .hero .hero-sculpture,.hero .sculpture-stage,.hero .hero-heading h1 { transform:none!important; }
+ .hero-sculpture,.sculpture-stage,.hero-heading h1 { transform:none!important; }
 }
