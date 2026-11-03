@@ -8,9 +8,7 @@ const groups = [
     description: "From versatile scripting to lower-level systems, these are the languages I use to turn ideas into working software.",
     tools: [
       { name: "TypeScript", svg: "/icons/toolkit/typescript.svg", color: "#3178c6" },
-      { name: "JavaScript", svg: "/icons/toolkit/javascript.svg", color: "#ac8400" },
       { name: "Python", svg: "/icons/toolkit/python.svg", color: "#3776ab" },
-      { name: "C++", svg: "/icons/toolkit/cpp.svg", color: "#00599c" },
       { name: "Rust", svg: "/icons/toolkit/rust.svg", color: "#93552e" },
       { name: "Ruby", Icon: Gem, color: "#cc342d" },
     ],
@@ -55,7 +53,6 @@ const projectExamples: Record<string, { title: string; slug: string }> = {
   Jupyter: { title: "City of Bentonville Traffic", slug: "city-of-bentonville-traffic" },
   "Tailwind CSS": { title: "Querry Berry", slug: "querry-berry" },
   React: { title: "Amazeum", slug: "amazeum" },
-  JavaScript: { title: "Amazeum", slug: "amazeum" },
   TypeScript: { title: "Still On", slug: "still-on" },
   "React Native": { title: "Still On", slug: "still-on" },
   Supabase: { title: "Still On", slug: "still-on" },

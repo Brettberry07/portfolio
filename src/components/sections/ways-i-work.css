@@ -1,4 +1,4 @@
-.approach { margin-top:64px; border-top:1px solid var(--line); padding-top:32px; }
+.approach { margin-top:112px; border-top:1px solid var(--line); padding-top:32px; }
 .approach header { display:flex; justify-content:space-between; align-items:baseline; gap:24px; }
 .approach header p { color:var(--text-secondary); }
 .approach-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:32px; list-style:none; padding:0; margin:32px 0 16px; }
@@ -6,9 +6,9 @@
 .approach-steps .mono { color:var(--text-secondary); }
 .approach-steps p { font-size:16px; margin-top:16px; color:var(--text-secondary); }
 .approach-steps strong { color:var(--ink); font-weight:500; }
-@media(max-width:1000px) { .approach header { display:block; } .approach header p { margin-top:16px; } .approach-steps { gap:24px; } }
+@media(max-width:1000px) { .approach { margin-top:96px; } .approach header { display:block; } .approach header p { margin-top:16px; } .approach-steps { gap:24px; } }
 @media(max-width:600px) {
- .approach { margin-top:48px; }
+ .approach { margin-top:72px; }
  .approach-steps { grid-template-columns:1fr; gap:24px; margin-top:24px; }
  .approach-steps p { margin-top:8px; }
 }

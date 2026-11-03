@@ -33,8 +33,8 @@ export function ProjectSelector() {
         <header className="selected-work__heading"><h2 className="section-title" id="selected-work-title">Selected work.</h2><p>Client problems, independent projects,<br className="desktop-break" /> and the systems behind them.</p></header>
         <noscript><style>{`.project-interactive{display:none!important}`}</style><nav className="project-noscript" aria-label="Project case studies"><ol>{projects.map((entry) => <li key={entry.slug}><Link href={`/projects/${entry.slug}`}>{entry.id} / {entry.title}<ArrowUpRight size={20} /></Link></li>)}</ol></nav></noscript>
         <div className="project-explorer project-interactive">
+          <p className="project-explorer__hint mono">SELECT A PROJECT</p>
           <div className="project-explorer__index">
-            <p className="project-explorer__hint mono">SELECT A PROJECT</p>
             <ol className="project-list" aria-label="Select a project">
               {projects.map((entry, index) => <li key={entry.slug}>
                 <button type="button" ref={(element) => { buttons.current[index] = element; }} className={`project-list__item${active === index ? " is-active" : ""}`} onClick={() => select(index)} onKeyDown={(event) => handleKey(event, index)} aria-pressed={active === index} aria-controls="active-project-card">
@@ -50,6 +50,7 @@ export function ProjectSelector() {
                 const index = (active + depth) % projects.length;
                 const entry = projects[index];
                 const isActive = depth === 0;
+                const year = entry.period?.match(/20\d{2}/)?.[0];
                 return (
                   <motion.article
                     key={entry.slug}
@@ -57,7 +58,7 @@ export function ProjectSelector() {
                     className={`project-card${isActive ? " is-front" : " is-behind"}`}
                     aria-labelledby={isActive ? "active-project-title" : undefined}
                     initial={false}
-                    animate={{ x: `${depth * 6}%`, y: depth * -18, rotate: depth * 3, scale: 1 - depth * 0.035 }}
+                    animate={{ x: `${depth * 3}%`, y: depth * -6, rotate: depth, scale: 1 - depth * 0.015 }}
                     transition={{ duration: reducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
                     style={{ zIndex: 3 - depth }}
                     drag={isActive ? "x" : false}
@@ -68,13 +69,20 @@ export function ProjectSelector() {
                     }}
                   >
                     {isActive ? <>
-                      <div className="project-card__topline mono"><span>PROJECT / {entry.id}</span><span aria-hidden="true">+</span></div>
-                      <div className="project-card__content">
+                      <header className="project-card__header">
+                        <p className="project-card__metadata mono"><span>{entry.cover.category}</span>{year && <span>{year}</span>}</p>
                         <h3 id="active-project-title">{entry.shortTitle ?? entry.title}</h3>
-                        <p className="project-card__hook">{entry.cardHook}</p>
+                      </header>
+                      <div className="project-card__content">
+                        <p className={`project-card__focal${entry.cover.metric ? " is-metric" : ""}`}>{entry.cover.focal}</p>
+                        <p className="project-card__explanation">{entry.cover.explanation}</p>
                       </div>
+                      {entry.workflow && <div className="project-card__approach">
+                        <p className="mono">APPROACH</p>
+                        <ol aria-label={`${entry.shortTitle ?? entry.title} approach`}>{entry.workflow.map((step, stepIndex) => <li key={step.title}><span className="mono" aria-hidden="true">{String(stepIndex + 1).padStart(2, "0")}</span><span>{step.title}</span></li>)}</ol>
+                      </div>}
                       <Link className="project-card__link" href={`/projects/${entry.slug}`}>View case study <ArrowUpRight size={22} aria-hidden="true" /></Link>
-                    </> : <button className="project-card__peek mono" type="button" onClick={() => select(index)} aria-label={`Select ${entry.title}`}><span>{entry.id} / {entry.shortTitle ?? entry.title}</span><span aria-hidden="true">+</span></button>}
+                    </> : <button className="project-card__peek mono" type="button" onClick={() => select(index)} aria-label={`Select ${entry.title}`} />}
                   </motion.article>
                 );
               })}

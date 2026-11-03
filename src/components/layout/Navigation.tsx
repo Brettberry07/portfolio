@@ -1,13 +1,62 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "motion/react";
+import { useMotionPreference } from "@/components/motion/useMotionPreference";
 import "./navigation.css";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const destinations = ["Home", "Projects", "Experience", "Contact"] as const;
 export function Navigation({ caseStudy = false }: { caseStudy?: boolean }) {
   const [active, setActive] = useState("home");
+  const [hidden, setHidden] = useState(false);
+  const reducedMotion = useMotionPreference();
+  const anchorDestination = useRef<string | null>(null);
+  const arrivalTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [anchorPhase, setAnchorPhase] = useState<"idle" | "jumping" | "arrived">("idle");
+  const phase = useRef<"idle" | "jumping" | "arrived">("idle");
+  const changePhase = useCallback((next: "idle" | "jumping" | "arrived") => {
+    phase.current = next;
+    setAnchorPhase(next);
+  }, []);
+  const shouldHide = anchorPhase === "idle" && hidden;
+  const desktopMenu = useRef<HTMLElement>(null);
   const mobileMenu = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    let previousY = Math.max(0, window.scrollY);
+    let travel = 0;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const y = Math.max(0, Math.min(window.scrollY, document.documentElement.scrollHeight - window.innerHeight));
+      const delta = y - previousY;
+      previousY = y;
+      if (phase.current !== "idle") {
+        travel = 0;
+        return;
+      }
+      if (y < 80 || mobileMenu.current?.open || desktopMenu.current?.querySelector(":focus-visible") || mobileMenu.current?.querySelector(":focus-visible")) {
+        travel = 0;
+        setHidden(false);
+        return;
+      }
+      if (!delta) return;
+      travel = Math.sign(delta) === Math.sign(travel) ? travel + delta : delta;
+      if (travel > 32) setHidden(true);
+      else if (travel < -12) setHidden(false);
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+    const revealForKeyboard = (event: KeyboardEvent) => {
+      if (event.key === "Tab") setHidden(false);
+    };
+    window.addEventListener("scroll", schedule, { passive: true });
+    document.addEventListener("keydown", revealForKeyboard);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      document.removeEventListener("keydown", revealForKeyboard);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
   useEffect(() => {
     const dismiss = (event: PointerEvent) => {
       if (mobileMenu.current && !mobileMenu.current.contains(event.target as Node)) {
@@ -26,28 +75,81 @@ export function Navigation({ caseStudy = false }: { caseStudy?: boolean }) {
     let frame = 0;
     const update = () => {
       frame = 0;
+      if (anchorDestination.current) return;
       const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
-      const current = atBottom ? "contact" : sections.findLast((section) => section.getBoundingClientRect().top <= 150)?.id ?? "home";
+      const contact = document.getElementById("contact")?.getBoundingClientRect();
+      const contactInView = contact && contact.top < window.innerHeight * 0.5 && contact.bottom > window.innerHeight * 0.5;
+      const current = atBottom || contactInView ? "contact" : sections.findLast((section) => section.getBoundingClientRect().top <= 150)?.id ?? "home";
       const destination = current === "about" ? "projects" : ["education", "toolkit"].includes(current) ? "experience" : current;
       setActive((previous) => previous === destination ? previous : destination);
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+    const startAnchor = (event: Event) => {
+      const id = (event as CustomEvent<{ id: string }>).detail.id;
+      if (!destinations.some((label) => label.toLowerCase() === id)) return;
+      if (arrivalTimer.current) clearTimeout(arrivalTimer.current);
+      changePhase("jumping");
+      anchorDestination.current = id;
+      setActive(id);
+      setHidden(false);
+    };
+    const endAnchor = (event: Event) => {
+      if ((event as CustomEvent<{ id: string }>).detail.id !== anchorDestination.current) return;
+      const id = anchorDestination.current;
+      anchorDestination.current = null;
+      setActive(id);
+      // Let the destination and its selected label register before tucking away.
+      changePhase("arrived");
+      setHidden(false);
+      arrivalTimer.current = setTimeout(() => {
+        arrivalTimer.current = null;
+        changePhase("idle");
+        const keyboardFocus = desktopMenu.current?.querySelector(":focus-visible") || mobileMenu.current?.querySelector(":focus-visible");
+        if (!mobileMenu.current?.open && !keyboardFocus) setHidden(window.scrollY >= 80);
+      }, 1200);
+    };
+    const cancelAnchor = () => {
+      const wasArrived = phase.current === "arrived";
+      if (arrivalTimer.current) clearTimeout(arrivalTimer.current);
+      arrivalTimer.current = null;
+      changePhase("idle");
+      if (wasArrived) setHidden(true);
+      if (!anchorDestination.current) return;
+      anchorDestination.current = null;
+      schedule();
+    };
+    const cancelWithKey = (event: KeyboardEvent) => {
+      if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) cancelAnchor();
+    };
+    document.addEventListener("portfolio:anchor-start", startAnchor);
+    document.addEventListener("portfolio:anchor-end", endAnchor);
+    window.addEventListener("wheel", cancelAnchor, { passive: true });
+    window.addEventListener("touchmove", cancelAnchor, { passive: true });
+    document.addEventListener("keydown", cancelWithKey);
     const observer = new ResizeObserver(schedule);
     sections.forEach((section) => observer.observe(section));
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     schedule();
     return () => {
+      if (arrivalTimer.current) clearTimeout(arrivalTimer.current);
+      phase.current = "idle";
+      document.removeEventListener("portfolio:anchor-start", startAnchor);
+      document.removeEventListener("portfolio:anchor-end", endAnchor);
+      window.removeEventListener("wheel", cancelAnchor);
+      window.removeEventListener("touchmove", cancelAnchor);
+      document.removeEventListener("keydown", cancelWithKey);
       observer.disconnect();
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       cancelAnimationFrame(frame);
     };
-  }, [caseStudy]);
+  }, [caseStudy, changePhase]);
   const links = destinations.map((label) => {
     const id = label.toLowerCase();
     return <Link key={id} href={`${caseStudy ? "/" : ""}#${id}`} className={active === id && !caseStudy ? "nav-link active" : "nav-link"} aria-current={active === id && !caseStudy ? "location" : undefined} onClick={() => {
       setActive(id);
+      setHidden(false);
       if (mobileMenu.current?.open) {
         mobileMenu.current.open = false;
         mobileMenu.current.querySelector("summary")?.focus();
@@ -56,10 +158,10 @@ export function Navigation({ caseStudy = false }: { caseStudy?: boolean }) {
   });
   return (
     <>
-    <nav className="navigation" aria-label="Main navigation">
+    <motion.nav ref={desktopMenu} className="navigation" aria-label="Main navigation" inert={shouldHide} initial={false} animate={{ y: shouldHide ? "calc(-100% - 24px)" : 0 }} transition={{ duration: reducedMotion ? 0 : 0.22 }} onFocusCapture={() => setHidden(false)}>
       {links}
-    </nav>
-    <details className="mobile-navigation" ref={mobileMenu} onKeyDown={(event) => {
+    </motion.nav>
+    <motion.details className="mobile-navigation" ref={mobileMenu} inert={shouldHide} initial={false} animate={{ y: shouldHide ? "calc(-100% - 24px)" : 0 }} transition={{ duration: reducedMotion ? 0 : 0.22 }} onFocusCapture={() => setHidden(false)} onKeyDown={(event) => {
       if (event.key === "Escape") {
         event.currentTarget.open = false;
         event.currentTarget.querySelector("summary")?.focus();
@@ -67,7 +169,7 @@ export function Navigation({ caseStudy = false }: { caseStudy?: boolean }) {
     }}>
       <summary>Menu <span className="menu-icon" aria-hidden="true" /></summary>
       <nav aria-label="Main navigation">{links}</nav>
-    </details>
+    </motion.details>
     </>
   );
 }

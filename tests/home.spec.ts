@@ -348,7 +348,7 @@ test("configured contact validates, focuses errors, sends once and handles provi
 
 test("toolkit links use the supplied project technologies", async ({ page }) => {
   await page.goto("/#toolkit");
-  for (const [tool, slug] of [["Ruby", "tariff-ninja"], ["Ruby on Rails", "tariff-ninja"], ["SQL", "tariff-ninja"], ["Python", "city-of-bentonville-traffic"], ["Jupyter", "city-of-bentonville-traffic"], ["Tailwind CSS", "querry-berry"], ["React", "amazeum"], ["JavaScript", "amazeum"]]) {
+  for (const [tool, slug] of [["Ruby", "tariff-ninja"], ["Ruby on Rails", "tariff-ninja"], ["SQL", "tariff-ninja"], ["Python", "city-of-bentonville-traffic"], ["Jupyter", "city-of-bentonville-traffic"], ["Tailwind CSS", "querry-berry"], ["React", "amazeum"]]) {
     await expect(page.locator("#toolkit").getByRole("link", { name: new RegExp(`^${tool} —`) })).toHaveAttribute("href", `/projects/${slug}`);
   }
 });

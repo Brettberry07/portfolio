@@ -1,3 +1,4 @@
+.about { padding-bottom:32px; }
 .about-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:64px; align-items:start; }
 .about-copy { display:grid; gap:24px; }
 .about-copy p { color:var(--text-secondary); max-width:60ch; }
@@ -10,6 +11,7 @@
  .about-portrait { grid-row:span 2; }
 }
 @media(max-width:600px) {
+ .about { padding-bottom:24px; }
  .about-layout,.about-layout.has-portrait { grid-template-columns:1fr; gap:32px; }
  .about-layout .section-title { font-size:clamp(36px,10vw,44px); }
  .about-copy { gap:16px; }

@@ -9,7 +9,7 @@ export type Project = {
   title: string;
   shortTitle?: string;
   summary?: string;
-  cardHook: string;
+  cover: { category: string; focal: string; explanation: string; metric?: boolean };
   category?: string;
   role?: string;
   period?: string;
@@ -34,7 +34,7 @@ export type Project = {
 const projectRecords: Project[] = [
   {
     id: "01", slug: "querry-berry",
-    cardHook: "2.3M+ unique tokens indexed by a custom-built search engine.", title: "Querry Berry",
+    cover: {"category": "Search engineering", "focal": "2.3M+", "explanation": "Unique tokens indexed by a custom-built search engine.", "metric": true}, title: "Querry Berry",
     summary: "A custom search engine, from raw language to searchable data. Built around a lexer and an index of 2.3 million unique tokens collected by a custom async web crawler.",
     category: "Search & data systems", role: "Full-stack development", period: "June–July 2025", stage: "Search engineering project",
     technologies: ["Next.js", "PostgreSQL", "Docker", "Tailwind CSS"], status: "verified",
@@ -53,7 +53,7 @@ const projectRecords: Project[] = [
   },
   {
     id: "02", slug: "fig",
-    cardHook: "A scripting language built from scratch in Rust.", title: "Fig",
+    cover: {"category": "Language development", "focal": "Source to execution", "explanation": "A scripting language built from scratch in Rust.", "metric": false}, title: "Fig",
     summary: "A scripting language built in Rust. A lexer, parser, evaluator, and small CLI make the journey from source code to execution visible.",
     category: "Language & developer tools", role: "Language & tooling development", stage: "Language development project",
     technologies: ["Rust", "Cargo", "VS Code syntax grammar"], status: "verified",
@@ -72,7 +72,7 @@ const projectRecords: Project[] = [
   },
   {
     id: "03", slug: "tariff-ninja",
-    cardHook: "Trade data infrastructure supporting 1.5M+ items.", title: "Tariff Ninja",
+    cover: {"category": "Trade infrastructure", "focal": "1.5M+", "explanation": "Items supported by trade data infrastructure.", "metric": true}, title: "Tariff Ninja",
     summary: "Human-in-the-loop AI for trade classification, supported by data systems for 1.5 million+ items and client-facing engineering.",
     category: "AI & trade infrastructure", role: "Software Engineer → Lead Software Engineer", period: "February–September 2026", stage: "Professional engineering engagement",
     technologies: ["Ruby", "Ruby on Rails", "SQL", "AI retrieval", "Data infrastructure", "Apollo integration"], status: "verified",
@@ -92,7 +92,7 @@ const projectRecords: Project[] = [
   },
   {
     id: "04", slug: "potential-energy-tech",
-    cardHook: "1.2M+ battery data points processed in under a second.", title: "Potential Energy Tech",
+    cover: {"category": "Battery analysis", "focal": "1.2M+", "explanation": "Battery data points processed in under a second.", "metric": true}, title: "Potential Energy Tech",
     summary: "Battery analytics built for real test data. A calculation system processes 1.2 million+ data points in under a second.",
     category: "Battery analytics & product", role: "Software Engineer Intern", period: "January–May 2026", stage: "Professional internship",
     technologies: ["Battery analysis", "Calculation systems", "Cloud storage planning"], status: "verified",
@@ -112,7 +112,7 @@ const projectRecords: Project[] = [
   },
   {
     id: "05", slug: "amazeum",
-    cardHook: "Finding the bottlenecks between an order and its shipment.", title: "McMillon Innovation Studios & The Amazeum", shortTitle: "Amazeum",
+    cover: {"category": "Operations research", "focal": "Order to shipment", "explanation": "Mapping fulfillment bottlenecks with the Amazeum.", "metric": false}, title: "McMillon Innovation Studios & The Amazeum", shortTitle: "Amazeum",
     summary: "Understanding how a growing organization picks, packs, and ships—and where practical operational improvements can make a difference.",
     category: "Operations & systems analysis", role: "Operational research & analysis", stage: "McMillon Innovation Studios engagement", period: "Fall 2026",
     technologies: ["React", "JavaScript", "Shopify", "Stock Savvy", "Workflow analysis"], status: "verified",
@@ -132,7 +132,7 @@ const projectRecords: Project[] = [
   },
   {
     id: "06", slug: "still-on",
-    cardHook: "An MVP built around one question: are we still on?", title: "Still On",
+    cover: {"category": "Independent product / MVP", "focal": "Are we still on?", "explanation": "A meeting companion exploring quick attendance check-ins.", "metric": false}, title: "Still On",
     summary: "A meeting companion that makes a simple question easier to answer: are we still on? An independent product and MVP project.",
     category: "Independent product / MVP", role: "Product thinking & development", stage: "Independent product / MVP",
     technologies: ["Expo / React Native", "TypeScript", "Supabase", "Calendar integrations"], status: "verified",
@@ -152,7 +152,7 @@ const projectRecords: Project[] = [
   },
   {
     id: "07", slug: "city-of-bentonville-traffic",
-    cardHook: "Traffic research presented to the city’s Traffic Department and Mayor.", title: "City of Bentonville Traffic",
+    cover: {"category": "Civic research", "focal": "Traffic into insight", "explanation": "Traffic analysis presented to the Traffic Department and Mayor.", "metric": false}, title: "City of Bentonville Traffic",
     summary: "Machine learning and traffic-data analysis in service of a community question: how could signal timing work better?",
     category: "Machine learning & civic research", role: "Model development, analysis & presentation", period: "November–December 2025", stage: "Civic research project",
     technologies: ["Python", "Jupyter", "Machine learning", "Data analysis", "Data visualization"], status: "verified",
