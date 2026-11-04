@@ -47,6 +47,21 @@ Capture full-page screenshots with useful descriptive filenames in `test-results
 
 Later phases: project switching via click/keyboard/swipe; all seven routes; contact error/success with mocked provider; server-side form validation; image/asset fallbacks; résumé link when provided.
 
+## Production CSS parity
+
+Test the production output as well as the development server before release:
+
+```bash
+npm run check
+npm run start -- --port 3100
+# In another terminal, with the production server already running:
+PLAYWRIGHT_PORT=3100 npx playwright test
+```
+
+Review every homepage section at 1440×900 and 390×844. Check the orange hero arrow, large About heading, contact gutters, footer row/grid and right-aligned desktop model attribution. At those widths, contact horizontal padding is 80px / 24px and the About heading is 74.88px / 39px. Fonts must load and the page must not overflow horizontally.
+
+Next.js 16.4.2 with the installed Tailwind Turbopack loader can emit the previous global stylesheet after restoring the production filesystem cache ([upstream reproduction](https://github.com/vercel/next.js/issues/100326)). `next.config.ts` disables that build cache; leave the workaround until a verified upstream fix is installed. If an existing deployment shows old styles with current markup, redeploy the intended main commit with **Use existing Build Cache** unchecked, then verify the actual domain in a fresh browser session. A browser refresh alone cannot repair stale CSS compiled into a deployment.
+
 ## Performance guidance
 
 Avoid treating raw FPS numbers as universal pass/fail; evaluate on an actual mid-range phone when feasible. WebGL must not block reading content. Optimize compressed GLB textures and model poly counts, reduce DPR under load, keep canvas isolated and asset downloads lazy, inspect `next build` output and network transfers.
