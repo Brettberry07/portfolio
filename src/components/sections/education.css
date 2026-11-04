@@ -1,0 +1,13 @@
+.education-layout { display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:64px; align-items:start; }
+.education-school { display:grid; gap:8px; margin-top:24px; }
+.education-school>.mono { color:var(--text-secondary); margin-bottom:8px; }
+.education-school h3 { font-size:28px; font-weight:450; line-height:1.2; letter-spacing:-.02em; }
+.education-school>p:not(.mono) { font-size:16px; color:var(--text-secondary); }
+.education-activities-title { font-size:24px; font-weight:450; margin-top:0; }
+.education-activities { margin:16px 0 0; padding:0; list-style:none; }
+.education-activities li { display:grid; grid-template-columns:1fr 1fr; gap:24px; padding-block:16px; border-top:1px solid var(--line); font-size:14px; }
+.education-activities h4 { font-size:16px; font-weight:500; line-height:1.4; }
+.education-activities p { color:var(--text-secondary); }
+.education-activities li>div>p { margin-top:4px; }
+@media(max-width:1000px) { .education-layout { grid-template-columns:minmax(0,4fr) minmax(0,7fr); gap:32px; } .education-activities li { grid-template-columns:1fr; gap:8px; } }
+@media(max-width:600px) { .education-layout { grid-template-columns:1fr; gap:24px; } .education-school h3 { font-size:26px; } }

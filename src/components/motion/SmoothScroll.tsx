@@ -34,19 +34,27 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
       // Capture before Next Link's default handler; keep real URLs and browser history.
       event.preventDefault();
       if (location.hash !== url.hash) history.pushState(null, "", url.hash);
-      lenis.scrollTo(target, {
+      // Refresh the limit after responsive/lazy content changes, and use the
+      // native position rather than an in-flight smoothed position as the origin.
+      lenis.resize();
+      const padding = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      const destination = Math.max(0, Math.min(window.scrollY + target.getBoundingClientRect().top - padding, lenis.limit));
+      document.dispatchEvent(new CustomEvent("portfolio:anchor-start", { detail: { id: target.id } }));
+      lenis.scrollTo(destination, {
+        immediate: reduced,
         duration: 0.9,
         onComplete: () => {
           const addedTabIndex = !target.hasAttribute("tabindex");
           if (addedTabIndex) target.setAttribute("tabindex", "-1");
           target.focus({ preventScroll: true });
           if (addedTabIndex) target.addEventListener("blur", () => target.removeAttribute("tabindex"), { once: true });
+          document.dispatchEvent(new CustomEvent("portfolio:anchor-end", { detail: { id: target.id } }));
         },
       });
     };
     document.addEventListener("click", navigate, true);
     return () => document.removeEventListener("click", navigate, true);
-  }, []);
+  }, [reduced]);
 
   // ReactLenis owns destruction; no second RAF and no synthetic touch inertia.
   return <ReactLenis root ref={controller} options={{ ...options, smoothWheel: !reduced }}>{children}</ReactLenis>;

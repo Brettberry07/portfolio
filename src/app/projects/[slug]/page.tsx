@@ -64,9 +64,9 @@ export default async function CaseStudy({ params }: CaseStudyProps) {
 
         <figure className="case-cover">
           {project.heroImage ? (
-            <div className="case-real-visual"><Image src={project.heroImage} alt={`${project.title} project visual`} fill sizes="(max-width: 600px) 92vw, 90vw" priority /></div>
+            <div className="case-real-visual"><Image src={project.heroImage} alt={project.heroImageAlt ?? `${project.title} project visual`} fill sizes="(max-width: 600px) 92vw, 90vw" priority /></div>
           ) : <ProjectArtwork project={project} variant="detail" accessible />}
-          <figcaption><span>{project.heroImage ? "PROJECT VISUAL" : "EDITORIAL ILLUSTRATION"} / {project.id}</span><span>{project.heroImage ? project.title : "Concept artwork · not a product screenshot"}</span></figcaption>
+          <figcaption><span>{project.heroImage ? "PROJECT VISUAL" : "WORKFLOW DIAGRAM"} / {project.id}</span><span>{project.heroImage ? (project.heroImageCaption ?? project.title) : "Documented approach · not a product screenshot"}</span></figcaption>
         </figure>
 
         {project.highlights?.length ? <Reveal className="case-highlights">{project.highlights.map((highlight, highlightIndex) => <div key={highlight.label}><span className="case-label">0{highlightIndex + 1} / PROJECT FOCUS</span><strong>{highlight.value}</strong><p>{highlight.label}</p></div>)}</Reveal> : null}

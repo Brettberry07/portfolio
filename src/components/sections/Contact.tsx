@@ -8,7 +8,7 @@ import "./contact.css";
 type ContactProps = { enabled?: boolean; publicEmail?: string; socialLinks?: readonly { label: string; href: string }[] };
 type SubmissionState = "idle" | "sending" | "success" | "error";
 
-const fieldOrder: ContactField[] = ["name", "email", "organization", "message"];
+const fieldOrder: ContactField[] = ["name", "email", "message"];
 
 export function Contact({ enabled = false, publicEmail, socialLinks = [] }: ContactProps) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -66,19 +66,16 @@ export function Contact({ enabled = false, publicEmail, socialLinks = [] }: Cont
 
   return (
     <section className="contact-section" id="contact" aria-labelledby="contact-heading">
-      <div className="contact-inner">
+      <div className="contact-inner container">
         <div className="contact-intro">
-          <p className="contact-eyebrow"><span>04 /</span> GET IN TOUCH</p>
+          <p className="contact-eyebrow"><span>06 /</span> GET IN TOUCH</p>
           <h2 id="contact-heading">Have something<br />in mind?<br /><span>Let’s build it.</span></h2>
-          <p className="contact-description">A project, a problem, a possibility.<br />Good things start with a conversation.</p>
+          <p className="contact-description">For engineering opportunities and freelance projects, let’s talk.</p>
           {(publicEmail || socialLinks.length > 0) && <div className="contact-profile-links">
             {publicEmail && <a href={`mailto:${publicEmail}`}>{publicEmail}<ArrowUpRight size={15} aria-hidden="true" /></a>}
             {socialLinks.map((link) => <a key={link.href} href={link.href} target="_blank" rel="noreferrer">{link.label}<ArrowUpRight size={15} aria-hidden="true" /></a>)}
           </div>}
-          <div className="contact-signal" aria-hidden="true">
-            <span className="contact-signal-mark">↗</span>
-            <span>THE NEXT CHAPTER<br />STARTS HERE.</span>
-          </div>
+
         </div>
 
         <form className="contact-form" ref={formRef} action="/api/contact" method="post" onSubmit={submit} noValidate aria-describedby={!enabled ? "contact-unconfigured" : undefined} aria-busy={state === "sending"}>
@@ -93,11 +90,6 @@ export function Contact({ enabled = false, publicEmail, socialLinks = [] }: Cont
               <input id="contact-email" name="email" type="email" autoComplete="email" required maxLength={254} placeholder="you@company.com" aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? "contact-email-error" : undefined} />
               {errors.email && <p className="contact-field-error" id="contact-email-error">{errors.email}</p>}
             </div>
-          </div>
-          <div className="contact-field">
-            <label htmlFor="contact-organization">Organization <span className="contact-optional">(optional)</span></label>
-            <input id="contact-organization" name="organization" autoComplete="organization" maxLength={120} placeholder="Where you’re building" aria-invalid={Boolean(errors.organization)} aria-describedby={errors.organization ? "contact-organization-error" : undefined} />
-            {errors.organization && <p className="contact-field-error" id="contact-organization-error">{errors.organization}</p>}
           </div>
           <div className="contact-field contact-message-field">
             <label htmlFor="contact-message">What are you thinking? <span aria-hidden="true">*</span></label>

@@ -14,9 +14,10 @@ class SculptureBoundary extends Component<{ children: ReactNode }, { failed: boo
 export function HeroSculpture() {
   const [visible, setVisible] = useState(false);
   const host = useRef<HTMLDivElement>(null);
+  const scrollTarget = useRef<HTMLElement>(null);
   // This stationary target spans the hero. Never transform the canvas's HTML
   // ancestors: R3F measures their bounds and would resize the camera after scroll.
-  const { scrollYProgress } = useScroll({ target: host, offset: ["start start", "end start"] });
+  const { scrollYProgress } = useScroll({ target: scrollTarget, offset: ["start start", "end start"] });
   // Hero-local stages: presence, retreat, exit. All values read the same
   // native scroll progress directly; no spring or delayed scale catch-up.
   const scale = useTransform(scrollYProgress, [0, 0.4, 0.75, 1], [1, 1.04, 1.01, 0.98]);
@@ -32,7 +33,7 @@ export function HeroSculpture() {
     return () => observer.disconnect();
   }, []);
   return (
-    <div ref={host} className="hero-scene-boundary">
+    <div ref={(node) => { host.current = node; scrollTarget.current = node?.closest<HTMLElement>(".hero") ?? null; }} className="hero-scene-boundary">
       <div className="hero-sculpture" role="img" aria-label="An oversized sculpture of alternating white and orange square frames threaded by a black winding line">
       <div className="sculpture-stage">
       {/* Poster is rendered from this same CC BY sculpture. It stays available without JavaScript or WebGL. */}
