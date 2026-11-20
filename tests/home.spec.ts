@@ -1,62 +1,265 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const slugs = ["querry-berry", "fig", "tariff-ninja", "potential-energy-tech", "amazeum", "still-on", "city-of-bentonville-traffic"];
+const projects = [
+  ["tariff-ninja", "Tariff Ninja"],
+  ["city-of-bentonville-traffic", "City of Bentonville Traffic"],
+  ["still-on", "Still On"],
+] as const;
 
-function collectErrors(page: Page) {
+function noBrowserErrors(page: Page) {
   const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
-  return errors;
-}
-async function checkContent(page: Page) {
-  await expect(page.getByRole("heading", { name: "BRETT BERRY." })).toBeVisible();
-  await expect(page.locator(".hero-tagline")).toHaveText("Building what's next.");
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  page.on("pageerror", error => errors.push(error.message));
+  page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
+  return () => expect(errors).toEqual([]);
 }
 
-test("work-first portfolio keeps the live sculpture and contact routes accessible", async ({ page }, testInfo) => {
-  const errors = collectErrors(page);
+async function scrollToPose(page: Page, id: string, progress: number) {
+  await page.evaluate(({ id, progress }) => {
+    const section = document.getElementById(id)!;
+    const header = document.querySelector<HTMLElement>(".folio-header")!;
+    scrollTo(0, scrollY + section.getBoundingClientRect().top - header.offsetHeight + progress * section.offsetHeight);
+  }, { id, progress });
+}
+
+const monitorScale = (page: Page) => page.locator(".scene-device--monitor").evaluate(element =>
+  new DOMMatrixReadOnly(getComputedStyle(element).transform).a,
+);
+
+test("the homepage and its featured anchors expose the work, résumé and email", async ({ page, request }) => {
+  const checkErrors = noBrowserErrors(page);
   await page.goto("/");
-  await checkContent(page);
-  const scene = page.getByTestId("scene-host");
-  await expect(scene).toHaveAttribute("data-renderer", "webgl");
-  const first = await scene.locator("canvas").evaluate((canvas: HTMLCanvasElement) => canvas.toDataURL());
-  await expect.poll(() => scene.locator("canvas").evaluate((canvas: HTMLCanvasElement) => canvas.toDataURL())).not.toBe(first);
-  expect(await page.locator("main > section").evaluateAll((sections) => sections.map(section => section.id))).toEqual(["home", "projects", "about", "experience", "education", "toolkit", "contact"]);
-  const gap = await page.evaluate(() => document.querySelector("#projects")!.getBoundingClientRect().top - document.querySelector("#home")!.getBoundingClientRect().bottom);
-  expect(Math.abs(gap)).toBeLessThan(1);
-  await page.screenshot({ path: testInfo.outputPath("hero.png") });
-  if (testInfo.project.name === "mobile") await page.locator(".mobile-navigation summary").click();
-  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Contact" }).click();
-  await expect(page.getByRole("heading", { name: "Have something in mind? Let’s build it." })).toBeInViewport();
-  await expect(page.locator("#contact").getByRole("link", { name: "brettberry07@gmail.com" })).toHaveAttribute("href", "mailto:brettberry07@gmail.com");
-  await expect(page.getByLabel("Organization", { exact: false })).toHaveCount(0);
-  expect(errors).toEqual([]);
-});
+  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("Brett Berry");
+  await expect(page.getByText("Software Engineer", { exact: true })).toBeInViewport();
 
-test("project selection is deliberate, keyboard and touch accessible, and opens stable routes", async ({ page }, testInfo) => {
-  await page.goto("/#projects");
-  await expect(page.locator("#active-project-card h3")).toHaveText("Tariff Ninja");
-  if (testInfo.project.name === "mobile") {
-    await page.getByRole("combobox", { name: "SELECT A PROJECT" }).selectOption("1");
-  } else {
-    const first = page.getByRole("button", { name: /^01 Tariff Ninja/ });
-    await first.click();
-    await first.press("ArrowRight");
-    await expect(page.getByRole("button", { name: /^02 Potential Energy Tech/ })).toBeFocused();
-    await first.hover();
+  const work = page.getByRole("link", { name: "View work" });
+  await expect(work).toBeInViewport();
+  await expect(work).toHaveCSS("color", "rgb(250, 246, 237)");
+  await work.click();
+  await expect(page).toHaveURL(/#projects$/);
+  await expect(page.getByRole("heading", { name: "Tariff Ninja", exact: true })).toBeInViewport();
+
+  const index = page.getByRole("navigation", { name: "Featured work" });
+  for (const [slug, title] of projects) {
+    await expect(index.getByRole("link", { name: title })).toHaveAttribute("href", `#${slug}`);
   }
-  await expect(page.locator("#active-project-card h3")).toHaveText("Potential Energy Tech");
-  await page.getByRole("button", { name: "Next project", exact: true }).click();
-  await expect(page.locator("#active-project-card h3")).toHaveText("Querry Berry");
-  await page.getByRole("button", { name: "Previous project", exact: true }).click();
-  await page.locator("#active-project-card").getByRole("link", { name: "View case study", exact: true }).click();
-  await expect(page).toHaveURL(/\/projects\/potential-energy-tech$/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Potential Energy Tech.");
-  await expect(page.getByRole("link", { name: "Back to selected work" })).toBeVisible();
+  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Contact" }).click();
+  await expect(page.getByRole("heading", { name: "Let’s talk." })).toBeInViewport();
+  const contact = page.locator("#contact");
+  await expect(contact.getByRole("link", { name: "Email me" })).toHaveAttribute("href", "mailto:brettberry07@gmail.com");
+  await expect(contact.getByRole("link", { name: "GitHub" })).toHaveAttribute("href", "https://github.com/Brettberry07");
+  await expect(contact.getByRole("link", { name: "LinkedIn" })).toHaveAttribute("href", "https://www.linkedin.com/in/brett-berry-a81b29329/");
+  const resume = await contact.getByRole("link", { name: "Résumé" }).getAttribute("href");
+  const response = await request.get(resume!);
+  expect(response.ok()).toBe(true);
+  expect(response.headers()["content-type"]).toContain("application/pdf");
+  checkErrors();
 });
 
-test("all seven case studies resolve with full editorial sections", async ({ page, request }, testInfo) => {
+test("direct fragments, refresh and history preserve a readable project pose", async ({ page }) => {
+  for (const [slug, title] of projects) {
+    await page.goto(`/#${slug}`);
+    const heading = page.getByRole("heading", { name: title, exact: true });
+    await expect(heading).toBeInViewport();
+    expect((await heading.boundingBox())!.y).toBeGreaterThanOrEqual(62);
+    await page.reload();
+    await expect(heading).toBeInViewport();
+  }
+  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Contact" }).click();
+  await page.goBack();
+  await expect(page).toHaveURL(/#still-on$/);
+  await expect(page.getByRole("heading", { name: "Still On", exact: true })).toBeInViewport();
+  await page.goForward();
+  await expect(page.getByRole("heading", { name: "Let’s talk." })).toBeInViewport();
+});
+
+test("the native meeting flow changes the screen and exposes its result", async ({ page }, testInfo) => {
+  await page.goto("/#still-on");
+  const group = page.getByRole("group", { name: "Try the meeting flow" });
+  const reminder = group.getByRole("radio", { name: "Reminder" });
+  await expect(reminder).toBeChecked();
+  if (testInfo.project.name === "mobile") {
+    await group.getByText("Check in", { exact: true }).tap();
+    await group.getByText("New time", { exact: true }).tap();
+  } else {
+    await reminder.focus();
+    await expect(group.locator('label:has(input[value="reminder"]) span')).toHaveCSS("outline-style", "solid");
+    await reminder.press("ArrowRight");
+    await expect(group.getByRole("radio", { name: "Check in" })).toBeChecked();
+    await page.keyboard.press("ArrowRight");
+  }
+  await expect(group.getByRole("radio", { name: "New time" })).toBeChecked();
+  await expect(group.getByText("Propose moving Design catch-up from 2:30 PM to 3:00 PM.")).toBeVisible();
+  await expect(page.locator('.phone-visual .phone-phase--reschedule')).toContainText("Proposed time · 3:00 PM");
+  await expect(page.locator('.phone-visual .phone-phase--reschedule')).toBeVisible();
+});
+
+test("one CRT surface carries the two signal timings through the bezel and the reminder", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "The cinematic composition is for a large fine-pointer viewport");
+  const checkErrors = noBrowserErrors(page);
+  await page.goto("/#tariff-ninja");
+  await expect(page.locator(".project-run")).toHaveAttribute("data-cinematic", "ready");
+  const scene = page.locator(".shared-scene");
+  const road = scene.locator(".crt-road");
+  await road.evaluate(element => { element.dataset.qaSurface = "original"; });
+  await expect(scene).toHaveAttribute("data-surface", "tariff");
+  const restingScale = await monitorScale(page);
+
+  await scrollToPose(page, "tariff-ninja", .74);
+  await expect(scene).toHaveAttribute("data-surface", "road");
+  await expect.poll(() => monitorScale(page)).toBeGreaterThan(restingScale + .22);
+  await scrollToPose(page, "tariff-ninja", .94);
+  await expect.poll(() => monitorScale(page)).toBeGreaterThan(restingScale * 2.7);
+  await expect.poll(async () => {
+    const before = await monitorScale(page);
+    await page.evaluate(() => new Promise<void>(resolve => setTimeout(resolve, 65)));
+    return Math.abs(await monitorScale(page) - before);
+  }).toBeLessThan(.006);
+
+  await scrollToPose(page, "city-of-bentonville-traffic", 0);
+  await expect(scene).toHaveAttribute("data-timing", "existing");
+  await expect(page.getByRole("heading", { name: "Simulated results" })).toBeInViewport();
+  const stoppedFrame = await road.evaluate((element: HTMLCanvasElement) => element.toDataURL());
+
+  for (const progress of [.43, .08, .52]) {
+    await scrollToPose(page, "city-of-bentonville-traffic", progress);
+    await expect(scene).toHaveAttribute("data-timing", progress > .3 ? "proposed" : "existing");
+    await expect(road).toHaveAttribute("data-qa-surface", "original");
+  }
+  expect(await road.evaluate((element: HTMLCanvasElement) => element.toDataURL())).not.toBe(stoppedFrame);
+
+  await scrollToPose(page, "still-on", -.118);
+  const notification = scene.locator(".monitor-notification");
+  await expect(notification).toContainText("Design catch-up");
+  await expect.poll(async () => Number(await notification.evaluate(element => getComputedStyle(element).opacity))).toBeGreaterThan(.9);
+  await expect.poll(() => monitorScale(page)).toBeCloseTo(restingScale, 1);
+
+  await scrollToPose(page, "still-on", .06);
+  await expect(scene.locator(".scene-device--phone")).toHaveCSS("opacity", "1");
+  await expect(notification).toHaveCSS("opacity", "0");
+  await expect(scene.locator(".phone-meeting-name")).toHaveText("Design catch-up");
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await expect(page.getByRole("heading", { name: "Still On", exact: true })).toBeInViewport();
+  await scrollToPose(page, "tariff-ninja", 0);
+  await expect(scene).toHaveAttribute("data-surface", "tariff");
+  await expect(notification).toHaveCount(1);
+  checkErrors();
+});
+
+test("pointer motion adds phosphor locally and the cloud settles on exit", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "The fine-pointer cloud is a desktop enhancement");
+  await page.goto("/");
+  await expect(page.locator(".glyph-volume")).toHaveAttribute("data-glyphs-live", "");
+  const canvas = page.locator(".glyph-canvas");
+  const box = (await canvas.boundingBox())!;
+
+  const accentCount = () => canvas.evaluate((element: HTMLCanvasElement) => {
+    const context = element.getContext("2d")!;
+    const rgba = context.getImageData(element.width * .52, element.height * .27, element.width * .43, element.height * .5).data;
+    let cellCount = 0;
+    for (let index = 0; index < rgba.length; index += 4) {
+      if (rgba[index + 3] > 32 && rgba[index + 1] - rgba[index] > 48 && rgba[index + 1] - rgba[index + 2] > 48) cellCount++;
+    }
+    return cellCount;
+  });
+
+  expect(await accentCount()).toBe(0);
+  await page.mouse.move(box.x + box.width * .58, box.y + box.height * .50);
+  const move = async () => {
+    for (const x of [.88, .66, .87]) {
+      await page.mouse.move(box.x + box.width * x, box.y + box.height * .46, { steps: 7 });
+    }
+  };
+  await Promise.all([
+    move(),
+    expect.poll(accentCount, { timeout: 3500, intervals: [25, 60, 100] }).toBeGreaterThan(15),
+  ]);
+  await page.mouse.move(21, 85);
+  await expect.poll(accentCount).toBe(0);
+});
+
+test("reduced motion and unavailable canvas preserve all resting compositions", async ({ page, browser, baseURL }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#city-of-bentonville-traffic");
+  await expect(page.getByRole("heading", { name: "Simulated results" })).toBeInViewport();
+  await expect(page.locator(".project-run")).not.toHaveAttribute("data-cinematic", "ready");
+  for (const art of ["Existing timing", "Proposed timing"]) {
+    await expect(page.locator(".traffic-stills").getByText(art, { exact: true })).toBeVisible();
+  }
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("auto");
+
+  const unavailable = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  try {
+    await unavailable.addInitScript(() => {
+      const original = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type, ...args) {
+        if (type === "2d" || type.startsWith("webgl")) return null;
+        return original.call(this, type, ...args);
+      } as typeof original;
+    });
+    await unavailable.goto(baseURL!);
+    await expect(unavailable.locator(".glyph-volume .cloud-poster")).toBeVisible();
+    await expect(unavailable.locator(".glyph-volume")).not.toHaveAttribute("data-glyphs-live", "");
+    await unavailable.getByRole("link", { name: "View work" }).click();
+    await expect(unavailable.getByRole("heading", { name: "Tariff Ninja", exact: true })).toBeInViewport();
+    await expect(unavailable.locator(".project-run")).not.toHaveAttribute("data-cinematic", "ready");
+    await expect(unavailable.locator(".tariff-visual img")).toBeVisible();
+  } finally {
+    await unavailable.close();
+  }
+});
+
+test("the project story and demo work without JavaScript", async ({ browser, baseURL, viewport }) => {
+  const noJs = await browser.newPage({ javaScriptEnabled: false, viewport: viewport ?? undefined });
+  try {
+    await noJs.goto(baseURL!);
+    await expect(noJs.locator(".glyph-volume img")).toBeVisible();
+    await noJs.keyboard.press("Tab");
+    await expect(noJs.getByRole("link", { name: "Skip to content" })).toBeFocused();
+    await noJs.keyboard.press("Enter");
+    await expect(noJs.locator("#main")).toBeFocused();
+    await noJs.getByRole("navigation", { name: "Featured work" }).getByRole("link", { name: "Still On" }).click();
+    await expect(noJs.getByRole("heading", { name: "Still On", exact: true })).toBeInViewport();
+    await noJs.locator(".meeting-options").getByText("New time", { exact: true }).click();
+    await expect(noJs.locator(".phone-visual .phone-phase--reschedule")).toBeVisible();
+    await noJs.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Contact" }).click();
+    await expect(noJs.getByRole("link", { name: "Email me" })).toBeInViewport();
+  } finally {
+    await noJs.close();
+  }
+});
+
+test("slow or missing hardware art leaves the project readable", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "Checks the enhanced scene's asset gate");
+  let release!: () => void;
+  const stalled = new Promise<void>(resolve => { release = resolve; });
+  await page.route("**/images/portfolio/monitor.webp", async route => {
+    await stalled;
+    await route.abort("failed");
+  });
+  try {
+    await page.goto("/#tariff-ninja", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { name: "Tariff Ninja", exact: true })).toBeInViewport();
+    await expect(page.locator(".project-run")).not.toHaveAttribute("data-cinematic", "ready");
+    release();
+    await expect(page.locator(".tariff-visual img")).toHaveJSProperty("complete", true);
+    await expect(page.getByRole("link", { name: "Tariff Ninja case study" })).toBeInViewport();
+    await expect(page.locator(".project-run")).not.toHaveAttribute("data-cinematic", "ready");
+  } finally {
+    release();
+  }
+});
+
+test("all supported layouts keep content within the viewport", async ({ page }) => {
+  await page.goto("/");
+  for (const [width, height] of [[1440, 900], [768, 1024], [390, 844], [320, 640], [1280, 600], [1100, 680]]) {
+    await page.setViewportSize({ width, height });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+    await expect(page.getByRole("link", { name: "View work" })).toBeInViewport();
+  }
+});
+
+test("existing case studies, résumé metadata and sitemap routes resolve", async ({ page, request }) => {
+  const slugs = [...projects.map(([slug]) => slug), "querry-berry", "fig", "potential-energy-tech", "amazeum"];
   for (const slug of slugs) {
     const response = await request.get(`/projects/${slug}`);
     expect(response.status()).toBe(200);
@@ -64,291 +267,11 @@ test("all seven case studies resolve with full editorial sections", async ({ pag
   }
   await page.goto("/projects/city-of-bentonville-traffic");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("City of Bentonville Traffic.");
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: testInfo.outputPath("case-study.png"), fullPage: true });
+  await expect(page.locator("link[rel=canonical]")).toHaveAttribute("href", "https://brettberry.dev/projects/city-of-bentonville-traffic");
+  await page.getByRole("link", { name: "Back to selected work" }).click();
+  await expect(page.getByRole("heading", { name: "Tariff Ninja", exact: true })).toBeInViewport();
+  const sitemap = await request.get("/sitemap.xml");
+  expect(await sitemap.text()).toContain("https://brettberry.dev/projects/still-on");
+  expect((await request.get("/opengraph-image.jpg")).headers()["content-type"]).toContain("image/jpeg");
   expect((await request.get("/projects/not-a-project")).status()).toBe(404);
-});
-
-test("reduced motion keeps the sculpture still and anchors native", async ({ page }, testInfo) => {
-  const errors = collectErrors(page);
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  await checkContent(page);
-  await expect(page.getByTestId("scene-host")).toHaveAttribute("data-renderer", "webgl");
-  const canvas = page.getByTestId("scene-host").locator("canvas");
-  // The overscan canvas extends outside the viewport. Element screenshots scroll
-  // the page and include animated HTML overlays; compare actual WebGL pixels.
-  const frames = await canvas.evaluate(async (element: HTMLCanvasElement) => {
-    await new Promise(requestAnimationFrame);
-    const first = element.toDataURL();
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    return [first, element.toDataURL()];
-  });
-  expect(frames[1]).toBe(frames[0]);
-  expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("auto");
-  await page.mouse.move(10, 420);
-  await page.mouse.wheel(0, 250);
-  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(200);
-  if (testInfo.project.name === "mobile") await page.locator(".mobile-navigation summary").click();
-  await page.getByRole("navigation").getByRole("link", { name: "Experience" }).click();
-  await expect(page.getByRole("heading", { name: "Built through experience." })).toBeInViewport();
-  expect(errors).toEqual([]);
-});
-
-test("WebGL unavailable retains the real sculpture poster and content", async ({ page }, testInfo) => {
-  await page.addInitScript(() => {
-    const original = HTMLCanvasElement.prototype.getContext;
-    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type, ...args) {
-      if (String(type).startsWith("webgl")) return null;
-      return original.call(this, type, ...args);
-    } as typeof original;
-  });
-  const errors = collectErrors(page);
-  await page.goto("/");
-  await checkContent(page);
-  await expect(page.locator("canvas")).toHaveCount(0);
-  await expect(page.getByTestId("scene-fallback")).toBeVisible();
-  await expect(page.getByTestId("scene-fallback")).toHaveCSS("background-image", /hero-poster(?:-mobile|-tablet)?\.webp/);
-  await page.screenshot({ path: testInfo.outputPath("webgl-fallback.png") });
-  expect(errors).toEqual([]);
-});
-
-test("no JavaScript retains every project, supporting content, anchors and safe form", async ({ browser }, testInfo) => {
-  const context = await browser.newContext({ javaScriptEnabled: false, viewport: testInfo.project.use.viewport });
-  const page = await context.newPage();
-  await page.goto("/");
-  await checkContent(page);
-  await expect(page.getByTestId("scene-fallback")).toBeVisible();
-  await expect(page.locator(".project-noscript a")).toHaveCount(7);
-  await expect(page.locator(".project-interactive")).toBeHidden();
-  await expect(page.getByRole("button", { name: "Send a message" })).toBeHidden();
-  await expect(page.locator(".contact-form")).toHaveAttribute("method", "post");
-  await expect(page.locator(".toolkit-group")).toHaveCount(4);
-  await expect(page.getByRole("heading", { name: "Teams & activities" })).toBeVisible();
-  await page.locator(".project-noscript a").nth(4).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("McMillon Innovation Studios & The Amazeum.");
-  await context.close();
-});
-
-test("hero transforms stay continuous through wheel stops and direction reversals", async ({ page }, testInfo) => {
-  test.setTimeout(60_000);
-  type Snapshot = { progress: number; targetScale: number; scale: number[]; position: number[]; rotation: number[]; camera: number[]; aspect: number; width: number; height: number };
-  const errors = collectErrors(page);
-  await page.goto("/");
-  await expect(page.getByTestId("scene-host")).toHaveAttribute("data-renderer", "webgl");
-  await expect(page.locator("html")).toHaveClass(/lenis/);
-  const sample = () => page.locator("canvas").evaluate((canvas) => (canvas as HTMLCanvasElement & { sculptureSnapshot: () => Snapshot }).sculptureSnapshot());
-  const initial = await sample();
-  const base = initial.scale[0];
-  const results = [];
-  await page.mouse.move(10, 420);
-  for (const delta of [70, 70, 70, -50, -50, -50, -60]) {
-    await page.mouse.wheel(0, delta);
-    // Sample the actual Three transform every frame, including the delayed
-    // measurement window that previously changed camera aspect after a stop.
-    const frames = await page.locator("canvas").evaluate(async (canvas) => {
-      const element = canvas as HTMLCanvasElement & { sculptureSnapshot: () => Snapshot };
-      const frames: Snapshot[] = [];
-      // Keep the stop/settling window on slow software WebGL too: waiting for
-      // 48 frames at 7fps made this otherwise passing check exceed its timeout.
-      const started = performance.now();
-      for (let frame = 0; frame < 48 && (frame < 6 || performance.now() - started < 1200); frame++) {
-        await new Promise(requestAnimationFrame);
-        frames.push(element.sculptureSnapshot());
-      }
-      return frames;
-    });
-    for (let index = 0; index < frames.length; index++) {
-      const current = frames[index];
-      expect(current.width).toBe(initial.width);
-      expect(current.height).toBe(initial.height);
-      expect(current.aspect).toBeCloseTo(initial.aspect, 8);
-      expect(current.camera).toEqual(initial.camera);
-      expect(Math.abs(current.scale[0] / base - current.targetScale)).toBeLessThan(0.002);
-      const p = current.progress;
-      const expectedScale = p <= 0.4 ? 1 + p * 0.1 : p <= 0.75 ? 1.04 - (p - 0.4) * (0.03 / 0.35) : 1.01 - (p - 0.75) * 0.12;
-      expect(current.targetScale).toBeCloseTo(expectedScale, 6);
-      if (index) expect(Math.abs(current.scale[0] - frames[index - 1].scale[0])).toBeLessThan(base * 0.005);
-    }
-    const stopped = frames.at(-1)!;
-    const afterStop = await sample();
-    expect(Math.abs(stopped.scale[0] - afterStop.scale[0])).toBeLessThan(base * 0.001);
-    results.push({ delta, frames });
-  }
-  expect((await sample()).progress).toBeCloseTo(0, 2);
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect.poll(async () => (await sample()).targetScale).toBe(1);
-  await page.mouse.wheel(0, 60);
-  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(40);
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.mouse.wheel(0, 60);
-  await expect.poll(async () => (await sample()).targetScale).toBeGreaterThan(1.005);
-  await page.waitForTimeout(800); // Let the preceding wheel input finish before the larger stage checks.
-  for (const progress of [0.4, 0.75, 0.95, 0.75, 0.4, 0]) {
-    const target = await page.locator("#home").evaluate((hero, p) => hero.getBoundingClientRect().height * p, progress);
-    await page.mouse.wheel(0, target - await page.evaluate(() => scrollY));
-    await expect.poll(async () => (await sample()).progress).toBeCloseTo(progress, 2);
-    const snapshot = await sample();
-    expect(snapshot.targetScale).toBeLessThanOrEqual(1.04);
-    expect(snapshot.width).toBe(initial.width);
-    expect(snapshot.height).toBe(initial.height);
-    const bounds = await page.evaluate(() => ({
-      heroBottom: document.querySelector("#home")!.getBoundingClientRect().bottom,
-      aboutTop: document.querySelector("#about-title")!.getBoundingClientRect().top,
-      clipping: getComputedStyle(document.querySelector(".hero-scene-boundary")!).overflow,
-    }));
-    expect(bounds.clipping).toBe("clip");
-    expect(bounds.heroBottom).toBeLessThan(bounds.aboutTop);
-  }
-  await testInfo.attach("scroll-transform-frames.json", { body: JSON.stringify(results), contentType: "application/json" });
-  expect(errors).toEqual([]);
-});
-
-test("entrances stay readable, settle monotonically and do not replay", async ({ page }) => {
-  await page.goto("/");
-  await page.evaluate(() => document.fonts.ready);
-  const heading = page.locator(".about-layout > .entrance").first();
-  const height = page.viewportSize()!.height;
-  const top = await heading.evaluate(element => element.getBoundingClientRect().top + scrollY - 18);
-  const pose = () => heading.evaluate(element => new DOMMatrixReadOnly(getComputedStyle(element).transform).m42);
-  await page.evaluate(y => window.scrollTo({ top: y, behavior: "instant" }), top - height * .8);
-  await expect.poll(pose).toBe(18);
-  const frames = await heading.evaluate(async (element, target) => {
-    const frames: number[] = [];
-    window.scrollTo({ top: target, behavior: "instant" });
-    const start = performance.now();
-    while (performance.now() - start < 1600) {
-      await new Promise(requestAnimationFrame);
-      frames.push(new DOMMatrixReadOnly(getComputedStyle(element).transform).m42);
-    }
-    return frames;
-  }, top - height * .45);
-  let previous = 18;
-  for (const value of frames) {
-    expect(value).toBeGreaterThanOrEqual(-.05);
-    expect(value).toBeLessThanOrEqual(previous + .05);
-    previous = value;
-  }
-  await expect.poll(pose).toBe(0);
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
-  await page.evaluate(y => window.scrollTo({ top: y, behavior: "instant" }), top - height * .45);
-  expect(await pose()).toBe(0);
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(heading).toHaveCSS("transform", "none");
-});
-
-test("mobile menu supports keyboard dismissal, outside tap and native no-JS navigation", async ({ page, browser }, testInfo) => {
-  test.skip(testInfo.project.name !== "mobile", "Mobile disclosure only");
-  await page.goto("/");
-  const menu = page.locator(".mobile-navigation");
-  const toggle = menu.locator("summary");
-  await expect(page.locator(".navigation")).toBeHidden();
-  await toggle.focus();
-  await page.keyboard.press("Enter");
-  await expect(menu).toHaveAttribute("open", "");
-  await expect(menu.getByRole("link")).toHaveCount(4);
-  await page.keyboard.press("Tab");
-  await expect(menu.getByRole("link", { name: "Home", exact: true })).toBeFocused();
-  await page.keyboard.press("Escape");
-  await expect(menu).not.toHaveAttribute("open");
-  await expect(toggle).toBeFocused();
-  await toggle.click();
-  await page.locator("#hero-title").click({ force: true });
-  await expect(menu).not.toHaveAttribute("open");
-  await toggle.click();
-  await menu.getByRole("link", { name: "Projects", exact: true }).click();
-  await expect(menu).not.toHaveAttribute("open");
-  await expect(page).toHaveURL(/#projects$/);
-  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
-  const nativePage = await context.newPage();
-  await nativePage.goto("/");
-  await nativePage.locator(".mobile-navigation summary").click();
-  await nativePage.getByRole("navigation").getByRole("link", { name: "Contact" }).click();
-  await expect(nativePage).toHaveURL(/#contact$/);
-  await context.close();
-});
-
-
-test("supporting sections remain compact and navigation follows the new reading order", async ({ page }, testInfo) => {
-  await page.goto("/");
-  for (const [id, destination] of [["about", "Projects"], ["education", "Experience"], ["toolkit", "Experience"], ["contact", "Contact"]]) {
-    await page.locator(`#${id}`).evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + scrollY - 110, behavior: "instant" }));
-    await expect(page.locator(`.navigation a[href="#${destination.toLowerCase()}"]`)).toHaveAttribute("aria-current", "location");
-  }
-  expect(await page.locator(".toolkit").evaluate(element => getComputedStyle(element).position)).toBe("static");
-  await expect(page.locator(".toolkit-group")).toHaveCount(4);
-  await expect(page.locator(".education-activities li")).toHaveCount(5);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  const baseline = testInfo.project.name === "mobile" ? 9741 : 12052;
-  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThan(baseline * .7);
-  await page.locator(".toolkit").evaluate(element => window.scrollTo({ top: element.getBoundingClientRect().top + scrollY - 110, behavior: "instant" }));
-  const before = await page.evaluate(() => scrollY);
-  await page.mouse.move(10, 420);
-  await page.mouse.wheel(0, 400);
-  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before + 300);
-});
-
-// Two production builds exercise the real enabled prop without modifying account
-// credentials. Configured requests are intercepted before they reach the API.
-test("unconfigured contact is explicit and cannot submit", async ({ page }) => {
-  test.skip(process.env.CONTACT_TEST_STATE !== "unconfigured", "Requires a build with empty provider environment variables");
-  await page.goto("/#contact");
-  await expect(page.getByRole("button", { name: "Send a message" })).toBeDisabled();
-  await expect(page.getByText("Email delivery is not connected yet.", { exact: false })).toBeVisible();
-});
-
-test("configured contact validates, focuses errors, sends once and handles provider failures", async ({ page }) => {
-  test.skip(process.env.CONTACT_TEST_STATE !== "configured", "Requires a build with test provider environment variables");
-  let calls = 0;
-  let release: (() => void) | undefined;
-  let mode = "pending";
-  await page.route("**/api/contact", async (route) => {
-    calls++;
-    if (mode === "network") return route.abort();
-    if (mode === "pending") await new Promise<void>(resolve => { release = resolve; });
-    if (mode === "field") return route.fulfill({ status: 400, json: { message: "Please check your email.", fields: { email: "Use a valid email address." } } });
-    if (mode === "unconfigured") return route.fulfill({ status: 503, json: { message: "Email delivery is not connected yet. Your message has not been sent." } });
-    if (mode === "limited") return route.fulfill({ status: 429, json: { message: "Too many attempts. Please try again in 15 minutes." } });
-    return route.fulfill({ status: 200, json: { message: "Your message is on its way. Thanks for reaching out." } });
-  });
-  await page.goto("/#contact");
-  const submit = page.getByRole("button", { name: "Send a message", exact: true });
-  await expect(submit).toBeEnabled();
-  await submit.click();
-  await expect(page.getByLabel("Your name", { exact: false })).toBeFocused();
-  expect(calls).toBe(0);
-  const fill = async () => {
-    await page.getByLabel("Your name", { exact: false }).fill("Portfolio visitor");
-    await page.getByLabel("Email address", { exact: false }).fill("visitor@example.com");
-    await page.getByLabel("What are you thinking?", { exact: false }).fill("I would like to discuss an engineering project with you.");
-  };
-  await fill();
-  await submit.click();
-  await expect(page.getByRole("button", { name: "Sending message…" })).toBeDisabled();
-  await expect(page.locator(".contact-form")).toHaveAttribute("aria-busy", "true");
-  await expect.poll(() => Boolean(release)).toBe(true);
-  release!();
-  await expect(page.getByRole("status")).toContainText("Your message is on its way.");
-  await expect(page.getByLabel("Your name", { exact: false })).toBeEmpty();
-  expect(calls).toBe(1);
-  await fill();
-  mode = "field";
-  await submit.click();
-  await expect(page.getByLabel("Email address", { exact: false })).toBeFocused();
-  await expect(page.getByLabel("Email address", { exact: false })).toHaveAttribute("aria-invalid", "true");
-  for (const [failure, message] of [["network", "We couldn’t reach the email service"], ["unconfigured", "Your message has not been sent"], ["limited", "Too many attempts"]]) {
-    mode = failure;
-    await submit.click();
-    await expect(page.getByRole("status")).toContainText(message);
-    await expect(page.getByLabel("Your name", { exact: false })).toHaveValue("Portfolio visitor");
-    await expect(submit).toBeEnabled();
-  }
-});
-
-
-test("toolkit links use the supplied project technologies", async ({ page }) => {
-  await page.goto("/#toolkit");
-  for (const [tool, slug] of [["Ruby", "tariff-ninja"], ["Ruby on Rails", "tariff-ninja"], ["SQL", "tariff-ninja"], ["Python", "city-of-bentonville-traffic"], ["Jupyter", "city-of-bentonville-traffic"], ["Tailwind CSS", "querry-berry"], ["React", "amazeum"]]) {
-    await expect(page.locator("#toolkit").getByRole("link", { name: new RegExp(`^${tool} —`) })).toHaveAttribute("href", `/projects/${slug}`);
-  }
 });

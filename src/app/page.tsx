@@ -1,50 +1,93 @@
-import { siteAssets } from "@/content/site";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { Navigation } from "@/components/layout/Navigation";
-import { Reveal } from "@/components/motion/Reveal";
-import { HeroName } from "@/components/motion/HeroName";
-import { About } from "@/components/sections/About";
-import { HeroSculpture } from "@/components/three/HeroSculpture";
-import { ProjectSelector } from "@/components/projects/ProjectSelector";
-import { Experience } from "@/components/sections/Experience";
-import { Education } from "@/components/sections/Education";
-import { Toolkit } from "@/components/sections/Toolkit";
-import { Contact } from "@/components/sections/Contact";
+import type { Metadata } from "next";
+import { ArrowDown, ArrowUp, ArrowUpRight } from "lucide-react";
+import { CloudPoster } from "@/components/portfolio/DeviceArt";
+import { GlyphWake } from "@/components/portfolio/GlyphWake";
+import { featuredProjects, ProjectSections } from "@/components/portfolio/ProjectSections";
+import { Button } from "@/components/ui/button";
+import { education } from "@/content/experience";
+import { siteAssets, siteUrl } from "@/content/site";
+import "./portfolio.css";
+
+export const metadata: Metadata = { alternates: { canonical: siteUrl } };
 
 export default function Home() {
+  const { resumeHref, publicEmail, socialLinks } = siteAssets;
+  const emailHref = publicEmail ? `mailto:${publicEmail}` : undefined;
+
   return (
-    <>
+    <div className="portfolio" id="home">
       <a className="skip-link" href="#main">Skip to content</a>
-      <Navigation />
-      <main id="main">
-        <section className="hero" id="home" aria-labelledby="hero-title">
-          <header className="masthead page-gutter">
-            <a href="#home" className="wordmark" aria-label="Brett Berry home">bb.</a>
-          </header>
-          <div className="hero-heading page-gutter">
-            <HeroName />
+      <header className="folio-header">
+        <div className="folio-wrap folio-header-inner">
+          <a className="folio-wordmark" href="#home" aria-label="Brett Berry home">bb<span>.</span></a>
+          <nav className="folio-nav" aria-label="Main navigation">
+            <a href="#projects">Work</a>
+            {resumeHref && <a href={resumeHref}>Résumé <ArrowUpRight size={14} aria-hidden="true" /></a>}
+            <Button asChild variant="outline" size="compact"><a href="#contact">Contact</a></Button>
+          </nav>
+        </div>
+      </header>
+
+      <main id="main" tabIndex={-1}>
+        <section className="folio-hero" aria-labelledby="hero-title">
+          <div className="folio-wrap hero-inner">
+            <div className="hero-introduction">
+              <p className="folio-label hero-role"><span aria-hidden="true" />Software Engineer</p>
+              <h1 id="hero-title">Brett<br />Berry<span aria-hidden="true">.</span></h1>
+              <p className="hero-intro">I like taking open-ended problems and turning them into software people can use.</p>
+              <div className="hero-actions">
+                <Button asChild><a href="#projects">View work <ArrowDown aria-hidden="true" /></a></Button>
+                {resumeHref && <Button asChild variant="outline"><a href={resumeHref}>Résumé <ArrowUpRight aria-hidden="true" /></a></Button>}
+              </div>
+            </div>
+            <div className="hero-visual" aria-hidden="true">
+              <div className="hero-reticle"><span /><span /><span /><span /></div>
+              <div className="glyph-volume">
+                <CloudPoster priority />
+                <GlyphWake />
+              </div>
+            </div>
           </div>
-          <HeroSculpture />
-          <div className="hero-copy page-gutter">
-            <Reveal delay={0.16}>
-              <p className="hero-tagline">Building<br /> what&apos;s next.</p>
-              <p className="hero-description">I build web applications, data systems, and tools with the people who use them.</p>
-              <a className="text-link" href="#projects">Explore the work <span className="round-arrow"><ArrowUpRight size={19} /></span></a>
-            </Reveal>
-          </div>
-          <p className="hero-credits mono"><a href="https://sketchfab.com/3d-models/complex-geometric-frames-and-curved-lines-model-287051b7796d4a94b5970f79cd4fc8e5">GEOMETRIC FRAMES BY OMER</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · ADAPTED</p>
-          <div className="hero-bottom page-gutter"><a className="mono scroll-cue" href="#projects"><ArrowDown size={14} /> SCROLL TO EXPLORE</a></div>
+          <nav className="folio-wrap work-index" aria-label="Featured work">
+            <span className="folio-label">Featured work</span>
+            {featuredProjects.map(({ id, title }) => (
+              <a key={id} href={`#${id}`}>{title}<ArrowUpRight size={16} aria-hidden="true" /></a>
+            ))}
+          </nav>
         </section>
 
-        <ProjectSelector />
-        <About />
+        <ProjectSections />
 
-        <Experience resumeHref={siteAssets.resumeHref} />
-        <Education />
-        <Toolkit />
-        <Contact publicEmail={siteAssets.publicEmail} socialLinks={siteAssets.socialLinks} enabled={Boolean(process.env.RESEND_API_KEY?.trim() && process.env.CONTACT_TO_EMAIL?.trim() && process.env.CONTACT_FROM_EMAIL?.trim())} />
+        <section className="folio-wrap about-bridge" id="experience" aria-labelledby="about-title" tabIndex={-1}>
+          <h2 id="about-title" className="folio-label">About &amp; experience</h2>
+          <p>I study at the {education[0].institution}. I’m drawn to work that starts with a conversation and ends with something people can use.</p>
+        </section>
+
+        <section className="folio-contact" id="contact" aria-labelledby="contact-title" tabIndex={-1}>
+          <div className="contact-volume" aria-hidden="true"><CloudPoster /></div>
+          <div className="folio-wrap contact-inner">
+            <div className="contact-card">
+              <div>
+                <p className="folio-label project-kicker">Contact</p>
+                <h2 id="contact-title">Let’s talk.</h2>
+                <p>Want to talk through how I built something here?</p>
+              </div>
+              <div className="contact-actions">
+                {emailHref && <Button asChild><a href={emailHref}>Email me <ArrowUpRight aria-hidden="true" /></a></Button>}
+                <ul aria-label="Résumé and profiles">
+                  {resumeHref && <li><a href={resumeHref}>Résumé <ArrowUpRight size={14} aria-hidden="true" /></a></li>}
+                  {socialLinks.map(({ label, href }) => <li key={href}><a href={href}>{label} <ArrowUpRight size={14} aria-hidden="true" /></a></li>)}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
-      <footer className="site-footer"><div className="footer-inner container"><a href="#home" className="footer-name">BRETT BERRY</a><span className="mono">© 2026 · BUILDING WHAT&apos;S NEXT.</span><div className="footer-profiles"><a href={`mailto:${siteAssets.publicEmail}`}>Email</a>{siteAssets.socialLinks.map((link) => <a key={link.href} href={link.href}>{link.label}</a>)}</div><a href="#home" className="mono back-top">BACK TO TOP <ArrowUpRight size={16} /></a></div><p className="footer-credits mono container"><a href="https://sketchfab.com/3d-models/complex-geometric-frames-and-curved-lines-model-287051b7796d4a94b5970f79cd4fc8e5">GEOMETRIC FRAMES BY OMER</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · ADAPTED</p></footer>
-    </>
+
+      <footer className="folio-wrap folio-footer">
+        <a href="#home" className="folio-footer-name">Brett Berry</a>
+        <a href="#home" className="folio-text-link">Back to top <ArrowUp size={15} aria-hidden="true" /></a>
+      </footer>
+    </div>
   );
 }
