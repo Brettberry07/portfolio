@@ -13,3 +13,5 @@ export const siteAssets: {
     { label: "LinkedIn", href: "https://www.linkedin.com/in/brett-berry-a81b29329/" },
   ],
 };
+
+export const siteUrl = "https://brettberry.dev";

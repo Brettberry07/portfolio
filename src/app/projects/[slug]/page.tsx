@@ -6,6 +6,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
 import { ProjectArtwork } from "@/components/projects/ProjectArtwork";
 import { getProjectBySlug, projects } from "@/content/projects";
+import { siteUrl } from "@/content/site";
 import "./case-studies.css";
 
 type CaseStudyProps = { params: Promise<{ slug: string }> };
@@ -19,6 +20,7 @@ export async function generateMetadata({ params }: CaseStudyProps): Promise<Meta
   const project = getProjectBySlug(slug);
   return {
     title: project ? project.title : "Project not found",
+    alternates: project ? { canonical: `${siteUrl}/projects/${project.slug}` } : undefined,
     description: project?.summary ?? `Explore ${project?.title ?? "selected work"} from Brett Berry. Case study details coming soon.`,
   };
 }
